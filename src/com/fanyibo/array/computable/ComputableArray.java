@@ -49,7 +49,7 @@ public class ComputableArray {
 
             char first = number.charAt(0);
             if ((first == POSITIVE || first == NEGATIVE) && number.length() == 1) {
-                throw new Exception(MALFORMED_STRING);
+                throw new Exception(MALFORMED_STRING + "[" + number + "]");
             }
 
             String numStr = (first == NEGATIVE)
@@ -64,14 +64,14 @@ public class ComputableArray {
             while (i < size) {
                 if (numStr.charAt(i) == DOT) {
                     if (hasDot) {
-                        throw new Exception(MALFORMED_STRING);
+                        throw new Exception(MALFORMED_STRING + "[" + number + "]");
                     }
                     hasDot = true;
                     _DOT_INDEX = --i;
                     numStr = numStr.replaceAll("\\.", "");
                     size--;
                 } else if (!Utils.isDigit(numStr.charAt(i))) {
-                    throw new Exception(MALFORMED_STRING);
+                    throw new Exception(MALFORMED_STRING + "[" + number + "]");
                 }
                 i++;
             }
@@ -79,7 +79,7 @@ public class ComputableArray {
             VALUE = numStr.toCharArray();
 
         } else {
-            throw new Exception(MALFORMED_STRING);
+            throw new Exception(MALFORMED_STRING + "[" + number + "]");
         }
     }
 
@@ -234,11 +234,62 @@ public class ComputableArray {
     }
 
 
+    private char[] absDivide(char[] left, char[] right) {
+
+        int length = left.length;
+
+        // first, compare these two numbers
+        boolean needSwitch = false;
+        for (int i = 1; i < length; i++) {
+            if (left[i] > right[i]) {
+                needSwitch = false;
+                break;
+            } else if (left[i] < right[i]) {
+                needSwitch = true;
+                break;
+            }
+        }
+
+        char[] large = needSwitch ? right : left;
+        char[] small = needSwitch ? left : right;
+
+
+        char result[] = new char[length];
+
+        boolean markOne = false;
+        int a, b, c;
+        for (int i = length - 1; i > 0; --i) {
+
+            a = Integer.parseInt(String.valueOf(large[i]));
+            b = Integer.parseInt(String.valueOf(small[i]));
+            if (markOne) {
+                a--;
+            }
+            if (a < b) {
+                markOne = true;
+                c = 10 + a - b;
+            } else {
+                markOne = false;
+                c = a - b;
+            }
+            result[i] = Character.forDigit(c, 10);
+        }
+
+        if (needSwitch) {
+            result[0] = NEGATIVE;
+        } else {
+            result[0] = POSITIVE;
+        }
+
+        return result;
+    }
+
+
     /**
      * All _methods don't care about positive or negative
      *
-     * @param target
-     * @return
+     * @param target target array
+     * @return ComputableArray
      */
     public ComputableArray plus(ComputableArray target) throws Exception {
 
@@ -281,14 +332,128 @@ public class ComputableArray {
     }
 
 
-    private ComputableArray multiply(ComputableArray target) {
+    public ComputableArray substract(ComputableArray target) throws Exception {
 
-        return null;
+        int newDotIndex = Math.max(this.dotIndex(), target.dotIndex());
+        int newLength = newDotIndex + Math.max(this.length() - this.dotIndex(),
+                target.length() - target.dotIndex());
+        char[] left = this.adjustLength(newLength, newDotIndex);
+        char[] right = target.adjustLength(newLength, newDotIndex);
+
+        char[] result;
+        boolean appendNegative = false;
+
+        StringBuilder strBuilder = new StringBuilder();
+
+        if (this.isNegative()) {
+
+            if (target.isNegative()) {
+                result = this.absSubstract(right, left);
+            } else {
+                result = this.absPlus(left, right);
+                appendNegative = true;
+            }
+
+        } else {
+            if (target.isNegative()) {
+                result = this.absPlus(left, right);
+            } else {
+                result = this.absSubstract(left, right);
+            }
+        }
+
+        if (appendNegative) {
+            strBuilder.append(NEGATIVE);
+        }
+        strBuilder.append(Arrays.copyOfRange(result, 0, newDotIndex + 1));
+        strBuilder.append(DOT);
+        strBuilder.append(Arrays.copyOfRange(result, newDotIndex + 1, newLength));
+
+        return new ComputableArray(strBuilder.toString());
     }
 
-    private ComputableArray divide(ComputableArray target) {
 
-        return null;
+    public ComputableArray multiply(ComputableArray target) throws Exception {
+
+        int newDotIndex = Math.max(this.dotIndex(), target.dotIndex());
+        int newLength = newDotIndex + Math.max(this.length() - this.dotIndex(),
+                target.length() - target.dotIndex());
+        char[] left = this.adjustLength(newLength, newDotIndex);
+        char[] right = target.adjustLength(newLength, newDotIndex);
+
+        int iResult = newLength << 1;
+        char result[] = new char[iResult];
+
+        int addLeft = 0;
+        int a, b, c;
+
+        String s;
+        for (int i = newLength - 1; i > 0; --i) {
+
+            a = Integer.parseInt(String.valueOf(left[i]));
+            b = Integer.parseInt(String.valueOf(right[i]));
+            c = a * b + addLeft;
+            s = String.valueOf(c);
+            if (s.length() == 1) {
+                addLeft = 0;
+            } else {
+                addLeft = Integer.parseInt(s.substring(0, s.length() - 1));
+            }
+            result[--iResult] = s.charAt(s.length() - 1) == ZERO ? ZERO : Character.forDigit(s.charAt(s.length() - 1), 10);
+        }
+
+        if (this.isNegative() == target.isNegative()) {
+            result[0] = POSITIVE;
+        } else {
+            result[0] = NEGATIVE;
+        }
+
+        StringBuilder strBuilder = new StringBuilder();
+        strBuilder.append(Arrays.copyOfRange(result, 0, result.length - (newLength - newDotIndex) - 1));
+        strBuilder.append(DOT);
+        strBuilder.append(Arrays.copyOfRange(result, result.length - (newLength - newDotIndex) - 1, result.length));
+
+        return new ComputableArray(strBuilder.toString());
+    }
+
+    public ComputableArray divide(ComputableArray target) throws Exception {
+
+        int newDotIndex = Math.max(this.dotIndex(), target.dotIndex());
+        int newLength = newDotIndex + Math.max(this.length() - this.dotIndex(),
+                target.length() - target.dotIndex());
+        char[] left = this.adjustLength(newLength, newDotIndex);
+        char[] right = target.adjustLength(newLength, newDotIndex);
+
+        char[] result;
+        boolean appendNegative = false;
+
+        StringBuilder strBuilder = new StringBuilder();
+
+        if (this.isNegative()) {
+
+            if (target.isNegative()) {
+                result = this.absSubstract(right, left);
+            } else {
+                result = this.absPlus(left, right);
+                appendNegative = true;
+            }
+
+        } else {
+            if (target.isNegative()) {
+                result = this.absPlus(left, right);
+            } else {
+                result = this.absSubstract(left, right);
+            }
+        }
+
+        if (appendNegative) {
+            strBuilder.append(NEGATIVE);
+        }
+        strBuilder.append(Arrays.copyOfRange(result, 0, newDotIndex + 1));
+        strBuilder.append(DOT);
+        strBuilder.append(Arrays.copyOfRange(result, newDotIndex + 1, newLength));
+
+        return new ComputableArray(strBuilder.toString());
     }
 
 }

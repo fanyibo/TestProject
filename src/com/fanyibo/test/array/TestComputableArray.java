@@ -13,10 +13,12 @@ public class TestComputableArray {
     public static void main(String[] args) {
 
         try {
-            ComputableArray array1 = new ComputableArray("3471027489237893252309519075013513502357.023752084535730");
-            ComputableArray array2 = new ComputableArray("1920482308572380510928429587285103410471.084731582475689");
+            ComputableArray array1 = new ComputableArray("-1.2");
+            ComputableArray array2 = new ComputableArray("-10");
 
             System.out.println(array1.plus(array2).toString());
+            System.out.println(array1.substract(array2).toString());
+            System.out.println(array1.multiply(array2).toString());
 
 
         } catch (Exception e) {
