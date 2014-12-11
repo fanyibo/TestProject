@@ -42,6 +42,14 @@
     <entry_points version="2.0" />
   </component>
   <component name="IdProvider" IDEtalkID="45566DB6B587B787D16C3EB0914A26E1" />
+  <component name="IvyIDEA.ProjectSettings">
+    <option name="artifactTypeSettings">
+      <ArtifactTypeSettings />
+    </option>
+    <option name="propertiesSettings">
+      <PropertiesSettings />
+    </option>
+  </component>
   <component name="ProjectKey">
     <option name="state" value="project://e2804f05-5315-4fc6-a121-c522a6c26470" />
   </component>

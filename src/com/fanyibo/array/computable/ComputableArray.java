@@ -52,11 +52,7 @@ public class ComputableArray {
                 throw new Exception(MALFORMED_STRING + "[" + number + "]");
             }
 
-            String numStr = (first == NEGATIVE)
-                    ?
-                    number
-                    :
-                    (first == POSITIVE ? number : POSITIVE + number);
+            String numStr = (first == NEGATIVE) ? number : (first == POSITIVE ? number : POSITIVE + number);
 
             boolean hasDot = false;
             int size = numStr.length();
@@ -294,8 +290,7 @@ public class ComputableArray {
     public ComputableArray plus(ComputableArray target) throws Exception {
 
         int newDotIndex = Math.max(this.dotIndex(), target.dotIndex());
-        int newLength = newDotIndex + Math.max(this.length() - this.dotIndex(),
-                target.length() - target.dotIndex());
+        int newLength = newDotIndex + Math.max(this.length() - this.dotIndex(), target.length() - target.dotIndex());
         char[] left = this.adjustLength(newLength, newDotIndex);
         char[] right = target.adjustLength(newLength, newDotIndex);
 
@@ -335,8 +330,7 @@ public class ComputableArray {
     public ComputableArray substract(ComputableArray target) throws Exception {
 
         int newDotIndex = Math.max(this.dotIndex(), target.dotIndex());
-        int newLength = newDotIndex + Math.max(this.length() - this.dotIndex(),
-                target.length() - target.dotIndex());
+        int newLength = newDotIndex + Math.max(this.length() - this.dotIndex(), target.length() - target.dotIndex());
         char[] left = this.adjustLength(newLength, newDotIndex);
         char[] right = target.adjustLength(newLength, newDotIndex);
 
@@ -372,12 +366,60 @@ public class ComputableArray {
         return new ComputableArray(strBuilder.toString());
     }
 
+    /**
+     * Divide and Conquer
+     * left and right are in same size.
+     * return array in size left.length + right.length
+     * with '0' filling up empty space.
+     *
+     */
+    private char[] absMultiply(char[] left, int leftStart, int leftEnd,
+                               char[] right, int rightStart, int rightEnd) {
+
+        int lengthLeft = left.length;
+        int lengthRight = right.length;
+
+        int half = lengthLeft >> 1;
+
+        char[] result = new char[lengthLeft + lengthRight];
+
+        char[] a1b1 = absMultiply(left, 0, half, right, 0, half);
+        char[] a1b2 = absMultiply(left, 0, half, right, half+1, lengthRight-1);
+        char[] a2b1 = absMultiply(left, half+1, lengthLeft-1, right, 0, half);
+        char[] a2b2 = absMultiply(left, half+1, lengthLeft-1, right, half+1, lengthRight-1);
+
+        /**
+         * result = a1b1 * 10^n + a1b2 * 10^(n/2) + a2b1 * 10^(n/2) + a2b2
+         */
+        return null;
+    }
+
+
+    /**
+     * Concatenate two arrays
+     * O(m+n)
+     *
+     * @param left  char[]
+     * @param right char[]
+     * @return char[]
+     */
+    private char[] join(char[] left, char[] right) {
+        int lengthLeft = left.length;
+        int lengthRight = right.length;
+        char[] result = new char[lengthLeft + lengthRight];
+        for (int i = 0; i < lengthLeft; i++) {
+            result[i] = left[i];
+        }
+        for (int i = 0; i < lengthRight; i++) {
+            result[i + lengthLeft] = right[i];
+        }
+        return result;
+    }
 
     public ComputableArray multiply(ComputableArray target) throws Exception {
 
         int newDotIndex = Math.max(this.dotIndex(), target.dotIndex());
-        int newLength = newDotIndex + Math.max(this.length() - this.dotIndex(),
-                target.length() - target.dotIndex());
+        int newLength = newDotIndex + Math.max(this.length() - this.dotIndex(), target.length() - target.dotIndex());
         char[] left = this.adjustLength(newLength, newDotIndex);
         char[] right = target.adjustLength(newLength, newDotIndex);
 
@@ -399,7 +441,8 @@ public class ComputableArray {
             } else {
                 addLeft = Integer.parseInt(s.substring(0, s.length() - 1));
             }
-            result[--iResult] = s.charAt(s.length() - 1) == ZERO ? ZERO : Character.forDigit(s.charAt(s.length() - 1), 10);
+            result[--iResult] = s.charAt(s.length() - 1) == ZERO ? ZERO : Character
+                    .forDigit(s.charAt(s.length() - 1), 10);
         }
 
         if (this.isNegative() == target.isNegative()) {
@@ -418,41 +461,7 @@ public class ComputableArray {
 
     public ComputableArray divide(ComputableArray target) throws Exception {
 
-        int newDotIndex = Math.max(this.dotIndex(), target.dotIndex());
-        int newLength = newDotIndex + Math.max(this.length() - this.dotIndex(),
-                target.length() - target.dotIndex());
-        char[] left = this.adjustLength(newLength, newDotIndex);
-        char[] right = target.adjustLength(newLength, newDotIndex);
-
-        char[] result;
-        boolean appendNegative = false;
-
         StringBuilder strBuilder = new StringBuilder();
-
-        if (this.isNegative()) {
-
-            if (target.isNegative()) {
-                result = this.absSubstract(right, left);
-            } else {
-                result = this.absPlus(left, right);
-                appendNegative = true;
-            }
-
-        } else {
-            if (target.isNegative()) {
-                result = this.absPlus(left, right);
-            } else {
-                result = this.absSubstract(left, right);
-            }
-        }
-
-        if (appendNegative) {
-            strBuilder.append(NEGATIVE);
-        }
-        strBuilder.append(Arrays.copyOfRange(result, 0, newDotIndex + 1));
-        strBuilder.append(DOT);
-        strBuilder.append(Arrays.copyOfRange(result, newDotIndex + 1, newLength));
-
         return new ComputableArray(strBuilder.toString());
     }
 
