@@ -6,7 +6,7 @@
  */
 package com.fanyibo.util;
 
-import java.util.Arrays;
+import java.util.*;
 
 public class Utils {
 
@@ -437,7 +437,7 @@ public class Utils {
             }
             min = stack[0];
             for (int i = 0; i < size; i++) {
-                min = min<stack[i] ? min : stack[i];
+                min = min < stack[i] ? min : stack[i];
             }
         }
 
@@ -449,15 +449,411 @@ public class Utils {
         }
     }
 
+
+    /**
+     * Given an index k, return the kth row of the Pascal's triangle.
+     * For example, given k = 3,
+     * Return [1,3,3,1].
+     * Note:
+     * Could you optimize your algorithm to use only O(k) extra space?
+     * 0 0 0 1
+     * 0 0 1 1
+     * 0 1 2 1
+     * 1 3 3 1
+     */
+    public static List<Integer> getRow(int rowIndex) {
+
+        int size = rowIndex + 1;
+        Integer[] array = new Integer[size];
+        array[size - 1] = 1;
+        for (int i = size - 2; i >= 0; i--) {
+            array[i] = 0;
+        }
+
+        for (int i = 1; i <= rowIndex; i++) {
+            int old = -1;
+            for (int j = size - 2; j >= size - i - 1; j--) {
+                if (j == size - 2) {
+                    old = array[j];
+                    array[j] += (array[j + 1]);
+                } else {
+                    int temp = array[j];
+                    array[j] += old;
+                    old = temp;
+                }
+            }
+        }
+
+        return Arrays.asList(array);
+    }
+
+    /**
+     * Given a binary tree and a sum, determine if the tree has a root-to-leaf path such that adding up all the
+     * values along the path equals the given sum.
+     * For example:
+     * Given the below binary tree and sum = 22,
+     * 5
+     * / \
+     * 4   8
+     * /   / \
+     * 11  13  4
+     * /  \      \
+     * 7    2      1
+     * return true, as there exist a root-to-leaf path 5->4->11->2 which sum is 22.
+     */
+
+    public static class TreeNode {
+        int      val;
+        TreeNode left;
+        TreeNode right;
+
+        TreeNode(int x) {
+            val = x;
+        }
+    }
+
+    public boolean hasPathSum(TreeNode root, int sum) {
+
+        if (root == null) {
+            return false;
+        }
+
+        int val = root.val;
+        sum -= val;
+
+        if (sum == 0 && root.left == null && root.right == null) {
+            return true;
+        } else {
+            return hasPathSum(root.left, sum) || hasPathSum(root.right, sum);
+        }
+    }
+
+    /**
+     * Given a binary tree, find its minimum depth.
+     * The minimum depth is the number of nodes along the shortest path from the root node down to the nearest leaf
+     * node.
+     */
+    public static int minDepth(TreeNode root) {
+
+        if (root == null) {
+            return 0;
+        } else if (root.left == null && root.right == null) {
+            return 1;
+        } else if (root.left == null && root.right != null) {
+            return 1 + minDepth(root.right);
+        } else if (root.left != null && root.right == null) {
+            return 1 + minDepth(root.left);
+        } else {
+            return 1 + Math.min(minDepth(root.left), minDepth(root.right));
+        }
+    }
+
+    public static int maxDepth(TreeNode root) {
+
+        if (root == null) {
+            return 0;
+        } else if (root.left == null && root.right == null) {
+            return 1;
+        } else if (root.left == null && root.right != null) {
+            return 1 + maxDepth(root.right);
+        } else if (root.left != null && root.right == null) {
+            return 1 + maxDepth(root.left);
+        } else {
+            return 1 + Math.max(maxDepth(root.left), maxDepth(root.right));
+        }
+    }
+
+    public static final class MaxMinDepth {
+
+        int max = 0;
+        int min = 0;
+
+        public MaxMinDepth(int max, int min) {
+            this.max = max;
+            this.min = min;
+        }
+    }
+
+    public static MaxMinDepth maxminDepth(TreeNode root) {
+
+        if (root == null) {
+            return new MaxMinDepth(0, 0);
+        } else if (root.left == null && root.right == null) {
+            return new MaxMinDepth(1, 1);
+        } else if (root.left == null && root.right != null) {
+            MaxMinDepth temp = maxminDepth(root.right);
+            return new MaxMinDepth(1 + temp.max, 1);
+        } else if (root.left != null && root.right == null) {
+            MaxMinDepth temp = maxminDepth(root.left);
+            return new MaxMinDepth(1 + temp.max, 1);
+        } else {
+            MaxMinDepth tempL = maxminDepth(root.left);
+            MaxMinDepth tempR = maxminDepth(root.right);
+            return new MaxMinDepth(1 + Math.max(tempL.max, tempR.max), 1 + Math.min(tempL.min, tempR.min));
+        }
+    }
+
+    /**
+     * Given a binary tree, determine if it is height-balanced.
+     * For this problem, a height-balanced binary tree is defined as a binary tree in which the depth of the two
+     * subtrees of every node never differ by more than 1.
+     */
+    public static boolean isBalanced(TreeNode root) {
+
+        if (root == null) {
+            return true;
+        }
+
+        int leftL = maxDepth(root.left);
+        int leftR = maxDepth(root.right);
+        if (Math.abs(leftL - leftR) > 1) {
+            return false;
+        } else {
+            return isBalanced(root.left) && isBalanced(root.right);
+        }
+    }
+
+    /**
+     * Given a binary tree, return the bottom-up level order traversal of its nodes' values. (ie, from left to right,
+     * level by level from leaf to root).
+     * For example:
+     * Given binary tree {3,9,20,#,#,15,7},
+     * 3
+     * / \
+     * 9  20
+     * /  \
+     * 15   7
+     * return its bottom-up level order traversal as:
+     * [
+     * [15,7],
+     * [9,20],
+     * [3]
+     * ]
+     * confused what "{1,#,2,3}" means? > read more on how binary tree is serialized on OJ.
+     */
+    public static List<List<Integer>> levelOrderBottom(TreeNode root) {
+
+        List<List<Integer>> result = new ArrayList<List<Integer>>();
+        if (root != null) {
+
+            LinkedList<TreeNode> bfsList1 = new LinkedList<TreeNode>();
+            LinkedList<TreeNode> bfsList2 = new LinkedList<TreeNode>();
+
+            bfsList1.push(root);
+
+            LinkedList<TreeNode> freeList = bfsList2;
+            LinkedList<TreeNode> busyList = bfsList1;
+
+            while (!busyList.isEmpty() || !freeList.isEmpty()) {
+                List<Integer> list = new ArrayList<Integer>();
+                while (!busyList.isEmpty()) {
+
+                    TreeNode temp = busyList.removeFirst();
+                    list.add(temp.val);
+                    if (temp.left != null) {
+                        freeList.addLast(temp.left);
+                    }
+                    if (temp.right != null) {
+                        freeList.addLast(temp.right);
+                    }
+                }
+                result.add(list);
+
+                LinkedList<TreeNode> tmp = freeList;
+                freeList = busyList;
+                busyList = tmp;
+            }
+
+            Collections.reverse(result);
+        }
+        return result;
+    }
+
+
+    /**
+     * Given a binary tree, check whether it is a mirror of itself (ie, symmetric around its center).
+     * For example, this binary tree is symmetric:
+     * 1
+     * /   \
+     * 2     2
+     * / \   / \
+     * 3   4 4   3
+     * But the following is not:
+     * 1
+     * / \
+     * 2   2
+     * \   \
+     * 3   3
+     * Note:
+     * Bonus points if you could solve it both recursively and iteratively.
+     * confused what "{1,#,2,3}" means? > read more on how binary tree is serialized on OJ.
+     */
+
+    private static boolean isListSymmetric(List<Integer> list) {
+        if (list == null || list.isEmpty()) {
+            return true;
+        }
+        int size = list.size();
+        int index1;
+        int index2;
+        if (size % 2 == 1) {
+            index1 = ((size - 1) / 2) - 1;
+            index2 = index1 + 1;
+        } else {
+            index1 = (size / 2) - 1;
+            index2 = index1 + 1;
+        }
+
+        while (index1 >= 0 && index2 <= size - 1) {
+
+            Integer left = list.get(index1);
+            Integer right = list.get(index2);
+
+            if ((left == null && right == null) || (left != null && right != null && left.equals(right))) {
+                index1--;
+                index2++;
+            } else {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static boolean isSymmetric(TreeNode root) {
+
+        if (root != null) {
+
+            LinkedList<TreeNode> bfsList1 = new LinkedList<TreeNode>();
+            LinkedList<TreeNode> bfsList2 = new LinkedList<TreeNode>();
+
+            bfsList1.push(root.left);
+            bfsList2.push(root.right);
+
+            while (!bfsList1.isEmpty() && !bfsList2.isEmpty()) {
+
+                TreeNode tempL = bfsList1.removeFirst();
+                TreeNode tempR = bfsList2.removeFirst();
+
+                if (tempL == null && tempR == null) {
+                    continue;
+                }
+                if ((tempL != null && tempR == null) || (tempL == null && tempR != null)) {
+                    return false;
+                }
+
+                if (tempL.val != tempR.val) {
+                    return false;
+                }
+
+                bfsList1.addLast(tempL.left);
+                bfsList1.addLast(tempL.right);
+
+                bfsList2.addLast(tempR.right);
+                bfsList2.addLast(tempR.left);
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Given an input string, reverse the string word by word.
+     * For example,
+     * Given s = "the sky is blue",
+     * return "blue is sky the".
+     */
+    public static String reverseWords(String s) {
+
+        if (s == null || s.length() == 0) {
+            return "";
+        }
+
+        List<String> result = new ArrayList<String>();
+
+        StringBuilder str = new StringBuilder();
+        for (int i = 0; i < s.length(); i++) {
+
+            char c = s.charAt(i);
+            if (c == ' ' && str.length() == 0) {
+                continue;
+            }
+            if (c == ' ') {
+                result.add(str.toString());
+                str.delete(0, str.length());
+            } else {
+                str.append(c);
+            }
+        }
+        if (str.length() > 0) {
+            result.add(str.toString());
+            str.delete(0, str.length());
+        }
+
+        int size = result.size();
+        if (size > 0) {
+            for (int i = size - 1; i > 0; i--) {
+                str.append(result.get(i));
+                str.append(" ");
+            }
+            str.append(result.get(0));
+        }
+        return str.toString();
+    }
+
+    /**
+     * Given a singly linked list L: L0→L1→…→Ln-1→Ln,
+     * reorder it to: L0→Ln→L1→Ln-1→L2→Ln-2→…
+     * You must do this in-place without altering the nodes' values.
+     * For example,
+     * Given {1,2,3,4}, reorder it to {1,4,2,3}.
+     */
+    public static void reorderList(ListNode head) {
+
+    }
+
     public static void main(String[] args) {
 
-        MinStack stack = new MinStack();
-        stack.push(-1);
-        System.out.println(stack.top());
-        System.out.println(stack.getMin());
+        System.out.println(reverseWords("     "));
+        //        {
+        //            TreeNode t1 = new TreeNode(1);
+        //            TreeNode t2 = new TreeNode(2);
+        //            TreeNode t3 = new TreeNode(2);
+        //            TreeNode t4 = new TreeNode(3);
+        //            TreeNode t5 = new TreeNode(4);
+        //            TreeNode t6 = new TreeNode(4);
+        //            TreeNode t7 = new TreeNode(3);
+        //
+        //            t1.left = t2;
+        //            t1.right = t3;
+        //
+        //            t2.left = t4;
+        //            t2.right = t5;
+        //
+        //            t3.left = t6;
+        //            t3.right = t7;
+        //
+        //            System.out.println(isSymmetric(t1));
+        //        }
+        //        {
+        //            TreeNode t1 = new TreeNode(1);
+        //            TreeNode t2 = new TreeNode(2);
+        //            TreeNode t3 = new TreeNode(2);
+        //            TreeNode t4 = new TreeNode(3);
+        //            TreeNode t5 = new TreeNode(3);
+        //
+        //            t1.left = t2;
+        //            t1.right = t3;
+        //            t2.right = t4;
+        //            t3.right = t5;
+        //
+        //            System.out.println(isSymmetric(t1));
+        //        }
 
+        //System.out.println(getRow(100));
 
-
+        //        MinStack stack = new MinStack();
+        //        stack.push(-1);
+        //        System.out.println(stack.top());
+        //        System.out.println(stack.getMin());
         //        ListNode n1 = new ListNode(1);
         //        ListNode n2 = new ListNode(2);
         //        ListNode n3 = new ListNode(3);
