@@ -808,11 +808,611 @@ public class Utils {
      */
     public static void reorderList(ListNode head) {
 
+        if (head == null) {
+            return;
+        }
+
+        List<ListNode> list = new ArrayList<ListNode>();
+
+        ListNode temp = head;
+        while (temp != null) {
+            list.add(temp);
+            temp = temp.next;
+        }
+        int size = list.size();
+
+        if (size <= 1) {
+            return;
+        }
+
+        int half = 0;
+        int left = 0;
+        if (size % 2 == 0) {
+            half = (size / 2) - 1;
+        } else {
+            half = ((size - 1) / 2) - 1;
+            left = half + 1;
+        }
+
+
+        for (int i = 0; i <= half; i++) {
+            list.get(i).next = list.get(size - 1 - i);
+            list.get(size - 1 - i).next = (i == size - 2 - i) ? null : list.get(i + 1);
+        }
+        if (left != 0) {
+            list.get(left).next = null;
+        }
+
     }
+
+    /**
+     * A peak element is an element that is greater than its neighbors.
+     * Given an input array where num[i] ≠ num[i+1], find a peak element and return its index.
+     * The array may contain multiple peaks, in that case return the index to any one of the peaks is fine.
+     * You may imagine that num[-1] = num[n] = -∞.
+     * For example, in array [1, 2, 3, 1], 3 is a peak element and your function should return the index number 2.
+     * click to show spoilers.
+     */
+    public static int findPeakElement(int[] num) {
+
+        List<Integer> indexs = findPeakElementIndex(num);
+        if (indexs.size() == 0) {
+            return 0;
+        }
+        return indexs.get(0);
+    }
+
+    public static List<Integer> findPeakElementIndex(int[] num) {
+
+        List<Integer> indexs = new ArrayList<Integer>();
+
+        int size = num.length;
+        if (size == 0) {
+            return indexs;
+        }
+        if (size == 1) {
+            indexs.add(0);
+            return indexs;
+        }
+
+        for (int i = 1; i < size; i++) {
+            if (i == 1 && num[0] > num[1]) {
+                indexs.add(0);
+            } else if (i == size - 1) {
+                if (num[i] > num[i - 1]) {
+                    indexs.add(i);
+                }
+            } else {
+                if (num[i] > num[i + 1] && num[i] > num[i - 1]) {
+                    indexs.add(i);
+                }
+            }
+        }
+        return indexs;
+    }
+
+    /**
+     * Given a linked list, return the node where the cycle begins. If there is no cycle, return null.
+     * Follow up:
+     * Can you solve it without using extra space?
+     */
+    public static ListNode detectCycle(ListNode head) {
+
+        if (head == null) {
+            return null;
+        }
+
+        ListNode temp1 = head;
+        ListNode temp2 = head;
+
+        while (temp1 != null && temp2 != null) {
+
+            temp1 = temp1.next;
+            if (temp2.next == null) {
+                return null;
+            } else {
+                temp2 = temp2.next.next;
+            }
+            if (temp1 == temp2) {
+                // have cycle
+                temp1 = head;
+                while (temp1 != temp2) {
+                    temp1 = temp1.next;
+                    temp2 = temp2.next;
+                }
+                return temp1;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Compare two version numbers version1 and version2.
+     * If version1 > version2 return 1, if version1 < version2 return -1, otherwise return 0.
+     * You may assume that the version strings are non-empty and contain only digits and the . character.
+     * The . character does not represent a decimal point and is used to separate number sequences.
+     * For instance, 2.5 is not "two and a half" or "half way to version three", it is the fifth second-level
+     * revision of the second first-level revision.
+     * Here is an example of version numbers ordering:
+     * 0.1 < 1.1 < 1.2 < 13.37
+     */
+    public static List<String> splitVersionString(String version) {
+
+        List<String> strs = new ArrayList<String>();
+        StringBuilder strBuilder = new StringBuilder();
+        int length = version.length();
+
+        for (int i = 0; i < length; i++) {
+            char c = version.charAt(i);
+            if (c != '.') {
+                strBuilder.append(c);
+            } else {
+                strs.add(strBuilder.toString());
+                strBuilder.delete(0, length);
+            }
+        }
+        strs.add(strBuilder.toString());
+        strBuilder.delete(0, length);
+        return strs;
+    }
+
+
+    public static int compareVersion(String version1, String version2) {
+
+        List<String> list1 = splitVersionString(version1);
+        List<String> list2 = splitVersionString(version2);
+
+        int size1 = list1.size();
+        int size2 = list2.size();
+
+        int minSize = size1 < size2 ? size1 : size2;
+
+        for (int i = 0; i < minSize; i++) {
+
+            String str1 = list1.get(i);
+            String str2 = list2.get(i);
+
+            int a = Integer.parseInt(str1);
+            int b = Integer.parseInt(str2);
+
+            if (a < b) {
+                return -1;
+            } else if (a == b) {
+                continue;
+            } else {
+                return 1;
+            }
+        }
+        if (size1 < size2) {
+            for (int i = size1; i < size2; i++) {
+                String str = list2.get(i);
+                int a = Integer.parseInt(str);
+                if (a == 0) {
+                    continue;
+                } else {
+                    return -1;
+                }
+            }
+            return 0;
+        } else if (size1 == size2) {
+            return 0;
+        } else {
+            for (int i = size2; i < size1; i++) {
+                String str = list1.get(i);
+                int a = Integer.parseInt(str);
+                if (a == 0) {
+                    continue;
+                } else {
+                    return 1;
+                }
+            }
+            return 0;
+        }
+    }
+
+    /**
+     * Given two binary trees, write a function to check if they are equal or not.
+     * Two binary trees are considered equal if they are structurally identical and the nodes have the same value.
+     */
+    public static boolean isSameTree(TreeNode p, TreeNode q) {
+
+        if (p == null) {
+            return q == null;
+        }
+        if (q == null) {
+            return p == null;
+        }
+
+        Stack<TreeNode> stack1 = new Stack<TreeNode>();
+        Stack<TreeNode> stack2 = new Stack<TreeNode>();
+        stack1.push(p);
+        stack2.push(q);
+        while (!stack1.isEmpty() && !stack2.isEmpty()) {
+
+            TreeNode temp1 = stack1.pop();
+            TreeNode temp2 = stack2.pop();
+
+            if (temp1 == null) {
+                if (temp2 != null) {
+                    return false;
+                }
+            } else if (temp2 == null) {
+                if (temp1 != null) {
+                    return false;
+                }
+            } else if (temp1.val == temp2.val) {
+                stack1.push(temp1.left);
+                stack1.push(temp1.right);
+                stack2.push(temp2.left);
+                stack2.push(temp2.right);
+            } else {
+                return false;
+            }
+        }
+        return stack1.isEmpty() && stack2.isEmpty();
+    }
+
+    /**
+     * Given n, how many structurally unique BST's (binary search trees) that store values 1...n?
+     * For example,
+     * Given n = 3, there are a total of 5 unique BST's.
+     * 1         3     3      2      1
+     * \       /     /      / \      \
+     * 3     2     1      1   3      2
+     * /     /       \                 \
+     * 2     1         2                 3
+     */
+    public static int numTrees(int n) {
+
+        if (n < 2) {
+            return 1;
+        }
+        int[] nums = new int[n + 1];
+
+        nums[0] = 1;
+        nums[1] = 1;
+        for (int i = 2; i <= n; i++) {
+            for (int j = 0; j < i; j++) {
+                nums[i] += nums[j] * nums[i - j - 1];
+            }
+
+        }
+        return nums[n];
+    }
+
+    /**
+     * Given two sorted integer arrays A and B, merge B into A as one sorted array.
+     * Note:
+     * You may assume that A has enough space (size that is greater or equal to m + n) to hold additional elements
+     * from B. The number of elements initialized in A and B are m and n respectively.
+     */
+    public static void merge(int A[], int m, int B[], int n) {
+
+
+        int C[] = new int[m + n];
+
+        int ia = 0;
+        int ib = 0;
+        for (int i = 0; i < m + n; i++) {
+
+            if (ia >= m) {
+                C[i] = B[ib++];
+                continue;
+            }
+            if (ib >= n) {
+                C[i] = A[ia++];
+                continue;
+            }
+
+            int a = A[ia];
+            int b = B[ib];
+
+            if (a < b) {
+                C[i] = a;
+                ia++;
+            } else if (a == b) {
+                C[i++] = a;
+                C[i] = b;
+                ia++;
+                ib++;
+            } else {
+                C[i] = b;
+                ib++;
+            }
+
+        }
+
+        for (int i = 0; i < m + n; i++) {
+            A[i] = C[i];
+        }
+    }
+
+
+    /**
+     * Given a sorted linked list, delete all duplicates such that each element appear only once.
+     * For example,
+     * Given 1->1->2, return 1->2.
+     * Given 1->1->2->3->3, return 1->2->3.
+     */
+    public static ListNode deleteDuplicates(ListNode head) {
+
+        if (head == null) {
+            return null;
+        }
+        ListNode temp1 = head;
+        ListNode temp2 = temp1.next;
+        while (temp2 != null) {
+            if (temp1.val == temp2.val) {
+                temp1.next = temp2.next;
+                temp2 = temp1.next;
+            } else {
+                temp1 = temp2;
+                temp2 = temp2.next;
+            }
+        }
+        return head;
+    }
+
+    /**
+     * You are climbing a stair case. It takes n steps to reach to the top.
+     * Each time you can either climb 1 or 2 steps. In how many distinct ways can you climb to the top?
+     */
+    public static int climbStairs(int n) {
+
+        int count[] = new int[n + 1];
+        count[0] = 1;
+        count[1] = 1;
+        for (int i = 2; i < n + 1; i++) {
+            count[i] = count[i - 2] + count[i - 1];
+        }
+        return count[n];
+    }
+
+    /**
+     * Given a non-negative number represented as an array of digits, plus one to the number.
+     * The digits are stored such that the most significant digit is at the head of the list.
+     */
+    public static int[] plusOne(int[] digits) {
+
+        int iDot = 0;
+        for (iDot = 0; iDot < digits.length; iDot++) {
+            if (digits[iDot] == '.') {
+                break;
+            }
+        }
+        if (iDot >= digits.length) {
+            iDot = digits.length;
+        }
+        boolean markOne = false;
+        for (int i = iDot - 1; i >= 0; i--) {
+
+            int temp;
+            if (i == iDot - 1) {
+                temp = digits[i] + 1;
+            } else {
+                temp = markOne ? digits[i] + 1 : digits[i];
+            }
+
+            if (temp < 10) {
+                digits[i] = temp;
+                return digits;
+            } else {
+                digits[i] = temp - 10;
+                markOne = true;
+            }
+        }
+        if (markOne) {
+            int[] result = new int[digits.length + 1];
+            result[0] = 1;
+            for (int i = 0; i < digits.length; i++) {
+                result[i + 1] = digits[i];
+            }
+            return result;
+        }
+        return digits;
+    }
+
+    /**
+     * Given two binary strings, return their sum (also a binary string).
+     * For example,
+     * a = "11"
+     * b = "1"
+     * Return "100".
+     */
+    public static String addBinary(String a, String b) {
+
+        String longStr, shortStr;
+        int length = a.length() > b.length() ? a.length() : b.length();
+        if (length == a.length()) {
+            longStr = a;
+            shortStr = b;
+        } else {
+            longStr = b;
+            shortStr = a;
+        }
+
+        StringBuilder result = new StringBuilder();
+
+        boolean markOne = false;
+        for (int i = shortStr.length() - 1; i >= 0; i--) {
+
+            char c1 = longStr.charAt(i + longStr.length() - shortStr.length());
+            char c2 = shortStr.charAt(i);
+
+            int i1 = (c1 == '1') ? 1 : 0;
+            int i2 = (c2 == '1') ? 1 : 0;
+
+            if (markOne) {
+                i1 += (i2 + 1);
+            } else {
+                i1 += i2;
+            }
+            if (i1 == 0 || i1 == 1) {
+                markOne = false;
+            } else {
+                markOne = true;
+                i1 = i1 - 2;
+            }
+            result.append(i1);
+
+        }
+        for (int i = longStr.length() - shortStr.length() - 1; i >= 0; i--) {
+
+            char c1 = longStr.charAt(i);
+            int i1 = (c1 == '1') ? 1 : 0;
+
+            if (markOne) {
+                i1 += 1;
+            }
+            if (i1 == 0 || i1 == 1) {
+                markOne = false;
+            } else {
+                markOne = true;
+                i1 = i1 - 2;
+            }
+            result.append(i1);
+        }
+        if (markOne) {
+            result.append(1);
+        }
+
+        return result.reverse().toString();
+    }
+
+
+    /**
+     * Merge two sorted linked lists and return it as a new list. The new list should be made by splicing together
+     * the nodes of the first two lists.
+     */
+    public static ListNode mergeTwoLists(ListNode l1, ListNode l2) {
+
+        if (l1 == null) {
+            return l2;
+        }
+        if (l2 == null) {
+            return l1;
+        }
+
+        ListNode head = l1.val < l2.val ? l1 : l2;
+
+        ListNode temp1 = l1;
+        ListNode temp2 = l2;
+        ListNode temp3;
+
+        while (temp1 != null && temp2 != null) {
+            if (temp1.val < temp2.val) {
+                temp3 = temp1.next;
+                if (temp3 == null || temp3.val >= temp2.val) {
+                    temp1.next = temp2;
+                }
+                temp1 = temp3;
+            } else {
+                temp3 = temp2.next;
+                if (temp3 == null || temp3.val >= temp1.val) {
+                    temp2.next = temp1;
+                }
+                temp2 = temp3;
+            }
+        }
+        return head;
+    }
+
 
     public static void main(String[] args) {
 
-        System.out.println(reverseWords("     "));
+        ListNode n11 = new ListNode(-9);
+        ListNode n12 = new ListNode(-7);
+        ListNode n13 = new ListNode(-3);
+        ListNode n14 = new ListNode(-3);
+        ListNode n15 = new ListNode(-1);
+        ListNode n16 = new ListNode(2);
+        ListNode n17 = new ListNode(3);
+
+        n11.next = n12;
+        n12.next = n13;
+        n13.next = n14;
+        n14.next = n15;
+        n15.next = n16;
+        n16.next = n17;
+
+        ListNode n21 = new ListNode(-7);
+        ListNode n22 = new ListNode(-7);
+        ListNode n23 = new ListNode(-6);
+        ListNode n24 = new ListNode(-6);
+        ListNode n25 = new ListNode(-5);
+        ListNode n26 = new ListNode(-3);
+        ListNode n27 = new ListNode(2);
+        ListNode n28 = new ListNode(4);
+
+        n21.next = n22;
+        n22.next = n23;
+        n23.next = n24;
+        n24.next = n25;
+        n25.next = n26;
+        n26.next = n27;
+        n27.next = n28;
+
+        ListNode head = mergeTwoLists(n11, n21);
+        printlist(head);
+
+
+        //System.out.println(addBinary("1011", "101"));
+        //        int A[] = {9, 9, 9, 9, 9};
+        //
+        //        A = plusOne(A);
+        //        for (int i = 0; i < A.length; i++) {
+        //            System.out.print(A[i] + " ");
+        //        }
+        //        System.out.println();
+
+        //System.out.println(numTrees(3));
+
+        //        ListNode n1 = new ListNode(1);
+        //        ListNode n2 = new ListNode(2);
+        //        ListNode n3 = new ListNode(3);
+        //        ListNode n4 = new ListNode(4);
+        //        ListNode n5 = new ListNode(5);
+        //        ListNode n6 = new ListNode(6);
+        //        ListNode n7 = new ListNode(7);
+        //        ListNode n8 = new ListNode(8);
+        //        ListNode n9 = new ListNode(9);
+        //
+        //        n1.next = n2;
+        //        n2.next = n3;
+        //        n3.next = n4;
+        //        n4.next = n5;
+        //        n5.next = n6;
+        //        n6.next = n7;
+        //        n7.next = n8;
+        //        n8.next = n9;
+        //        n9.next = n4;
+        //
+        //        System.out.println(detectCycle(n1).val);
+
+        //        ListNode n1 = new ListNode(1);
+        //        ListNode n2 = new ListNode(2);
+        //        ListNode n3 = new ListNode(3);
+        //        ListNode n4 = new ListNode(4);
+        //        ListNode n5 = new ListNode(5);
+        //        ListNode n6 = new ListNode(6);
+        //        ListNode n7 = new ListNode(7);
+        //
+        //        n1.next = n2;
+        //        n2.next = n3;
+        //        n3.next = n4;
+        //        n4.next = n5;
+        //        n5.next = n6;
+        //        n6.next = n7;
+        //
+        //        reorderList(n1);
+        //        ListNode temp = n1;
+        //        while (temp != null) {
+        //            System.out.print(temp.val + " -> ");
+        //            temp = temp.next;
+        //        }
+        //        System.out.println();
+
+        //System.out.println(reverseWords("     "));
         //        {
         //            TreeNode t1 = new TreeNode(1);
         //            TreeNode t2 = new TreeNode(2);
