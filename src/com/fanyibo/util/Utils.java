@@ -1293,56 +1293,63 @@ public class Utils {
             return l1;
         }
 
-        ListNode head = l1.val < l2.val ? l1 : l2;
+        ListNode head = l1.val <= l2.val ? l1 : l2;
 
         ListNode temp1 = l1;
         ListNode temp2 = l2;
         ListNode temp3;
 
         while (temp1 != null && temp2 != null) {
+
             if (temp1.val < temp2.val) {
-                temp3 = temp1.next;
-                if (temp3 == null || temp3.val >= temp2.val) {
-                    temp1.next = temp2;
+
+                temp3 = temp1;
+                while (temp3 != null && temp3.val <= temp2.val) {
+                    temp1 = temp3;
+                    temp3 = temp3.next;
                 }
+                temp1.next = temp2;
                 temp1 = temp3;
+
             } else {
-                temp3 = temp2.next;
-                if (temp3 == null || temp3.val >= temp1.val) {
-                    temp2.next = temp1;
+
+                temp3 = temp2;
+                while (temp3 != null && temp3.val <= temp1.val) {
+                    temp2 = temp3;
+                    temp3 = temp3.next;
                 }
+                temp2.next = temp1;
                 temp2 = temp3;
+
             }
         }
+
         return head;
     }
 
 
     public static void main(String[] args) {
 
-        ListNode n11 = new ListNode(-9);
-        ListNode n12 = new ListNode(-7);
-        ListNode n13 = new ListNode(-3);
-        ListNode n14 = new ListNode(-3);
-        ListNode n15 = new ListNode(-1);
-        ListNode n16 = new ListNode(2);
-        ListNode n17 = new ListNode(3);
+        ListNode n11 = new ListNode(-4);
+        ListNode n12 = new ListNode(-2);
+        ListNode n13 = new ListNode(0);
+        ListNode n14 = new ListNode(1);
+        ListNode n15 = new ListNode(4);
 
         n11.next = n12;
         n12.next = n13;
         n13.next = n14;
         n14.next = n15;
-        n15.next = n16;
-        n16.next = n17;
 
-        ListNode n21 = new ListNode(-7);
-        ListNode n22 = new ListNode(-7);
+        ListNode n21 = new ListNode(-9);
+        ListNode n22 = new ListNode(-8);
         ListNode n23 = new ListNode(-6);
         ListNode n24 = new ListNode(-6);
         ListNode n25 = new ListNode(-5);
-        ListNode n26 = new ListNode(-3);
-        ListNode n27 = new ListNode(2);
+        ListNode n26 = new ListNode(-1);
+        ListNode n27 = new ListNode(1);
         ListNode n28 = new ListNode(4);
+        ListNode n29 = new ListNode(9);
 
         n21.next = n22;
         n22.next = n23;
@@ -1351,7 +1358,16 @@ public class Utils {
         n25.next = n26;
         n26.next = n27;
         n27.next = n28;
-
+        n28.next = n29;
+//        ListNode n11 = new ListNode(1);
+//        ListNode n12 = new ListNode(3);
+//        ListNode n13 = new ListNode(4);
+//
+//        n11.next = n12;
+//        n12.next = n13;
+//
+//        ListNode n21 = new ListNode(0);
+//
         ListNode head = mergeTwoLists(n11, n21);
         printlist(head);
 
