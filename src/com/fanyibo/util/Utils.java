@@ -251,15 +251,6 @@ public class Utils {
         return 0;
     }
 
-    public static class ListNode {
-        int      val;
-        ListNode next;
-
-        ListNode(int x) {
-            val = x;
-            next = null;
-        }
-    }
 
     /**
      * Write a program to find the node at which the intersection of two singly linked lists begins.
@@ -350,12 +341,21 @@ public class Utils {
 
 
     public static void printlist(ListNode head) {
+
+        if (head == null) {
+            System.out.println("null");
+            return;
+        }
+        StringBuilder builder = new StringBuilder();
         ListNode tmp = head;
         while (tmp != null) {
-            System.out.print(tmp.val + " -> ");
+            builder.append(tmp.val);
+            if (tmp.next != null) {
+                builder.append(" -> ");
+            }
             tmp = tmp.next;
         }
-        System.out.print("null");
+        System.out.println(builder.toString());
     }
 
     public static ListNode reverse(ListNode head) {
@@ -1020,7 +1020,7 @@ public class Utils {
             return q == null;
         }
         if (q == null) {
-            return p == null;
+            return false;
         }
 
         Stack<TreeNode> stack1 = new Stack<TreeNode>();
@@ -1037,9 +1037,7 @@ public class Utils {
                     return false;
                 }
             } else if (temp2 == null) {
-                if (temp1 != null) {
-                    return false;
-                }
+                return false;
             } else if (temp1.val == temp2.val) {
                 stack1.push(temp1.left);
                 stack1.push(temp1.right);
@@ -1327,49 +1325,360 @@ public class Utils {
         return head;
     }
 
+    /**
+     * Given a string s consists of upper/lower-case alphabets and empty space characters ' ', return the length of
+     * last word in the string.
+     * If the last word does not exist, return 0.
+     * Note: A word is defined as a character sequence consists of non-space characters only.
+     * For example,
+     * Given s = "Hello World",
+     * return 5.
+     */
+    public static int lengthOfLastWord(String s) {
+
+        if (s == null || s.length() == 0) {
+            return 0;
+        }
+
+        List<Integer> lengths = new ArrayList<Integer>();
+        int length = 0;
+        boolean meetWord = false;
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+            if (c == ' ') {
+                if (meetWord) {
+                    lengths.add(length);
+                    length = 0;
+                    meetWord = false;
+                }
+            } else {
+                length++;
+                meetWord = true;
+            }
+        }
+        if (meetWord) {
+            lengths.add(length);
+        }
+        if (lengths.size() == 0) {
+            return 0;
+        }
+        return lengths.get(lengths.size() - 1);
+    }
+
+
+    /**
+     * The count-and-say sequence is the sequence of integers beginning as follows:
+     * 1, 11, 21, 1211, 111221, ...
+     * 1 is read off as "one 1" or 11.
+     * 11 is read off as "two 1s" or 21.
+     * 21 is read off as "one 2, then one 1" or 1211.
+     * Given an integer n, generate the nth sequence.
+     * Note: The sequence of integers will be represented as a string.
+     */
+    public static String countAndSay(int n) {
+
+        StringBuilder builder = new StringBuilder();
+        String str = "1";
+        for (int i = 1; i < n; i++) {
+            int length = str.length();
+            int count = 0;
+            char lastC = '\0';
+            for (int j = 0; j < length; j++) {
+                char currC = str.charAt(j);
+                if (lastC != '\0' && currC == lastC) {
+                    count++;
+                } else if (lastC != '\0' && currC != lastC) {
+                    builder.append(count);
+                    builder.append(lastC);
+                    lastC = currC;
+                    count = 1;
+                } else {
+                    lastC = currC;
+                    count++;
+                }
+            }
+            if (lastC != '\0') {
+                builder.append(count);
+                builder.append(lastC);
+            }
+            str = builder.toString();
+            builder.delete(0, builder.length());
+        }
+        return str;
+    }
+
+    /**
+     * Implement strStr().
+     * Returns the index of the first occurrence of needle in haystack, or -1 if needle is not part of haystack.
+     * Update (2014-11-02):
+     * The signature of the function had been updated to return the index instead of the pointer. If you still see
+     * your function signature returns a char * or String, please click the reload button to reset your code definition.
+     */
+    public static int strStr(String haystack, String needle) {
+
+        int mainLength = haystack.length();
+        int targetLength = needle.length();
+
+        if (targetLength == 0) {
+            return 0;
+        }
+        if (mainLength < targetLength) {
+            return -1;
+        }
+
+        int mainIndex = 0;
+        int targetIndex = 0;
+        for (mainIndex = 0; mainIndex <= mainLength - targetLength; mainIndex++) {
+            for (targetIndex = 0; targetIndex < targetLength; targetIndex++) {
+                if (haystack.charAt(mainIndex + targetIndex) != needle.charAt(targetIndex)) {
+                    break;
+                }
+            }
+            if (targetIndex == targetLength) {
+                return mainIndex;
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * Given an array and a value, remove all instances of that value in place and return the new length.
+     * The order of elements can be changed. It doesn't matter what you leave beyond the new length.
+     */
+    public static int removeElement(int[] A, int elem) {
+
+        if (A == null) {
+            return 0;
+        }
+        int length = A.length;
+        if (length == 0) {
+            return 0;
+        }
+
+        int index1 = 0;
+        int index2 = length - 1;
+        while (index1 != index2) {
+
+            if (A[index1] == elem) {
+                while (index2 > index1 && A[index2] == elem) {
+                    index2--;
+                }
+                if (index2 == index1) {
+                    break;
+                }
+                int temp = A[index2];
+                A[index2] = A[index1];
+                A[index1] = temp;
+            }
+            index1++;
+        }
+        if (A[index1] != elem) {
+            index1++;
+        }
+        if (index1 > 0) {
+            return index1;
+        } else if (index1 == 0 && A[0] == elem) {
+            return 0;
+        }
+        return A.length;
+    }
+
+
+    /**
+     * Sort a linked list in O(n log n) time using constant space complexity.
+     */
+    // TODO sorting
+    public static ListNode sortList(ListNode head) {
+
+        return null;
+    }
+
+    /**
+     * Evaluate the value of an arithmetic expression in Reverse Polish Notation.
+     * Valid operators are +, -, *, /. Each operand may be an integer or another expression.
+     * Some examples:
+     * ["2", "1", "+", "3", "*"] -> ((2 + 1) * 3) -> 9
+     * ["4", "13", "5", "/", "+"] -> (4 + (13 / 5)) -> 6
+     */
+    public static int evalRPN(String[] tokens) {
+
+        if (tokens == null || tokens.length == 0) {
+            return 0;
+        }
+
+        int left = 0;
+        int right = 0;
+        int result = 0;
+
+        Stack<Integer> stack = new Stack<Integer>();
+        for (String token : tokens) {
+            if (token.equals("+")) {
+                right = stack.pop();
+                left = stack.pop();
+                result = left + right;
+                stack.push(result);
+            } else if (token.equals("-")) {
+                right = stack.pop();
+                left = stack.pop();
+                result = left - right;
+                stack.push(result);
+            } else if (token.equals("*")) {
+                right = stack.pop();
+                left = stack.pop();
+                result = left * right;
+                stack.push(result);
+            } else if (token.equals("/")) {
+                right = stack.pop();
+                left = stack.pop();
+                result = left / right;
+                stack.push(result);
+            } else {
+                stack.push(Integer.parseInt(token));
+            }
+        }
+        return stack.pop();
+    }
+
+
+    /**
+     * Given a binary tree, return the preorder traversal of its nodes' values.
+     * For example:
+     * Given binary tree {1,#,2,3},
+     * 1
+     * \
+     * 2
+     * /
+     * 3
+     * return [1,2,3].
+     * Note: Recursive solution is trivial, could you do it iteratively?
+     */
+    public static List<Integer> preorderTraversal(TreeNode root) {
+
+        List<Integer> result = new ArrayList<Integer>();
+        if (root == null) {
+            return result;
+        }
+
+        Stack<TreeNode> stack = new Stack<TreeNode>();
+        stack.push(root);
+        while (!stack.isEmpty()) {
+            TreeNode node = stack.pop();
+            result.add(node.val);
+            if (node.right != null) {
+                stack.push(node.right);
+            }
+            if (node.left != null) {
+                stack.push(node.left);
+            }
+        }
+        return result;
+    }
+
+
+    /**
+     * Given a string s and a dictionary of words dict, determine if s can be segmented into a space-separated
+     * sequence of one or more dictionary words.
+     * For example, given
+     * s = "leetcode",
+     * dict = ["leet", "code"].
+     * Return true because "leetcode" can be segmented as "leet code".
+     */
+    public static boolean wordBreak(String s, Set<String> dict) {
+
+        return false;
+    }
+
 
     public static void main(String[] args) {
 
-        ListNode n11 = new ListNode(-4);
-        ListNode n12 = new ListNode(-2);
-        ListNode n13 = new ListNode(0);
-        ListNode n14 = new ListNode(1);
-        ListNode n15 = new ListNode(4);
+        TreeNode t1 = new TreeNode(1);
+        TreeNode t2 = new TreeNode(2);
+        TreeNode t3 = new TreeNode(2);
+        TreeNode t4 = new TreeNode(3);
+        TreeNode t5 = new TreeNode(4);
+        TreeNode t6 = new TreeNode(4);
+        TreeNode t7 = new TreeNode(3);
 
-        n11.next = n12;
-        n12.next = n13;
-        n13.next = n14;
-        n14.next = n15;
+        t1.left = t2;
+        t1.right = t3;
 
-        ListNode n21 = new ListNode(-9);
-        ListNode n22 = new ListNode(-8);
-        ListNode n23 = new ListNode(-6);
-        ListNode n24 = new ListNode(-6);
-        ListNode n25 = new ListNode(-5);
-        ListNode n26 = new ListNode(-1);
-        ListNode n27 = new ListNode(1);
-        ListNode n28 = new ListNode(4);
-        ListNode n29 = new ListNode(9);
+        t2.left = t4;
+        t2.right = t5;
 
-        n21.next = n22;
-        n22.next = n23;
-        n23.next = n24;
-        n24.next = n25;
-        n25.next = n26;
-        n26.next = n27;
-        n27.next = n28;
-        n28.next = n29;
-//        ListNode n11 = new ListNode(1);
-//        ListNode n12 = new ListNode(3);
-//        ListNode n13 = new ListNode(4);
-//
-//        n11.next = n12;
-//        n12.next = n13;
-//
-//        ListNode n21 = new ListNode(0);
-//
-        ListNode head = mergeTwoLists(n11, n21);
-        printlist(head);
+        t3.left = t6;
+        t3.right = t7;
+
+        System.out.println(preorderTraversal(t1));
+
+
+        //        ListNode n1 = new ListNode(9);
+        //        ListNode n2 = new ListNode(1);
+        //        ListNode n3 = new ListNode(1);
+        //        ListNode n4 = new ListNode(1);
+        //        ListNode n5 = new ListNode(1);
+        //
+        //        n1.next = n2;
+        //        n2.next = n3;
+        //        n3.next = n4;
+        //        n4.next = n5;
+        //
+        //        printlist(n1);
+        //        ListNode head = Sorting.insertionSort(n1);
+        //        printlist(head);
+
+
+        //        int A[] = {2};
+        //        int A[] = {3,3,3,3,3,3,3,3};
+        //
+        //        System.out.println(removeElement(A, 6));
+        //        for (int i = 0; i < A.length; i++) {
+        //            System.out.print(A[i] + " ");
+        //        }
+        //        System.out.println();
+
+
+        //System.out.println(strStr("", ""));
+
+        //        ListNode n11 = new ListNode(-4);
+        //        ListNode n12 = new ListNode(-2);
+        //        ListNode n13 = new ListNode(0);
+        //        ListNode n14 = new ListNode(1);
+        //        ListNode n15 = new ListNode(4);
+        //
+        //        n11.next = n12;
+        //        n12.next = n13;
+        //        n13.next = n14;
+        //        n14.next = n15;
+        //
+        //        ListNode n21 = new ListNode(-9);
+        //        ListNode n22 = new ListNode(-8);
+        //        ListNode n23 = new ListNode(-6);
+        //        ListNode n24 = new ListNode(-6);
+        //        ListNode n25 = new ListNode(-5);
+        //        ListNode n26 = new ListNode(-1);
+        //        ListNode n27 = new ListNode(1);
+        //        ListNode n28 = new ListNode(4);
+        //        ListNode n29 = new ListNode(9);
+        //
+        //        n21.next = n22;
+        //        n22.next = n23;
+        //        n23.next = n24;
+        //        n24.next = n25;
+        //        n25.next = n26;
+        //        n26.next = n27;
+        //        n27.next = n28;
+        //        n28.next = n29;
+        //        ListNode n11 = new ListNode(1);
+        //        ListNode n12 = new ListNode(3);
+        //        ListNode n13 = new ListNode(4);
+        //
+        //        n11.next = n12;
+        //        n12.next = n13;
+        //
+        //        ListNode n21 = new ListNode(0);
+        //
+        //        ListNode head = mergeTwoLists(n11, n21);
+        //        printlist(head);
 
 
         //System.out.println(addBinary("1011", "101"));
