@@ -1412,7 +1412,8 @@ public class Utils {
      * Returns the index of the first occurrence of needle in haystack, or -1 if needle is not part of haystack.
      * Update (2014-11-02):
      * The signature of the function had been updated to return the index instead of the pointer. If you still see
-     * your function signature returns a char * or String, please click the reload button to reset your code definition.
+     * your function signature returns a char * or String, please click the reload button to reset your code
+     * definition.
      */
     public static int strStr(String haystack, String needle) {
 
@@ -1583,32 +1584,164 @@ public class Utils {
      * dict = ["leet", "code"].
      * Return true because "leetcode" can be segmented as "leet code".
      */
+    private static HashMap<String, Boolean> results = new HashMap<String, Boolean>();
+
     public static boolean wordBreak(String s, Set<String> dict) {
+
+        if (dict == null || dict.size() == 0 || s == null || s.length() == 0) {
+            return false;
+        }
+
+        for (String word : dict) {
+
+            Boolean value = results.get(word);
+            if (value != null && value == false) {
+                continue;
+            }
+
+            int i;
+            for (i = 0; i <= s.length() - word.length(); i++) {
+
+                int j;
+                for (j = 0; j < word.length(); j++) {
+                    if (s.charAt(i + j) != word.charAt(j)) {
+                        break;
+                    }
+                }
+                if (j == word.length()) {
+
+                    if (i == 0) {
+                        if (i + word.length() >= s.length()) {
+                            return true;
+                        } else if (wordBreak(s.substring(i + word.length()), dict)) {
+                            return true;
+                        }
+                    } else {
+                        if (wordBreak(s.substring(0, i), dict)) {
+                            if (i + word.length() >= s.length()) {
+                                return true;
+                            } else if (wordBreak(s.substring(i + word.length()), dict)) {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+            results.put(word, false);
+        }
+        return false;
+    }
+
+
+    /**
+     * Given a sorted array, remove the duplicates in place such that each element appear only once and return the new
+     * length.
+     * Do not allocate extra space for another array, you must do this in place with constant memory.
+     * For example,
+     * Given input array A = [1,1,2],
+     * Your function should return length = 2, and A is now [1,2].
+     */
+    public static int removeDuplicates(int[] A) {
+
+        return 0;
+    }
+
+    /**
+     * Given a string containing just the characters '(', ')', '{', '}', '[' and ']', determine if the input string is
+     * valid.
+     * The brackets must close in the correct order, "()" and "()[]{}" are all valid but "(]" and "([)]" are not.
+     */
+    public static boolean isValid(String s) {
 
         return false;
     }
 
 
+    /**
+     * Given a roman numeral, convert it to an integer.
+     * Input is guaranteed to be within the range from 1 to 3999.
+     */
+    public static int romanToInt(String s) {
+
+        return 0;
+    }
+
+    /**
+     * Determine whether an integer is a palindrome. Do this without extra space.
+     * click to show spoilers.
+     * Some hints:
+     * Could negative integers be palindromes? (ie, -1)
+     * If you are thinking of converting the integer to string, note the restriction of using extra space.
+     * You could also try reversing an integer. However, if you have solved the problem "Reverse Integer", you know
+     * that
+     * the reversed integer might overflow. How would you handle such case?
+     * There is a more generic way of solving this problem.
+     */
+    public static boolean isPalindrome(int x) {
+
+        return false;
+    }
+
+    /**
+     * Reverse digits of an integer.
+     * Example1: x = 123, return 321
+     * Example2: x = -123, return -321
+     * click to show spoilers.
+     * Have you thought about this?
+     * Here are some good questions to ask before coding. Bonus points for you if you have already thought through
+     * this!
+     * If the integer's last digit is 0, what should the output be? ie, cases such as 10, 100.
+     * Did you notice that the reversed integer might overflow? Assume the input is a 32-bit integer, then the reverse
+     * of 1000000003 overflows. How should you handle such cases?
+     * For the purpose of this problem, assume that your function returns 0 when the reversed integer overflows.
+     * Update (2014-11-10):
+     * Test cases had been added to test the overflow behavior.
+     */
+    public static int reverse(int x) {
+
+        return 0;
+    }
+
+
+
+
     public static void main(String[] args) {
 
-        TreeNode t1 = new TreeNode(1);
-        TreeNode t2 = new TreeNode(2);
-        TreeNode t3 = new TreeNode(2);
-        TreeNode t4 = new TreeNode(3);
-        TreeNode t5 = new TreeNode(4);
-        TreeNode t6 = new TreeNode(4);
-        TreeNode t7 = new TreeNode(3);
+        String s = "fohhemkkaecojceoaejkkoedkofhmohkcjmkggcmnami";
+        Set<String> dict = new HashSet<String>();
+        String str[] = {"kfomka", "hecagbngambii", "anobmnikj", "c", "nnkmfelneemfgcl", "ah", "bgomgohl", "lcbjbg", "ebjfoiddndih", "hjknoamjbfhckb", "eioldlijmmla", "nbekmcnakif", "fgahmihodolmhbi", "gnjfe", "hk", "b", "jbfgm", "ecojceoaejkkoed", "cemodhmbcmgl", "j", "gdcnjj", "kolaijoicbc", "liibjjcini", "lmbenj", "eklingemgdjncaa", "m", "hkh", "fblb", "fk", "nnfkfanaga", "eldjml", "iejn", "gbmjfdooeeko", "jafogijka", "ngnfggojmhclkjd", "bfagnfclg", "imkeobcdidiifbm", "ogeo", "gicjog", "cjnibenelm", "ogoloc", "edciifkaff", "kbeeg", "nebn", "jdd", "aeojhclmdn", "dilbhl", "dkk", "bgmck", "ohgkefkadonafg", "labem", "fheoglj", "gkcanacfjfhogjc", "eglkcddd", "lelelihakeh", "hhjijfiodfi", "enehbibnhfjd", "gkm", "ggj", "ag", "hhhjogk", "lllicdhihn", "goakjjnk", "lhbn", "fhheedadamlnedh", "bin", "cl", "ggjljjjf", "fdcdaobhlhgj", "nijlf", "i", "gaemagobjfc", "dg", "g", "jhlelodgeekj", "hcimohlni", "fdoiohikhacgb", "k", "doiaigclm", "bdfaoncbhfkdbjd", "f", "jaikbciac", "cjgadmfoodmba", "molokllh", "gfkngeebnggo", "lahd", "n", "ehfngoc", "lejfcee", "kofhmoh", "cgda", "de", "kljnicikjeh", "edomdbibhif", "jehdkgmmofihdi", "hifcjkloebel", "gcghgbemjege", "kobhhefbbb", "aaikgaolhllhlm", "akg", "kmmikgkhnn", "dnamfhaf", "mjhj", "ifadcgmgjaa", "acnjehgkflgkd", "bjj", "maihjn", "ojakklhl", "ign", "jhd", "kndkhbebgh", "amljjfeahcdlfdg", "fnboolobch", "gcclgcoaojc", "kfokbbkllmcd", "fec", "dljma", "noa", "cfjie", "fohhemkka", "bfaldajf", "nbk", "kmbnjoalnhki", "ccieabbnlhbjmj", "nmacelialookal", "hdlefnbmgklo", "bfbblofk", "doohocnadd", "klmed", "e", "hkkcmbljlojkghm", "jjiadlgf", "ogadjhambjikce", "bglghjndlk", "gackokkbhj", "oofohdogb", "leiolllnjj", "edekdnibja", "gjhglilocif", "ccfnfjalchc", "gl", "ihee", "cfgccdmecem", "mdmcdgjelhgk", "laboglchdhbk", "ajmiim", "cebhalkngloae", "hgohednmkahdi", "ddiecjnkmgbbei", "ajaengmcdlbk", "kgg", "ndchkjdn", "heklaamafiomea", "ehg", "imelcifnhkae", "hcgadilb", "elndjcodnhcc", "nkjd", "gjnfkogkjeobo", "eolega", "lm", "jddfkfbbbhia", "cddmfeckheeo", "bfnmaalmjdb", "fbcg", "ko", "mojfj", "kk", "bbljjnnikdhg", "l", "calbc", "mkekn", "ejlhdk", "hkebdiebecf", "emhelbbda", "mlba", "ckjmih", "odfacclfl", "lgfjjbgookmnoe", "begnkogf", "gakojeblk", "bfflcmdko", "cfdclljcg", "ho", "fo", "acmi", "oemknmffgcio", "mlkhk", "kfhkndmdojhidg", "ckfcibmnikn", "dgoecamdliaeeoa", "ocealkbbec", "kbmmihb", "ncikad", "hi", "nccjbnldneijc", "hgiccigeehmdl", "dlfmjhmioa", "kmff", "gfhkd", "okiamg", "ekdbamm", "fc", "neg", "cfmo", "ccgahikbbl", "khhoc", "elbg", "cbghbacjbfm", "jkagbmfgemjfg", "ijceidhhajmja", "imibemhdg", "ja", "idkfd", "ndogdkjjkf", "fhic", "ooajkki", "fdnjhh", "ba", "jdlnidngkfffbmi", "jddjfnnjoidcnm", "kghljjikbacd", "idllbbn", "d", "mgkajbnjedeiee", "fbllleanknmoomb", "lom", "kofjmmjm", "mcdlbglonin", "gcnboanh", "fggii", "fdkbmic", "bbiln", "cdjcjhonjgiagkb", "kooenbeoongcle", "cecnlfbaanckdkj", "fejlmog", "fanekdneoaammb", "maojbcegdamn", "bcmanmjdeabdo", "amloj", "adgoej", "jh", "fhf", "cogdljlgek", "o", "joeiajlioggj", "oncal", "lbgg", "elainnbffk", "hbdi", "femcanllndoh", "ke", "hmib", "nagfahhljh", "ibifdlfeechcbal", "knec", "oegfcghlgalcnno", "abiefmjldmln", "mlfglgni", "jkofhjeb", "ifjbneblfldjel", "nahhcimkjhjgb", "cdgkbn", "nnklfbeecgedie", "gmllmjbodhgllc", "hogollongjo", "fmoinacebll", "fkngbganmh", "jgdblmhlmfij", "fkkdjknahamcfb", "aieakdokibj", "hddlcdiailhd", "iajhmg", "jenocgo", "embdib", "dghbmljjogka", "bahcggjgmlf", "fb", "jldkcfom", "mfi", "kdkke", "odhbl", "jin", "kcjmkggcmnami", "kofig", "bid", "ohnohi", "fcbojdgoaoa", "dj", "ifkbmbod", "dhdedohlghk", "nmkeakohicfdjf", "ahbifnnoaldgbj", "egldeibiinoac", "iehfhjjjmil", "bmeimi", "ombngooicknel", "lfdkngobmik", "ifjcjkfnmgjcnmi", "fmf", "aoeaa", "an", "ffgddcjblehhggo", "hijfdcchdilcl", "hacbaamkhblnkk", "najefebghcbkjfl", "hcnnlogjfmmjcma", "njgcogemlnohl", "ihejh", "ej", "ofn", "ggcklj", "omah", "hg", "obk", "giig", "cklna", "lihaiollfnem", "ionlnlhjckf", "cfdlijnmgjoebl", "dloehimen", "acggkacahfhkdne", "iecd", "gn", "odgbnalk", "ahfhcd", "dghlag", "bchfe", "dldblmnbifnmlo", "cffhbijal", "dbddifnojfibha", "mhh", "cjjol", "fed", "bhcnf", "ciiibbedklnnk", "ikniooicmm", "ejf", "ammeennkcdgbjco", "jmhmd", "cek", "bjbhcmda", "kfjmhbf", "chjmmnea", "ifccifn", "naedmco", "iohchafbega", "kjejfhbco", "anlhhhhg"};
+//        for (int i = 0; i < str.length; i++) {
+//            //dict.add(str[i]);
+//        }
+//        dict.add("fohhemkkaeco");
+//        dict.add("jceoaejkk");
+//        dict.add("oedkofhmo");
+//        dict.add("hkcjmk");
+//        dict.add("ggcmnami");
 
-        t1.left = t2;
-        t1.right = t3;
+        dict.add("b");
+        dict.add("a");
 
-        t2.left = t4;
-        t2.right = t5;
+        System.out.println(wordBreak("ab", dict));
 
-        t3.left = t6;
-        t3.right = t7;
-
-        System.out.println(preorderTraversal(t1));
+//        TreeNode t1 = new TreeNode(1);
+//        TreeNode t2 = new TreeNode(2);
+//        TreeNode t3 = new TreeNode(2);
+//        TreeNode t4 = new TreeNode(3);
+//        TreeNode t5 = new TreeNode(4);
+//        TreeNode t6 = new TreeNode(4);
+//        TreeNode t7 = new TreeNode(3);
+//
+//        t1.left = t2;
+//        t1.right = t3;
+//
+//        t2.left = t4;
+//        t2.right = t5;
+//
+//        t3.left = t6;
+//        t3.right = t7;
+//
+//        System.out.println(preorderTraversal(t1));
 
 
         //        ListNode n1 = new ListNode(9);
