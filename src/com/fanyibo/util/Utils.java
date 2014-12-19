@@ -1643,7 +1643,32 @@ public class Utils {
      */
     public static int removeDuplicates(int[] A) {
 
-        return 0;
+        if (A == null) {
+            return 0;
+        }
+        int length = A.length;
+        if (length < 2) {
+            return length;
+        }
+
+        int index1 = 0;
+        int index2 = 1;
+        int size = length;
+        while (index1 < size && index2 < length) {
+
+            while (index2 < length && A[index2] == A[index1]) {
+                index2++;
+                size--;
+            }
+            if (index2 < length && index2 - index1 > 1) {
+                int temp = A[index1 + 1];
+                A[index1 + 1] = A[index2];
+                A[index2] = temp;
+            }
+            index1++;
+            index2++;
+        }
+        return size;
     }
 
     /**
@@ -1653,7 +1678,31 @@ public class Utils {
      */
     public static boolean isValid(String s) {
 
-        return false;
+        if (s == null || s.length() == 0) {
+            return true;
+        }
+        Stack<Character> stack = new Stack<Character>();
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+            if (c == '{' || c == '[' || c == '(') {
+                stack.push(c);
+            } else if (c == '}' || c == ']' || c == ')') {
+                if (stack.isEmpty()) {
+                    return false;
+                }
+                char p = stack.peek();
+                if (c == '}' && p == '{') {
+                    stack.pop();
+                } else if (c == ']' && p == '[') {
+                    stack.pop();
+                } else if (c == ')' && p == '(') {
+                    stack.pop();
+                } else {
+                    return false;
+                }
+            }
+        }
+        return stack.isEmpty();
     }
 
 
@@ -1661,9 +1710,50 @@ public class Utils {
      * Given a roman numeral, convert it to an integer.
      * Input is guaranteed to be within the range from 1 to 3999.
      */
+    private static final HashMap<Character, Integer> ROMAN_NUM_DICT = new HashMap<Character, Integer>();
+
+    static {
+        ROMAN_NUM_DICT.put('I', 1);
+        ROMAN_NUM_DICT.put('V', 5);
+        ROMAN_NUM_DICT.put('X', 10);
+        ROMAN_NUM_DICT.put('L', 50);
+        ROMAN_NUM_DICT.put('C', 100);
+        ROMAN_NUM_DICT.put('D', 500);
+        ROMAN_NUM_DICT.put('M', 1000);
+    }
+
     public static int romanToInt(String s) {
 
-        return 0;
+        if (s == null || s.length() == 0) {
+            return 0;
+        }
+        if (s.length() == 1) {
+            return ROMAN_NUM_DICT.get(s.charAt(0));
+        }
+        int result = 0;
+        int i = 0;
+        while (i < s.length() - 1) {//MDCXCV
+            char c1 = s.charAt(i);
+            char c2 = s.charAt(i + 1);
+
+            int i1 = ROMAN_NUM_DICT.get(c1);
+            int i2 = ROMAN_NUM_DICT.get(c2);
+
+            if (i1 >= i2) {
+                result += i1;
+                if (i == s.length() - 2) {
+                    result += i2;
+                }
+                i++;
+            } else {
+                result += (i2 - i1);
+                i += 2;
+                if (i == s.length() - 1) {
+                    result += ROMAN_NUM_DICT.get(s.charAt(i));
+                }
+            }
+        }
+        return result;
     }
 
     /**
@@ -1676,10 +1766,63 @@ public class Utils {
      * that
      * the reversed integer might overflow. How would you handle such case?
      * There is a more generic way of solving this problem.
+     * 12321
      */
     public static boolean isPalindrome(int x) {
 
-        return false;
+        if (x < 0) {
+            return false;
+        } else if (x < 10) {
+            return true;
+        }
+        int last = x - ((x / 10) * 10);
+        int ten = 10;
+        int left = x / ten;
+        int size = 1;
+        while (left > 10) {
+            size++;
+            ten = (int) Math.pow(10, size);
+            left = x / ten;
+        }
+        int first = (x - (x % (int) Math.pow(10, size))) / ((int) Math.pow(10, size));
+        if (first == last) {
+            if (size <= 2) {
+                return true;
+            } else {
+
+                int newX = (x % (int) Math.pow(10, size)) / 10;
+                size = size - 2;
+                if (newX == 0) {
+                    return true;
+                } else if (newX / (int) Math.pow(10, size) > 0) {
+                    return isPalindrome(newX);
+                } else {
+                    int zeroBefore = size;
+                    ten = (int) Math.pow(10, zeroBefore);
+                    while (newX / ten == 0) {
+                        zeroBefore--;
+                        ten /= 10;
+                    }
+                    zeroBefore = size - zeroBefore;
+                    int zeroAfter = 0;
+                    ten = 10;
+                    left = newX % ten;
+                    while (left == 0) {
+                        zeroAfter++;
+                        ten *= 10;
+                        left = newX % ten;
+                    }
+                    if (zeroAfter != zeroBefore) {
+                        return false;
+                    } else {
+                        newX = newX / (ten / 10);
+                        return isPalindrome(newX);
+                    }
+                }
+            }
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -1699,49 +1842,163 @@ public class Utils {
      */
     public static int reverse(int x) {
 
+        if (x == Integer.MIN_VALUE) {
+            return 0;
+        }
+        boolean negative = false;
+        if (x < 0) {
+            negative = true;
+            x = -x;
+        }
+        StringBuilder builder = new StringBuilder();
+        boolean meetUnZero = false;
+        while (x > 0) {
+            int last = x - (x / 10) * 10;
+
+            if (!meetUnZero) {
+                if (last > 0) {
+                    meetUnZero = true;
+                    builder.append(last);
+                }
+            } else {
+                builder.append(last);
+            }
+
+            x = (x - last) / 10;
+        }
+        int size = builder.length();
+        if (size > 10) {
+            return 0;
+        }
+        int result = 0;
+        for (int i = 0; i < size; i++) {
+            int digit = (int) builder.charAt(i) - 48;
+            if (i == 9) {
+                if ((result > 214748364) ||
+                        (result == 214748364 && digit > 7 && !negative) ||
+                        (result == 214748364 && digit > 8 && negative)) {
+                    return 0;
+                }
+            }
+            result = 10 * result + digit;
+        }
+        return negative ? -result : result;
+    }
+
+    /**
+     * The string "PAYPALISHIRING" is written in a zigzag pattern on a given number of rows like this: (you may want
+     * to display this pattern in a fixed font for better legibility)
+     * P   A   H   N
+     * A P L S I I G
+     * Y   I   R
+     * And then read line by line: "PAHNAPLSIIGYIR"
+     * Write the code that will take a string and make this conversion given a number of rows:
+     * string convert(string text, int nRows);
+     * convert("PAYPALISHIRING", 3) should return "PAHNAPLSIIGYIR".
+     */
+    public static String convert(String s, int nRows) {
+
+        if (nRows == 1) {
+            return s;
+        }
+
+        int length = s.length();
+        int half = (int)((double)nRows) / 2;
+
+        int a = (int) Math.ceil(0.25 * (1.0 + (((double) length) / half)));
+        int b = 2 * a - 1;
+
+        int index = 0;
+        char matrix[][] = new char[nRows][Math.max(a, b)];
+        for (int i = 0; i < Math.max(a, b); i++) {
+            if (i % 2 == 0) {
+                for (int j = 0; j < nRows; j++) {
+                    if (index < length) {
+                        matrix[j][i] = s.charAt(index);
+                        index++;
+                    }
+                }
+            } else {
+                for (int j = 1; j < nRows; j += 2) {
+                    if (index < length) {
+                        matrix[j][i] = s.charAt(index);
+                        index++;
+                    }
+                }
+            }
+        }
+
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < nRows; i++) {
+            for (int j = 0; j < Math.max(a, b); j++) {
+                char c = matrix[i][j];
+                if (c != '\0') {
+                    builder.append(c);
+                }
+            }
+        }
+
+        return builder.toString();
+    }
+
+    /**
+     * Given two integers representing the numerator and denominator of a fraction, return the fraction in string
+     * format.
+     * If the fractional part is repeating, enclose the repeating part in parentheses.
+     * For example,
+     * Given numerator = 1, denominator = 2, return "0.5".
+     * Given numerator = 2, denominator = 1, return "2".
+     * Given numerator = 2, denominator = 3, return "0.(6)".
+     */
+    public static String fractionToDecimal(int numerator, int denominator) {
+
+        return "";
+    }
+
+    /**
+     * Find the contiguous subarray within an array (containing at least one number) which has the largest product.
+     * For example, given the array [2,3,-2,4],
+     * the contiguous subarray [2,3] has the largest product = 6.
+     */
+    public static int maxProduct(int[] A) {
+
         return 0;
     }
 
 
-
-
     public static void main(String[] args) {
 
-        String s = "fohhemkkaecojceoaejkkoedkofhmohkcjmkggcmnami";
-        Set<String> dict = new HashSet<String>();
-        String str[] = {"kfomka", "hecagbngambii", "anobmnikj", "c", "nnkmfelneemfgcl", "ah", "bgomgohl", "lcbjbg", "ebjfoiddndih", "hjknoamjbfhckb", "eioldlijmmla", "nbekmcnakif", "fgahmihodolmhbi", "gnjfe", "hk", "b", "jbfgm", "ecojceoaejkkoed", "cemodhmbcmgl", "j", "gdcnjj", "kolaijoicbc", "liibjjcini", "lmbenj", "eklingemgdjncaa", "m", "hkh", "fblb", "fk", "nnfkfanaga", "eldjml", "iejn", "gbmjfdooeeko", "jafogijka", "ngnfggojmhclkjd", "bfagnfclg", "imkeobcdidiifbm", "ogeo", "gicjog", "cjnibenelm", "ogoloc", "edciifkaff", "kbeeg", "nebn", "jdd", "aeojhclmdn", "dilbhl", "dkk", "bgmck", "ohgkefkadonafg", "labem", "fheoglj", "gkcanacfjfhogjc", "eglkcddd", "lelelihakeh", "hhjijfiodfi", "enehbibnhfjd", "gkm", "ggj", "ag", "hhhjogk", "lllicdhihn", "goakjjnk", "lhbn", "fhheedadamlnedh", "bin", "cl", "ggjljjjf", "fdcdaobhlhgj", "nijlf", "i", "gaemagobjfc", "dg", "g", "jhlelodgeekj", "hcimohlni", "fdoiohikhacgb", "k", "doiaigclm", "bdfaoncbhfkdbjd", "f", "jaikbciac", "cjgadmfoodmba", "molokllh", "gfkngeebnggo", "lahd", "n", "ehfngoc", "lejfcee", "kofhmoh", "cgda", "de", "kljnicikjeh", "edomdbibhif", "jehdkgmmofihdi", "hifcjkloebel", "gcghgbemjege", "kobhhefbbb", "aaikgaolhllhlm", "akg", "kmmikgkhnn", "dnamfhaf", "mjhj", "ifadcgmgjaa", "acnjehgkflgkd", "bjj", "maihjn", "ojakklhl", "ign", "jhd", "kndkhbebgh", "amljjfeahcdlfdg", "fnboolobch", "gcclgcoaojc", "kfokbbkllmcd", "fec", "dljma", "noa", "cfjie", "fohhemkka", "bfaldajf", "nbk", "kmbnjoalnhki", "ccieabbnlhbjmj", "nmacelialookal", "hdlefnbmgklo", "bfbblofk", "doohocnadd", "klmed", "e", "hkkcmbljlojkghm", "jjiadlgf", "ogadjhambjikce", "bglghjndlk", "gackokkbhj", "oofohdogb", "leiolllnjj", "edekdnibja", "gjhglilocif", "ccfnfjalchc", "gl", "ihee", "cfgccdmecem", "mdmcdgjelhgk", "laboglchdhbk", "ajmiim", "cebhalkngloae", "hgohednmkahdi", "ddiecjnkmgbbei", "ajaengmcdlbk", "kgg", "ndchkjdn", "heklaamafiomea", "ehg", "imelcifnhkae", "hcgadilb", "elndjcodnhcc", "nkjd", "gjnfkogkjeobo", "eolega", "lm", "jddfkfbbbhia", "cddmfeckheeo", "bfnmaalmjdb", "fbcg", "ko", "mojfj", "kk", "bbljjnnikdhg", "l", "calbc", "mkekn", "ejlhdk", "hkebdiebecf", "emhelbbda", "mlba", "ckjmih", "odfacclfl", "lgfjjbgookmnoe", "begnkogf", "gakojeblk", "bfflcmdko", "cfdclljcg", "ho", "fo", "acmi", "oemknmffgcio", "mlkhk", "kfhkndmdojhidg", "ckfcibmnikn", "dgoecamdliaeeoa", "ocealkbbec", "kbmmihb", "ncikad", "hi", "nccjbnldneijc", "hgiccigeehmdl", "dlfmjhmioa", "kmff", "gfhkd", "okiamg", "ekdbamm", "fc", "neg", "cfmo", "ccgahikbbl", "khhoc", "elbg", "cbghbacjbfm", "jkagbmfgemjfg", "ijceidhhajmja", "imibemhdg", "ja", "idkfd", "ndogdkjjkf", "fhic", "ooajkki", "fdnjhh", "ba", "jdlnidngkfffbmi", "jddjfnnjoidcnm", "kghljjikbacd", "idllbbn", "d", "mgkajbnjedeiee", "fbllleanknmoomb", "lom", "kofjmmjm", "mcdlbglonin", "gcnboanh", "fggii", "fdkbmic", "bbiln", "cdjcjhonjgiagkb", "kooenbeoongcle", "cecnlfbaanckdkj", "fejlmog", "fanekdneoaammb", "maojbcegdamn", "bcmanmjdeabdo", "amloj", "adgoej", "jh", "fhf", "cogdljlgek", "o", "joeiajlioggj", "oncal", "lbgg", "elainnbffk", "hbdi", "femcanllndoh", "ke", "hmib", "nagfahhljh", "ibifdlfeechcbal", "knec", "oegfcghlgalcnno", "abiefmjldmln", "mlfglgni", "jkofhjeb", "ifjbneblfldjel", "nahhcimkjhjgb", "cdgkbn", "nnklfbeecgedie", "gmllmjbodhgllc", "hogollongjo", "fmoinacebll", "fkngbganmh", "jgdblmhlmfij", "fkkdjknahamcfb", "aieakdokibj", "hddlcdiailhd", "iajhmg", "jenocgo", "embdib", "dghbmljjogka", "bahcggjgmlf", "fb", "jldkcfom", "mfi", "kdkke", "odhbl", "jin", "kcjmkggcmnami", "kofig", "bid", "ohnohi", "fcbojdgoaoa", "dj", "ifkbmbod", "dhdedohlghk", "nmkeakohicfdjf", "ahbifnnoaldgbj", "egldeibiinoac", "iehfhjjjmil", "bmeimi", "ombngooicknel", "lfdkngobmik", "ifjcjkfnmgjcnmi", "fmf", "aoeaa", "an", "ffgddcjblehhggo", "hijfdcchdilcl", "hacbaamkhblnkk", "najefebghcbkjfl", "hcnnlogjfmmjcma", "njgcogemlnohl", "ihejh", "ej", "ofn", "ggcklj", "omah", "hg", "obk", "giig", "cklna", "lihaiollfnem", "ionlnlhjckf", "cfdlijnmgjoebl", "dloehimen", "acggkacahfhkdne", "iecd", "gn", "odgbnalk", "ahfhcd", "dghlag", "bchfe", "dldblmnbifnmlo", "cffhbijal", "dbddifnojfibha", "mhh", "cjjol", "fed", "bhcnf", "ciiibbedklnnk", "ikniooicmm", "ejf", "ammeennkcdgbjco", "jmhmd", "cek", "bjbhcmda", "kfjmhbf", "chjmmnea", "ifccifn", "naedmco", "iohchafbega", "kjejfhbco", "anlhhhhg"};
-//        for (int i = 0; i < str.length; i++) {
-//            //dict.add(str[i]);
-//        }
-//        dict.add("fohhemkkaeco");
-//        dict.add("jceoaejkk");
-//        dict.add("oedkofhmo");
-//        dict.add("hkcjmk");
-//        dict.add("ggcmnami");
+        System.out.println(convert("ABC", 2));
+        //System.out.println(isPalindrome(120030021));
+        //System.out.println(Integer.MAX_VALUE);
+        //System.out.println(Integer.MIN_VALUE);
+        //System.out.println(isValid("{[]{([][][][()([(])])}}"));
+        //        int A[] = {1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5};
+        //
+        //        int size = removeDuplicates(A);
+        //        for (int i = 0; i < size; i++) {
+        //            System.out.print(A[i] + " ");
+        //        }
+        //        System.out.println();
 
-        dict.add("b");
-        dict.add("a");
-
-        System.out.println(wordBreak("ab", dict));
-
-//        TreeNode t1 = new TreeNode(1);
-//        TreeNode t2 = new TreeNode(2);
-//        TreeNode t3 = new TreeNode(2);
-//        TreeNode t4 = new TreeNode(3);
-//        TreeNode t5 = new TreeNode(4);
-//        TreeNode t6 = new TreeNode(4);
-//        TreeNode t7 = new TreeNode(3);
-//
-//        t1.left = t2;
-//        t1.right = t3;
-//
-//        t2.left = t4;
-//        t2.right = t5;
-//
-//        t3.left = t6;
-//        t3.right = t7;
-//
-//        System.out.println(preorderTraversal(t1));
+        //        TreeNode t1 = new TreeNode(1);
+        //        TreeNode t2 = new TreeNode(2);
+        //        TreeNode t3 = new TreeNode(2);
+        //        TreeNode t4 = new TreeNode(3);
+        //        TreeNode t5 = new TreeNode(4);
+        //        TreeNode t6 = new TreeNode(4);
+        //        TreeNode t7 = new TreeNode(3);
+        //
+        //        t1.left = t2;
+        //        t1.right = t3;
+        //
+        //        t2.left = t4;
+        //        t2.right = t5;
+        //
+        //        t3.left = t6;
+        //        t3.right = t7;
+        //
+        //        System.out.println(preorderTraversal(t1));
 
 
         //        ListNode n1 = new ListNode(9);
