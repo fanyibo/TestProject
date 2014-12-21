@@ -6,6 +6,9 @@
  */
 package com.fanyibo.util;
 
+import com.sun.deploy.util.StringUtils;
+import javafx.util.Pair;
+
 import java.util.*;
 
 public class Utils {
@@ -1903,41 +1906,41 @@ public class Utils {
         }
 
         int length = s.length();
-        int half = (int)((double)nRows) / 2;
-
-        int a = (int) Math.ceil(0.25 * (1.0 + (((double) length) / half)));
-        int b = 2 * a - 1;
+        int a = length / (2 * nRows - 2);
+        int left = length % (2 * nRows - 2);
+        int cols = a * (nRows - 1) + 1 + (left > nRows ? (left - nRows) : 0);
 
         int index = 0;
-        char matrix[][] = new char[nRows][Math.max(a, b)];
-        for (int i = 0; i < Math.max(a, b); i++) {
-            if (i % 2 == 0) {
+        int rowIndex = nRows - 2;
+        char array[][] = new char[nRows][cols];
+        for (int i = 0; i < cols; i++) {
+
+            if (i == 0 || i % (nRows - 1) == 0) {
                 for (int j = 0; j < nRows; j++) {
                     if (index < length) {
-                        matrix[j][i] = s.charAt(index);
-                        index++;
+                        array[j][i] = s.charAt(index++);
                     }
                 }
             } else {
-                for (int j = 1; j < nRows; j += 2) {
-                    if (index < length) {
-                        matrix[j][i] = s.charAt(index);
-                        index++;
+                if (index < length) {
+                    if (rowIndex >= 1) {
+                        array[rowIndex--][i] = s.charAt(index++);
+                    }
+                    if (rowIndex == 0) {
+                        rowIndex = nRows - 2;
                     }
                 }
             }
         }
-
         StringBuilder builder = new StringBuilder();
         for (int i = 0; i < nRows; i++) {
-            for (int j = 0; j < Math.max(a, b); j++) {
-                char c = matrix[i][j];
+            for (int j = 0; j < cols; j++) {
+                char c = array[i][j];
                 if (c != '\0') {
                     builder.append(c);
                 }
             }
         }
-
         return builder.toString();
     }
 
@@ -1952,7 +1955,166 @@ public class Utils {
      */
     public static String fractionToDecimal(int numerator, int denominator) {
 
-        return "";
+        if (numerator == 0) {
+            return "0";
+        }
+
+        long left = (long) numerator;
+        long right = (long) denominator;
+
+        if (right == 1) {
+            return String.valueOf(left);
+        } else if (right == -1) {
+            return String.valueOf(-left);
+        }
+
+        boolean negativeL = false;
+        boolean negativeR = false;
+
+
+        if (left < 0) {
+            negativeL = true;
+            left = -left;
+        }
+        if (right < 0) {
+            negativeR = true;
+            right = -right;
+        }
+
+        StringBuilder builder = new StringBuilder();
+        boolean appendDot = false;
+
+        HashMap<Long, Integer> numeratorIndexMap = new HashMap<Long, Integer>();
+
+        while (true) {
+            if (left == right) {
+                builder.append('1');
+                break;
+            } else if (left < right) {
+                left = 10 * left;
+                if (!appendDot) {
+                    builder.append('.');
+                    appendDot = true;
+                }
+            }
+            if (appendDot) {
+
+                if (numeratorIndexMap.containsKey(left)) {
+                    builder.insert(numeratorIndexMap.get(left), "(");
+                    builder.append(')');
+                    break;
+                }
+                numeratorIndexMap.put(left, builder.length());
+            }
+            int i = (int) (left / right);
+            left = left % right;
+            builder.append(i);
+            if (left == 0) {
+                break;
+            }
+        }
+        if (builder.charAt(0) == '.') {
+            builder.insert(0, '0');
+        }
+
+        return negativeL == negativeR ? builder.toString() : "-" + builder.toString();
+    }
+
+    public static String convertToTitle(int n) {
+
+        if (n < 27) {
+            return String.valueOf((char) (n + 64));
+        }
+
+        StringBuilder builder = new StringBuilder();
+        int left = n % 26;
+        n = n / 26;
+        if (left >= 0) {
+
+            builder.append((char) (((left == 0) ? 26 : left) + 64));
+            if (left == 0) {
+                n--;
+            }
+        }
+
+        return convertToTitle(n) + builder.reverse().toString();
+    }
+
+    /**
+     * Given a 2D board and a word, find if the word exists in the grid.
+     * The word can be constructed from letters of sequentially adjacent cell, where "adjacent" cells are those
+     * horizontally or vertically neighboring. The same letter cell may not be used more than once.
+     * For example,
+     * Given board =
+     * [
+     * ["ABCE"],
+     * ["SFCS"],
+     * ["ADEE"]
+     * ]
+     * word = "ABCCED", -> returns true,
+     * word = "SEE", -> returns true,
+     * word = "ABCB", -> returns false.
+     */
+
+    public static boolean exist(char[][] board, String word) {
+
+        if (word == null || word.length() == 0 || board == null || board.length == 0) {
+            return false;
+        }
+
+        int row = board.length;
+        int col = board[0].length;
+        int visited[][] = new int[row][col];
+
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board[i].length; j++) {
+                if (visited[i][j] != 1 && board[i][j] == word.charAt(0)) {
+                    visited[i][j] = 1;
+                    if (search(board, visited, word, 0, i, j, 1)) {
+                        return true;
+                    }
+                    visited[i][j] = 0;
+                }
+            }
+        }
+        return false;
+    }
+
+
+    private static boolean search(char[][] board, int[][] visited, String word, int direction, int row, int col, int index) {
+
+        if (index >= word.length()) {
+            return true;
+        }
+        if (direction != 3 && col + 1 < board[0].length && visited[row][col + 1] != 1 && board[row][col + 1] == word.charAt(index)) {
+            visited[row][col + 1] = 1;
+            if (search(board, visited, word, 4, row, col + 1, index + 1)) {
+                return true;
+            }
+            visited[row][col + 1] = 0;
+        }
+        if (direction != 1 && row + 1 < board.length && visited[row + 1][col] != 1 && board[row + 1][col] == word.charAt(index)) {
+            visited[row + 1][col] = 1;
+            if (search(board, visited, word, 2, row + 1, col, index + 1)) {
+                return true;
+            }
+            visited[row + 1][col] = 0;
+        }
+        if (direction != 4 && col - 1 >= 0 && visited[row][col - 1] != 1 && board[row][col - 1] == word.charAt(index)) {
+            visited[row][col - 1] = 1;
+            if (search(board, visited, word, 3, row, col - 1, index + 1)) {
+                return true;
+            }
+            visited[row][col - 1] = 0;
+        }
+        if (direction != 2 && row - 1 >= 0 && visited[row - 1][col] != 1 && board[row - 1][col] == word.charAt(index)) {
+            visited[row - 1][col] = 1;
+            if (search(board, visited, word, 1, row - 1, col, index + 1)) {
+                return true;
+            }
+            visited[row - 1][col] = 0;
+        }
+        return false;
     }
 
     /**
@@ -1968,7 +2130,6 @@ public class Utils {
 
     public static void main(String[] args) {
 
-        System.out.println(convert("ABC", 2));
         //System.out.println(isPalindrome(120030021));
         //System.out.println(Integer.MAX_VALUE);
         //System.out.println(Integer.MIN_VALUE);
