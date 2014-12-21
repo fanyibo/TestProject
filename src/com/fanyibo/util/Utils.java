@@ -2117,6 +2117,74 @@ public class Utils {
         return false;
     }
 
+
+    public static int singleNumberII_36(int A[]) {
+        int n = A.length;
+        int ans = 0;
+        for (int i = 0; i < 32; i++) {
+            int c = 0;
+            int d = 1 << i;
+            for (int j = 0; j < n; j++) {
+                if ((A[j] & d) > 0) {
+                    c++;
+                }
+            }
+
+            if (c % 3 != 0) {
+                ans |= d;
+            }
+        }
+        return ans;
+    }
+
+
+    /**
+     * There are N gas stations along a circular route, where the amount of gas at station i is gas[i].
+     * You have a car with an unlimited gas tank and it costs cost[i] of gas to travel from station i to its next
+     * station (i+1). You begin the journey with an empty tank at one of the gas stations.
+     * Return the starting gas station's index if you can travel around the circuit once, otherwise return -1.
+     */
+    public static int canCompleteCircuit(int[] gas, int[] cost) {
+
+        if (gas == null || gas.length == 0 || cost == null || cost.length == 0) {
+            return 0;
+        }
+
+        int sizeG = gas.length;
+        int max = gas[0];
+        int maxIndex = 0;
+        for (int i = 0; i < sizeG; i++) {
+            if (max < gas[i]) {
+                max = gas[i];
+                maxIndex = i;
+            }
+        }
+        int start = maxIndex;
+
+        for (int i = 0; i < sizeG; i++) {
+
+            int current = start;
+            int tank = gas[current];
+            int next = (current == sizeG - 1) ? 0 : (current + 1);
+            while (next != start) {
+
+                if (tank - cost[current] < 0) {
+                    break;
+                }
+                tank = tank - cost[current] + gas[next];
+                current = next;
+                next = (current == sizeG - 1) ? 0 : (current + 1);
+            }
+            if (next == start && tank >= cost[current]) {
+                return start;
+            } else {
+                start = (start == sizeG - 1) ? 0 : (start + 1);
+            }
+        }
+        return -1;
+    }
+
+
     /**
      * Find the contiguous subarray within an array (containing at least one number) which has the largest product.
      * For example, given the array [2,3,-2,4],
@@ -2129,6 +2197,8 @@ public class Utils {
 
 
     public static void main(String[] args) {
+
+        System.out.println(singleNumberII_36(new int[]{1, 2, 5, 1, 2, 2, 1}));
 
         //System.out.println(isPalindrome(120030021));
         //System.out.println(Integer.MAX_VALUE);
