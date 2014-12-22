@@ -6,9 +6,6 @@
  */
 package com.fanyibo.util;
 
-import com.sun.deploy.util.StringUtils;
-import javafx.util.Pair;
-
 import java.util.*;
 
 public class Utils {
@@ -2081,19 +2078,22 @@ public class Utils {
     }
 
 
-    private static boolean search(char[][] board, int[][] visited, String word, int direction, int row, int col, int index) {
+    private static boolean search(char[][] board, int[][] visited, String word, int direction, int row, int col,
+                                  int index) {
 
         if (index >= word.length()) {
             return true;
         }
-        if (direction != 3 && col + 1 < board[0].length && visited[row][col + 1] != 1 && board[row][col + 1] == word.charAt(index)) {
+        if (direction != 3 && col + 1 < board[0].length && visited[row][col + 1] != 1 && board[row][col + 1] == word
+                .charAt(index)) {
             visited[row][col + 1] = 1;
             if (search(board, visited, word, 4, row, col + 1, index + 1)) {
                 return true;
             }
             visited[row][col + 1] = 0;
         }
-        if (direction != 1 && row + 1 < board.length && visited[row + 1][col] != 1 && board[row + 1][col] == word.charAt(index)) {
+        if (direction != 1 && row + 1 < board.length && visited[row + 1][col] != 1 && board[row + 1][col] == word
+                .charAt(index)) {
             visited[row + 1][col] = 1;
             if (search(board, visited, word, 2, row + 1, col, index + 1)) {
                 return true;
@@ -2184,6 +2184,7 @@ public class Utils {
         return -1;
     }
 
+    /************************************************************************************************************/
 
     /**
      * Find the contiguous subarray within an array (containing at least one number) which has the largest product.
@@ -2191,251 +2192,377 @@ public class Utils {
      * the contiguous subarray [2,3] has the largest product = 6.
      */
     public static int maxProduct(int[] A) {
+        int res = A[0];
+        int pos = Math.max(0, A[0]);
+        int neg = Math.min(0, A[0]);
+        for (int i = 1; i < A.length; ++i) {
+            if (A[i] == 0) {
+                pos = 0;
+                neg = 0;
+            } else if (A[i] > 0) {
+                pos = Math.max(1, pos) * A[i];
+                neg = neg * A[i];
+            } else {
+                int pos_old = pos;
+                pos = neg * A[i];
+                neg = Math.min(A[i], A[i] * pos_old);
+            }
+            res = Math.max(res, pos);
+        }
+        return res;
+    }
 
-        return 0;
+    /**
+     * Given a triangle, find the minimum path sum from top to bottom. Each step you may move to adjacent numbers on
+     * the row below.
+     * For example, given the following triangle
+     * [
+     * [2],
+     * [3,4],
+     * [6,5,7],
+     * [4,1,8,3]
+     * ]
+     * The minimum path sum from top to bottom is 11 (i.e., 2 + 3 + 5 + 1 = 11).
+     * Note:
+     * Bonus point if you are able to do this using only O(n) extra space, where n is the total number of rows in the
+     * triangle.
+     */
+    public static int minimumTotal(List<List<Integer>> triangle) {
+
+        int row = triangle.size();
+        if (row == 0) {
+            return 0;
+        } else if (row == 1) {
+            return triangle.get(0).get(0);
+        }
+        int col = triangle.get(row - 1).size();
+        int value[][] = new int[row][col];
+        for (int j = 0; j < triangle.get(row - 1).size(); j++) {
+            value[row - 1][j] = triangle.get(row - 1).get(j);
+        }
+        for (int i = row - 2; i >= 0; i--) {
+            for (int j = 0; j < triangle.get(i).size(); j++) {
+                value[i][j] = triangle.get(i).get(j) + Math.min(value[i + 1][j], value[i + 1][j + 1]);
+            }
+        }
+        return value[0][0];
+    }
+
+    public static int minimumTotal(List<List<Integer>> triangle, int rowIndex, int colIndex) {
+
+        if (triangle.get(rowIndex).size() == 0 || rowIndex < 0 || rowIndex >= triangle
+                .size() || colIndex < 0 || colIndex >= triangle.get(rowIndex).size()) {
+            return 0;
+        }
+        if (rowIndex == triangle.size() - 1) {
+            return triangle.get(rowIndex).get(colIndex);
+        }
+        return triangle.get(rowIndex).get(colIndex) + Math.min(minimumTotal(triangle, rowIndex + 1, colIndex),
+                                                               minimumTotal(triangle, rowIndex + 1, colIndex + 1));
+    }
+
+    /**
+     * Populate each next pointer to point to its next right node. If there is no next right node, the next pointer
+     * should be set to NULL.
+     * Initially, all next pointers are set to NULL.
+     * Note:
+     * You may only use constant extra space.
+     * You may assume that it is a perfect binary tree (ie, all leaves are at the same level, and every parent has
+     * two children).
+     * For example,
+     * Given the following perfect binary tree,
+     * 1
+     * /  \
+     * 2    3
+     * / \  / \
+     * 4  5  6  7
+     * After calling your function, the tree should look like:
+     * 1 -> NULL
+     * /  \
+     * 2 -> 3 -> NULL
+     * / \  / \
+     * 4->5->6->7 -> NULL
+     */
+    public static class TreeLinkNode {
+        int          val;
+        TreeLinkNode left, right, next;
+
+        TreeLinkNode(int x) {
+            val = x;
+        }
+    }
+
+    public static void connect(TreeLinkNode root) {
+
+        if (root == null) {
+            return;
+        }
+
+        List<TreeLinkNode> list = new ArrayList<TreeLinkNode>();
+        boolean setLevelStart = false;
+        TreeLinkNode nextLevelStart = root.left;
+        list.add(root);
+        while (!list.isEmpty()) {
+
+            TreeLinkNode temp = list.remove(0);
+            if (setLevelStart) {
+                nextLevelStart = temp.left;
+            }
+            if (temp.left != null) {
+                list.add(temp.left);
+            }
+            if (temp.right != null) {
+                list.add(temp.right);
+            }
+            if (!list.isEmpty() && list.get(0) != nextLevelStart) {
+                temp.next = list.get(0);
+                setLevelStart = false;
+            } else {
+                temp.next = null;
+                setLevelStart = true;
+            }
+        }
     }
 
 
+    /**
+     * Given a binary tree, flatten it to a linked list in-place.
+     * For example,
+     * Given
+     * 1
+     * / \
+     * 2   5
+     * / \   \
+     * 3   4   6
+     * The flattened tree should look like:
+     * 1
+     * \
+     * 2
+     * \
+     * 3
+     * \
+     * 4
+     * \
+     * 5
+     * \
+     * 6
+     * click to show hints.
+     * Hints:
+     * If you notice carefully in the flattened tree, each node's right child points to the next node of a pre-order
+     * traversal.
+     */
+    public static void flatten(TreeNode root) {
+
+        List<TreeNode> list = new ArrayList<TreeNode>();
+        dfs(root, list);
+
+        for (int i = 0; i < list.size() - 1; ++i) {
+            list.get(i).left = null;
+            list.get(i).right = list.get(i + 1);
+        }
+    }
+
+    public static void dfs(TreeNode node, List<TreeNode> list) {
+
+        if (node == null) {
+            return;
+        }
+        list.add(node);
+        dfs(node.left, list);
+        dfs(node.right, list);
+    }
+
+    /**
+     * Given a binary tree and a sum, find all root-to-leaf paths where each path's sum equals the given sum.
+     * For example:
+     * Given the below binary tree and sum = 22,
+     * 5
+     * / \
+     * 4   8
+     * /   / \
+     * 11  13  4
+     * /  \    / \
+     * 7    2  5   1
+     * return
+     * [
+     * [5,4,11,2],
+     * [5,8,4,5]
+     * ]
+     */
+    public static List<List<Integer>> pathSum(TreeNode root, int sum) {
+
+        if (root == null) {
+            return null;
+        }
+
+        List<List<Integer>> total = new ArrayList<List<Integer>>();
+        List<Integer> list = new ArrayList<Integer>();
+        dfs1(root, 0, sum, list, total);
+        return total;
+    }
+
+    public static void dfs1(TreeNode node, int current, int sum, List<Integer> list, List<List<Integer>> total) {
+
+        list.add(node.val);
+        current += node.val;
+        if (node.left != null) {
+            dfs1(node.left, current, sum, list, total);
+        }
+        if (node.right != null) {
+            dfs1(node.right, current, sum, list, total);
+        }
+        if (node.left == null && node.right == null && current == sum) {
+            total.add(new ArrayList<Integer>(list));
+        }
+        list.remove(list.size() - 1);
+        current -= node.val;
+    }
+
+
+    /**
+     * Given a list, rotate the list to the right by k places, where k is non-negative.
+     * For example:
+     * Given 1->2->3->4->5->NULL and k = 2,
+     * return 4->5->1->2->3->NULL.
+     */
+    public static ListNode rotateRight(ListNode head, int n) {
+
+        if (head == null) {
+            return null;
+        }
+        ListNode newHead = head;
+        ListNode last = head;
+
+        int size = 0;
+        ListNode temp = head;
+        while (temp != null) {
+            last = temp;
+            temp = temp.next;
+            size++;
+        }
+        if (n != 0 && size > n) {
+            int i = 0;
+            temp = head;
+            while (i != size - n - 1) {
+                temp = temp.next;
+                i++;
+            }
+            newHead = temp.next;
+            temp.next = null;
+            last.next = head;
+        }
+        return newHead;
+    }
+
+
+    /**
+     * Given a singly linked list where elements are sorted in ascending order, convert it to a height balanced BST.
+     */
+    public static TreeNode sortedListToBST(ListNode head) {
+        return null;
+    }
+
+    /**
+     * Given inorder and postorder traversal of a tree, construct the binary tree.
+     * Note:
+     * You may assume that duplicates do not exist in the tree.
+     */
+    public static TreeNode buildTree1(int[] inorder, int[] postorder) {
+        return null;
+    }
+
+    /**
+     * Given preorder and inorder traversal of a tree, construct the binary tree.
+     */
+    public static TreeNode buildTree2(int[] preorder, int[] inorder) {
+        return null;
+    }
+
+    /**
+     * Given a binary tree, return the zigzag level order traversal of its nodes' values. (ie, from left to right,
+     * then right to left for the next level and alternate between).
+     * For example:
+     * Given binary tree {3,9,20,#,#,15,7},
+     * 3
+     * / \
+     * 9  20
+     * /  \
+     * 15   7
+     * return its zigzag level order traversal as:
+     * [
+     * [3],
+     * [20,9],
+     * [15,7]
+     * ]
+     */
+    public static List<List<Integer>> zigzagLevelOrder(TreeNode root) {
+        return null;
+    }
+
+    /**
+     * Given a binary tree, determine if it is a valid binary search tree (BST).
+     * Assume a BST is defined as follows:
+     * The left subtree of a node contains only nodes with keys less than the node's key.
+     * The right subtree of a node contains only nodes with keys greater than the node's key.
+     * Both the left and right subtrees must also be binary search trees.
+     */
+    public static boolean isValidBST(TreeNode root) {
+        return false;
+    }
+
+    /**
+     * Given n, generate all structurally unique BST's (binary search trees) that store values 1...n.
+     * For example,
+     * Given n = 3, your program should return all 5 unique BST's shown below.
+     * 1         3     3      2      1
+     * \       /     /      / \      \
+     * 3     2     1      1   3      2
+     * /     /       \                 \
+     * 2     1         2                 3
+     */
+    public static List<TreeNode> generateTrees(int n) {
+        return null;
+    }
+
     public static void main(String[] args) {
+        /**
+         *     5(1)
+         *   /      \
+         * 4(2)     8(3)
+         * /       /    \
+         *  11(4) 13(5)   4(6)
+         *  /   \      /  \
+         * 7(7) 2(8) 5(9) 1(10)
+         */
+        TreeNode n1 = new TreeNode(5);
+        TreeNode n2 = new TreeNode(4);
+        TreeNode n3 = new TreeNode(8);
+        TreeNode n4 = new TreeNode(11);
+        TreeNode n5 = new TreeNode(13);
+        TreeNode n6 = new TreeNode(4);
+        TreeNode n7 = new TreeNode(7);
+        TreeNode n8 = new TreeNode(2);
+        TreeNode n9 = new TreeNode(5);
+        TreeNode n10 = new TreeNode(1);
 
-        System.out.println(singleNumberII_36(new int[]{1, 2, 5, 1, 2, 2, 1}));
+        n1.left = n2;
+        n1.right = n3;
 
-        //System.out.println(isPalindrome(120030021));
-        //System.out.println(Integer.MAX_VALUE);
-        //System.out.println(Integer.MIN_VALUE);
-        //System.out.println(isValid("{[]{([][][][()([(])])}}"));
-        //        int A[] = {1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5};
-        //
-        //        int size = removeDuplicates(A);
-        //        for (int i = 0; i < size; i++) {
-        //            System.out.print(A[i] + " ");
-        //        }
-        //        System.out.println();
+        n2.left = n4;
 
-        //        TreeNode t1 = new TreeNode(1);
-        //        TreeNode t2 = new TreeNode(2);
-        //        TreeNode t3 = new TreeNode(2);
-        //        TreeNode t4 = new TreeNode(3);
-        //        TreeNode t5 = new TreeNode(4);
-        //        TreeNode t6 = new TreeNode(4);
-        //        TreeNode t7 = new TreeNode(3);
-        //
-        //        t1.left = t2;
-        //        t1.right = t3;
-        //
-        //        t2.left = t4;
-        //        t2.right = t5;
-        //
-        //        t3.left = t6;
-        //        t3.right = t7;
-        //
-        //        System.out.println(preorderTraversal(t1));
+        n3.left = n5;
+        n3.right = n6;
 
+        n4.left = n7;
+        n4.right = n8;
 
-        //        ListNode n1 = new ListNode(9);
-        //        ListNode n2 = new ListNode(1);
-        //        ListNode n3 = new ListNode(1);
-        //        ListNode n4 = new ListNode(1);
-        //        ListNode n5 = new ListNode(1);
-        //
-        //        n1.next = n2;
-        //        n2.next = n3;
-        //        n3.next = n4;
-        //        n4.next = n5;
-        //
-        //        printlist(n1);
-        //        ListNode head = Sorting.insertionSort(n1);
-        //        printlist(head);
+        n6.left = n9;
+        n6.right = n10;
 
-
-        //        int A[] = {2};
-        //        int A[] = {3,3,3,3,3,3,3,3};
-        //
-        //        System.out.println(removeElement(A, 6));
-        //        for (int i = 0; i < A.length; i++) {
-        //            System.out.print(A[i] + " ");
-        //        }
-        //        System.out.println();
-
-
-        //System.out.println(strStr("", ""));
-
-        //        ListNode n11 = new ListNode(-4);
-        //        ListNode n12 = new ListNode(-2);
-        //        ListNode n13 = new ListNode(0);
-        //        ListNode n14 = new ListNode(1);
-        //        ListNode n15 = new ListNode(4);
-        //
-        //        n11.next = n12;
-        //        n12.next = n13;
-        //        n13.next = n14;
-        //        n14.next = n15;
-        //
-        //        ListNode n21 = new ListNode(-9);
-        //        ListNode n22 = new ListNode(-8);
-        //        ListNode n23 = new ListNode(-6);
-        //        ListNode n24 = new ListNode(-6);
-        //        ListNode n25 = new ListNode(-5);
-        //        ListNode n26 = new ListNode(-1);
-        //        ListNode n27 = new ListNode(1);
-        //        ListNode n28 = new ListNode(4);
-        //        ListNode n29 = new ListNode(9);
-        //
-        //        n21.next = n22;
-        //        n22.next = n23;
-        //        n23.next = n24;
-        //        n24.next = n25;
-        //        n25.next = n26;
-        //        n26.next = n27;
-        //        n27.next = n28;
-        //        n28.next = n29;
-        //        ListNode n11 = new ListNode(1);
-        //        ListNode n12 = new ListNode(3);
-        //        ListNode n13 = new ListNode(4);
-        //
-        //        n11.next = n12;
-        //        n12.next = n13;
-        //
-        //        ListNode n21 = new ListNode(0);
-        //
-        //        ListNode head = mergeTwoLists(n11, n21);
-        //        printlist(head);
-
-
-        //System.out.println(addBinary("1011", "101"));
-        //        int A[] = {9, 9, 9, 9, 9};
-        //
-        //        A = plusOne(A);
-        //        for (int i = 0; i < A.length; i++) {
-        //            System.out.print(A[i] + " ");
-        //        }
-        //        System.out.println();
-
-        //System.out.println(numTrees(3));
-
-        //        ListNode n1 = new ListNode(1);
-        //        ListNode n2 = new ListNode(2);
-        //        ListNode n3 = new ListNode(3);
-        //        ListNode n4 = new ListNode(4);
-        //        ListNode n5 = new ListNode(5);
-        //        ListNode n6 = new ListNode(6);
-        //        ListNode n7 = new ListNode(7);
-        //        ListNode n8 = new ListNode(8);
-        //        ListNode n9 = new ListNode(9);
-        //
-        //        n1.next = n2;
-        //        n2.next = n3;
-        //        n3.next = n4;
-        //        n4.next = n5;
-        //        n5.next = n6;
-        //        n6.next = n7;
-        //        n7.next = n8;
-        //        n8.next = n9;
-        //        n9.next = n4;
-        //
-        //        System.out.println(detectCycle(n1).val);
-
-        //        ListNode n1 = new ListNode(1);
-        //        ListNode n2 = new ListNode(2);
-        //        ListNode n3 = new ListNode(3);
-        //        ListNode n4 = new ListNode(4);
-        //        ListNode n5 = new ListNode(5);
-        //        ListNode n6 = new ListNode(6);
-        //        ListNode n7 = new ListNode(7);
-        //
-        //        n1.next = n2;
-        //        n2.next = n3;
-        //        n3.next = n4;
-        //        n4.next = n5;
-        //        n5.next = n6;
-        //        n6.next = n7;
-        //
-        //        reorderList(n1);
-        //        ListNode temp = n1;
-        //        while (temp != null) {
-        //            System.out.print(temp.val + " -> ");
-        //            temp = temp.next;
-        //        }
-        //        System.out.println();
-
-        //System.out.println(reverseWords("     "));
-        //        {
-        //            TreeNode t1 = new TreeNode(1);
-        //            TreeNode t2 = new TreeNode(2);
-        //            TreeNode t3 = new TreeNode(2);
-        //            TreeNode t4 = new TreeNode(3);
-        //            TreeNode t5 = new TreeNode(4);
-        //            TreeNode t6 = new TreeNode(4);
-        //            TreeNode t7 = new TreeNode(3);
-        //
-        //            t1.left = t2;
-        //            t1.right = t3;
-        //
-        //            t2.left = t4;
-        //            t2.right = t5;
-        //
-        //            t3.left = t6;
-        //            t3.right = t7;
-        //
-        //            System.out.println(isSymmetric(t1));
-        //        }
-        //        {
-        //            TreeNode t1 = new TreeNode(1);
-        //            TreeNode t2 = new TreeNode(2);
-        //            TreeNode t3 = new TreeNode(2);
-        //            TreeNode t4 = new TreeNode(3);
-        //            TreeNode t5 = new TreeNode(3);
-        //
-        //            t1.left = t2;
-        //            t1.right = t3;
-        //            t2.right = t4;
-        //            t3.right = t5;
-        //
-        //            System.out.println(isSymmetric(t1));
-        //        }
-
-        //System.out.println(getRow(100));
-
-        //        MinStack stack = new MinStack();
-        //        stack.push(-1);
-        //        System.out.println(stack.top());
-        //        System.out.println(stack.getMin());
-        //        ListNode n1 = new ListNode(1);
-        //        ListNode n2 = new ListNode(2);
-        //        ListNode n3 = new ListNode(3);
-        //        ListNode n4 = new ListNode(4);
-        //        ListNode n5 = new ListNode(5);
-        //        ListNode n6 = new ListNode(6);
-        //        ListNode n7 = new ListNode(7);
-        //
-        //        n1.next = n2;
-        //        n2.next = n3;
-        //        n3.next = n6;
-        //        n6.next = n7;
-        //
-        //        n4.next = n5;
-        //        n5.next = n6;
-        //        n6.next = n7;
-        //
-        //        n7.next = null;
-        //
-        //
-        //        ListNode tmp = getIntersectionNode(n1, n4);
-        //        System.out.println(tmp.val);
-        //ListNode tmp = reverse(n1);
-        //printlist(tmp);
-
-
-        //        Random random = new Random(new Date().getTime());
-        //        int size = 99999;
-        //        int prices[] = new int[size];
-        //        for (int i = 0; i < size; ++i) {
-        //            prices[i] = random.nextInt();
-        //        }
-        //        long timeA = System.currentTimeMillis();
-        //        System.out.println(maxProfit_1(prices));
-        //        long timeB = System.currentTimeMillis();
-        //        System.out.println("Elapsed time: " + (timeB - timeA));
+        List<List<Integer>> lists = pathSum(n1, 22);
+        for (List<Integer> list : lists) {
+            System.out.println(list.toString());
+        }
     }
 }
 
