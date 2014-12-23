@@ -1,4 +1,6 @@
-package com.fanyibo.util;
+package com.fanyibo.sorting;
+
+import com.fanyibo.util.ListNode;
 
 public class Sorting {
 

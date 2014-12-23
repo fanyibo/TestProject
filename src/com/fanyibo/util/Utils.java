@@ -2472,8 +2472,106 @@ public class Utils {
      * []
      * ]
      */
+    public static int[] mergeSort(int[] num, int start, int end) {
+
+        if (end < start) {
+            return new int[]{};
+        }
+        int size = end - start + 1;
+
+        if (size == 1) {
+            int[] result = new int[size];
+            result[0] = num[start];
+            return result;
+        } else if (size == 2) {
+            int[] result = new int[size];
+            result[0] = num[start] <= num[end] ? num[start] : num[end];
+            result[1] = num[start] <= num[end] ? num[end] : num[start];
+            return result;
+        } else {
+            int half = size / 2;
+            return merge1(mergeSort(num, start, start + half), mergeSort(num, start + half + 1, end));
+        }
+    }
+
+    public static int[] merge1(int[] left, int[] right) {
+
+        if ((left == null && right == null) || (left.length == 0 && right.length == 0)) {
+            return new int[]{};
+        }
+        if (left == null || left.length == 0) {
+            return right;
+        }
+        if (right == null || right.length == 0) {
+            return left;
+        }
+        int sizeL = left.length;
+        int sizeR = right.length;
+        int size = sizeL + sizeR;
+        int result[] = new int[size];
+        int index = 0;
+        int index1 = 0;
+        int index2 = 0;
+
+        while (index1 < sizeL && index2 < sizeR) {
+            if (left[index1] <= right[index2]) {
+                result[index++] = left[index1];
+                index1++;
+            } else {
+                result[index++] = right[index2];
+                index2++;
+            }
+        }
+
+        if (index1 == sizeL && index2 != sizeR) {
+            for (int i = index2; i < sizeR; i++) {
+                result[index++] = right[i];
+            }
+        } else if (index1 != sizeL && index2 == sizeR) {
+            for (int i = index1; i < sizeL; i++) {
+                result[index++] = left[i];
+            }
+        }
+
+        return result;
+    }
+
+    public static Set<List<Integer>> getAllCombination(int[] num, int index) {
+
+        Set<List<Integer>> set = new HashSet<List<Integer>>();
+        List<Integer> list = new ArrayList<Integer>();
+        list.add(num[index]);
+        set.add(list);
+        if (index < num.length - 1) {
+            Set<List<Integer>> rest = getAllCombination(num, index + 1);
+            for (List<Integer> elem : rest) {
+                set.add(new ArrayList<Integer>(elem));
+                elem.add(0, num[index]);
+                set.add(new ArrayList<Integer>(elem));
+            }
+        }
+        return set;
+    }
+
+
     public static List<List<Integer>> subsetsWithDup(int[] num) {
-        return null;
+
+
+        if (num == null || num.length == 0) {
+            return new ArrayList<List<Integer>>();
+
+        }
+        int array[] = mergeSort(num, 0, num.length - 1);
+
+        Set<List<Integer>> bigSet = new HashSet<List<Integer>>();
+        for (int i = 0; i < array.length; i++) {
+            Set<List<Integer>> set = getAllCombination(array, i);
+            for (List<Integer> elem : set) {
+                bigSet.add(elem);
+            }
+        }
+        bigSet.add(new ArrayList<Integer>());
+        return new ArrayList<List<Integer>>(bigSet);
     }
 
 
@@ -2547,6 +2645,13 @@ public class Utils {
     }
 
     public static void main(String[] args) {
+
+
+        int num[] = {1, 2, 3};
+
+        List<List<Integer>> list = subsetsWithDup(num);
+
+        System.out.println(list.toString());
         /**
          *     5(1)
          *   /      \
@@ -2556,35 +2661,35 @@ public class Utils {
          *  /   \      /  \
          * 7(7) 2(8) 5(9) 1(10)
          */
-        TreeNode n1 = new TreeNode(5);
-        TreeNode n2 = new TreeNode(4);
-        TreeNode n3 = new TreeNode(8);
-        TreeNode n4 = new TreeNode(11);
-        TreeNode n5 = new TreeNode(13);
-        TreeNode n6 = new TreeNode(4);
-        TreeNode n7 = new TreeNode(7);
-        TreeNode n8 = new TreeNode(2);
-        TreeNode n9 = new TreeNode(5);
-        TreeNode n10 = new TreeNode(1);
-
-        n1.left = n2;
-        n1.right = n3;
-
-        n2.left = n4;
-
-        n3.left = n5;
-        n3.right = n6;
-
-        n4.left = n7;
-        n4.right = n8;
-
-        n6.left = n9;
-        n6.right = n10;
-
-        List<List<Integer>> lists = pathSum(n1, 22);
-        for (List<Integer> list : lists) {
-            System.out.println(list.toString());
-        }
+//        TreeNode n1 = new TreeNode(5);
+//        TreeNode n2 = new TreeNode(4);
+//        TreeNode n3 = new TreeNode(8);
+//        TreeNode n4 = new TreeNode(11);
+//        TreeNode n5 = new TreeNode(13);
+//        TreeNode n6 = new TreeNode(4);
+//        TreeNode n7 = new TreeNode(7);
+//        TreeNode n8 = new TreeNode(2);
+//        TreeNode n9 = new TreeNode(5);
+//        TreeNode n10 = new TreeNode(1);
+//
+//        n1.left = n2;
+//        n1.right = n3;
+//
+//        n2.left = n4;
+//
+//        n3.left = n5;
+//        n3.right = n6;
+//
+//        n4.left = n7;
+//        n4.right = n8;
+//
+//        n6.left = n9;
+//        n6.right = n10;
+//
+//        List<List<Integer>> lists = pathSum(n1, 22);
+//        for (List<Integer> list : lists) {
+//            System.out.println(list.toString());
+//        }
     }
 }
 
