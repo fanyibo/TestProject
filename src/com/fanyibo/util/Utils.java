@@ -6,6 +6,9 @@
  */
 package com.fanyibo.util;
 
+import com.fanyibo.tree.AVLTree;
+import com.fanyibo.tree.TreeNode;
+
 import java.util.*;
 
 public class Utils {
@@ -501,16 +504,6 @@ public class Utils {
      * 7    2      1
      * return true, as there exist a root-to-leaf path 5->4->11->2 which sum is 22.
      */
-
-    public static class TreeNode {
-        int      val;
-        TreeNode left;
-        TreeNode right;
-
-        TreeNode(int x) {
-            val = x;
-        }
-    }
 
     public boolean hasPathSum(TreeNode root, int sum) {
 
@@ -2258,7 +2251,7 @@ public class Utils {
             return triangle.get(rowIndex).get(colIndex);
         }
         return triangle.get(rowIndex).get(colIndex) + Math.min(minimumTotal(triangle, rowIndex + 1, colIndex),
-                minimumTotal(triangle, rowIndex + 1, colIndex + 1));
+                                                               minimumTotal(triangle, rowIndex + 1, colIndex + 1));
     }
 
     /**
@@ -2579,7 +2572,14 @@ public class Utils {
      * Given a singly linked list where elements are sorted in ascending order, convert it to a height balanced BST.
      */
     public static TreeNode sortedListToBST(ListNode head) {
-        return null;
+
+        AVLTree avlTree = new AVLTree();
+        ListNode temp = head;
+        while (temp != null) {
+            avlTree.insert(temp.val);
+            temp = temp.next;
+        }
+        return avlTree.root;
     }
 
     /**
@@ -2588,14 +2588,110 @@ public class Utils {
      * You may assume that duplicates do not exist in the tree.
      */
     public static TreeNode buildTree1(int[] inorder, int[] postorder) {
-        return null;
+
+        if (inorder == null || inorder.length == 0 || postorder == null || postorder.length == 0) {
+            return null;
+        }
+        int inLength = inorder.length;
+        int poLength = postorder.length;
+
+        int rootVal = postorder[poLength - 1];
+        int i = 0;
+        for (i = 0; i < inLength; i++) {
+            if (inorder[i] == rootVal) {
+                break;
+            }
+        }
+        TreeNode root = new TreeNode(rootVal);
+        root.left = buildTreeFromInPostOrders(inorder, 0, i - 1, postorder, 0, i - 1);
+        root.right = buildTreeFromInPostOrders(inorder, i + 1, inLength - 1, postorder, i, poLength - 2);
+        return root;
+    }
+
+    public static TreeNode buildTreeFromInPostOrders(int[] inorder, int inStart, int inEnd, int[] postorder,
+                                                     int poStart, int poEnd) {
+
+        if (inorder == null || inorder.length == 0 || postorder == null || postorder.length == 0) {
+            return null;
+        }
+
+        if (inEnd == inStart) {
+            return new TreeNode(inorder[inStart]);
+        } else if (inEnd < inStart) {
+            return null;
+        }
+        if (poEnd == poStart) {
+            return new TreeNode(postorder[poStart]);
+        } else if (poEnd < poStart) {
+            return null;
+        }
+        int rootVal = postorder[poEnd];
+        int i = 0;
+        for (i = inStart; i <= inEnd; i++) {
+            if (inorder[i] == rootVal) {
+                break;
+            }
+        }
+        TreeNode root = new TreeNode(rootVal);
+        root.left = buildTreeFromInPostOrders(inorder, inStart, i - 1, postorder, poStart, poStart + i - 1 - inStart);
+        root.right = buildTreeFromInPostOrders(inorder, i + 1, inEnd, postorder, poStart + i - inStart, poEnd - 1);
+
+        return root;
     }
 
     /**
      * Given preorder and inorder traversal of a tree, construct the binary tree.
      */
     public static TreeNode buildTree2(int[] preorder, int[] inorder) {
-        return null;
+
+        if (inorder == null || inorder.length == 0 || preorder == null || preorder.length == 0) {
+            return null;
+        }
+        int inLength = inorder.length;
+        int preLength = preorder.length;
+
+        int rootVal = preorder[0];
+        int i = 0;
+        for (i = 0; i < inLength; i++) {
+            if (inorder[i] == rootVal) {
+                break;
+            }
+        }
+        TreeNode root = new TreeNode(rootVal);
+        root.left = buildTreeFromPreInOrders(preorder, 1, i, inorder, 0, i - 1);
+        root.right = buildTreeFromPreInOrders(preorder, i + 1, preLength - 1, inorder, i + 1, inLength - 1);
+        return root;
+    }
+
+    public static TreeNode buildTreeFromPreInOrders(int[] preorder, int preStart, int preEnd, int[] inorder,
+                                                    int inStart, int inEnd) {
+
+        if (inorder == null || inorder.length == 0 || preorder == null || preorder.length == 0) {
+            return null;
+        }
+
+        if (preEnd == preStart) {
+            return new TreeNode(preorder[preStart]);
+        } else if (preEnd < preStart) {
+            return null;
+        }
+        if (inEnd == inStart) {
+            return new TreeNode(inorder[inStart]);
+        } else if (inEnd < inStart) {
+            return null;
+        }
+        int rootVal = preorder[preStart];
+        int i = 0;
+        for (i = inStart; i <= inEnd; i++) {
+            if (inorder[i] == rootVal) {
+                break;
+            }
+        }
+        TreeNode root = new TreeNode(rootVal);
+        root.left = buildTreeFromPreInOrders(preorder, preStart + 1, preStart + i - inStart, inorder, inStart, i - 1);
+        root.right = buildTreeFromPreInOrders(preorder, preStart + i - inStart + 1, preEnd, inorder, i + 1, inEnd);
+
+        return root;
     }
 
     /**
@@ -2616,7 +2712,84 @@ public class Utils {
      * ]
      */
     public static List<List<Integer>> zigzagLevelOrder(TreeNode root) {
-        return null;
+
+        if (root == null) {
+            return new ArrayList<List<Integer>>();
+        }
+        List<List<Integer>> resultList = new ArrayList<List<Integer>>();
+        List<Integer> tempList = new ArrayList<Integer>();
+        List<TreeNode> queue = new ArrayList<TreeNode>();
+        queue.add(root);
+        boolean markNewLevel = true;
+        TreeNode levelMark = null;
+        int level = 0;
+        while (!queue.isEmpty()) {
+
+            TreeNode temp = queue.remove(0);
+            if (level % 2 == 0) {
+                tempList.add(temp.val);
+            } else {
+                tempList.add(0, temp.val);
+            }
+            if (markNewLevel) {
+                if (temp.left != null) {
+                    levelMark = temp.left;
+                    markNewLevel = false;
+                } else if (temp.right != null) {
+                    levelMark = temp.right;
+                    markNewLevel = false;
+                }
+            }
+            if (temp.left != null) {
+                queue.add(temp.left);
+            }
+            if (temp.right != null) {
+                queue.add(temp.right);
+            }
+            if (!queue.isEmpty() && queue.get(0) == levelMark) {
+                resultList.add(new ArrayList<Integer>(tempList));
+                tempList.clear();
+                markNewLevel = true;
+                level++;
+            } else if (queue.isEmpty()) {
+                resultList.add(new ArrayList<Integer>(tempList));
+                tempList.clear();
+            }
+        }
+
+        return resultList;
+    }
+
+    /**
+     * Given a binary tree, return the inorder traversal of its nodes' values.
+     * For example:
+     * Given binary tree {1,#,2,3},
+     * 1
+     * \
+     * 2
+     * /
+     * 3
+     * return [1,3,2].
+     * Note: Recursive solution is trivial, could you do it iteratively?
+     */
+    public static List<Integer> inorderTraversal(TreeNode root) {
+        if (root == null) {
+            return new ArrayList<Integer>();
+        }
+        List<Integer> resultList = new ArrayList<Integer>();
+        TreeNode node = root;
+        Stack<TreeNode> parentStack = new Stack<TreeNode>();
+        while (!parentStack.isEmpty() || node != null) {
+            if (node != null) {
+                parentStack.push(node);
+                node = node.left;
+            } else {
+                node = parentStack.pop();
+                resultList.add(node.val);
+                node = node.right;
+            }
+        }
+        return resultList;
     }
 
     /**
@@ -2627,7 +2800,40 @@ public class Utils {
      * Both the left and right subtrees must also be binary search trees.
      */
     public static boolean isValidBST(TreeNode root) {
-        return false;
+
+        if (root == null) {
+            return true;
+        }
+        List<Integer> list = new ArrayList<Integer>();
+        dfsBST(root, list);
+        int temp = list.get(0);
+        for (int i = 1; i < list.size(); i++) {
+            if (temp >= list.get(i)) {
+                return false;
+            }
+            temp = list.get(i);
+        }
+        return true;
+    }
+
+    public static void dfsBST(TreeNode node, List<Integer> inorder) {
+
+        if (node == null) {
+            return;
+        }
+        dfsBST(node.left, inorder);
+        inorder.add(node.val);
+        dfsBST(node.right, inorder);
+    }
+
+    /**
+     * Given a string containing only digits, restore it by returning all possible valid IP address combinations.
+     * For example:
+     * Given "25525511135",
+     * return ["255.255.11.135", "255.255.111.35"]. (Order does not matter)
+     */
+    public static List<String> restoreIpAddresses(String s) {
+
     }
 
     /**
@@ -2646,50 +2852,49 @@ public class Utils {
 
     public static void main(String[] args) {
 
-
-        int num[] = {1, 2, 3};
-
-        List<List<Integer>> list = subsetsWithDup(num);
-
-        System.out.println(list.toString());
         /**
-         *     5(1)
-         *   /      \
-         * 4(2)     8(3)
-         * /       /    \
-         *  11(4) 13(5)   4(6)
-         *  /   \      /  \
-         * 7(7) 2(8) 5(9) 1(10)
+         *        10(1)
+         *     /      \
+         *    5(2)     12(3)
+         *    /        /    \
+         *  2(4)   11(5)   15(6)
+         *  /   \           /  \
+         * 1(7) 14(8)      14(9) 18(10)
+         *      /
+         *      3(11)
          */
-//        TreeNode n1 = new TreeNode(5);
-//        TreeNode n2 = new TreeNode(4);
-//        TreeNode n3 = new TreeNode(8);
-//        TreeNode n4 = new TreeNode(11);
-//        TreeNode n5 = new TreeNode(13);
-//        TreeNode n6 = new TreeNode(4);
-//        TreeNode n7 = new TreeNode(7);
-//        TreeNode n8 = new TreeNode(2);
-//        TreeNode n9 = new TreeNode(5);
-//        TreeNode n10 = new TreeNode(1);
-//
-//        n1.left = n2;
-//        n1.right = n3;
-//
-//        n2.left = n4;
-//
-//        n3.left = n5;
-//        n3.right = n6;
-//
-//        n4.left = n7;
-//        n4.right = n8;
-//
-//        n6.left = n9;
-//        n6.right = n10;
-//
-//        List<List<Integer>> lists = pathSum(n1, 22);
-//        for (List<Integer> list : lists) {
-//            System.out.println(list.toString());
-//        }
+        TreeNode n1 = new TreeNode(10);
+        TreeNode n2 = new TreeNode(5);
+        TreeNode n3 = new TreeNode(12);
+        TreeNode n4 = new TreeNode(2);
+        TreeNode n5 = new TreeNode(11);
+        TreeNode n6 = new TreeNode(15);
+        TreeNode n7 = new TreeNode(1);
+        TreeNode n8 = new TreeNode(14);
+        TreeNode n9 = new TreeNode(14);
+        TreeNode n10 = new TreeNode(18);
+        TreeNode n11 = new TreeNode(3);
+
+        n1.left = n2;
+        n1.right = n3;
+
+        n2.left = n4;
+
+        n3.left = n5;
+        n3.right = n6;
+
+        n4.left = n7;
+        n4.right = n8;
+
+        n6.left = n9;
+        n6.right = n10;
+
+        n8.left = n11;
+
+        System.out.println(isValidBST(n1));
+        //        for (List<Integer> list : lists) {
+        //            System.out.println(list.toString());
+        //        }
     }
 }
 

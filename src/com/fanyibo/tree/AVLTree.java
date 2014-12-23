@@ -27,12 +27,14 @@ public class AVLTree {
                 root.right = newNode;
             } else {
                 _insert(root.right, newNode);
+                selfBalance();
             }
         } else {
             if (root.left == null) {
                 root.left = newNode;
             } else {
                 _insert(root.left, newNode);
+                selfBalance();
             }
         }
     }
@@ -52,6 +54,10 @@ public class AVLTree {
                 _insert(node.left, target);
             }
         }
+    }
+
+    public void updateBalance(TreeNode node) {
+
     }
 
     public void selfBalance() {
@@ -111,7 +117,7 @@ public class AVLTree {
 
         AVLTree avlTree = new AVLTree();
 
-        System.out.println(avlTree.balanceFactor(n9));
+        System.out.println(avlTree.balanceFactor(n6));
 
     }
 }
