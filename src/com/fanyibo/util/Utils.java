@@ -2258,7 +2258,7 @@ public class Utils {
             return triangle.get(rowIndex).get(colIndex);
         }
         return triangle.get(rowIndex).get(colIndex) + Math.min(minimumTotal(triangle, rowIndex + 1, colIndex),
-                                                               minimumTotal(triangle, rowIndex + 1, colIndex + 1));
+                minimumTotal(triangle, rowIndex + 1, colIndex + 1));
     }
 
     /**
@@ -2424,6 +2424,7 @@ public class Utils {
      * For example:
      * Given 1->2->3->4->5->NULL and k = 2,
      * return 4->5->1->2->3->NULL.
+     * {1,2,3}, 4 Expected:	{3,1,2}
      */
     public static ListNode rotateRight(ListNode head, int n) {
 
@@ -2440,7 +2441,8 @@ public class Utils {
             temp = temp.next;
             size++;
         }
-        if (n != 0 && size > n) {
+        n = n % size;
+        if (n != 0) {
             int i = 0;
             temp = head;
             while (i != size - n - 1) {
@@ -2452,6 +2454,26 @@ public class Utils {
             last.next = head;
         }
         return newHead;
+    }
+
+    /**
+     * Given a collection of integers that might contain duplicates, S, return all possible subsets.
+     * Note:
+     * Elements in a subset must be in non-descending order.
+     * The solution set must not contain duplicate subsets.
+     * For example,
+     * If S = [1,2,2], a solution is:
+     * [
+     * [2],
+     * [1],
+     * [1,2,2],
+     * [2,2],
+     * [1,2],
+     * []
+     * ]
+     */
+    public static List<List<Integer>> subsetsWithDup(int[] num) {
+        return null;
     }
 
 
