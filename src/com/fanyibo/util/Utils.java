@@ -2251,7 +2251,7 @@ public class Utils {
             return triangle.get(rowIndex).get(colIndex);
         }
         return triangle.get(rowIndex).get(colIndex) + Math.min(minimumTotal(triangle, rowIndex + 1, colIndex),
-                                                               minimumTotal(triangle, rowIndex + 1, colIndex + 1));
+                minimumTotal(triangle, rowIndex + 1, colIndex + 1));
     }
 
     /**
@@ -2834,6 +2834,123 @@ public class Utils {
      */
     public static List<String> restoreIpAddresses(String s) {
 
+        if (s == null || s.length() < 4 || s.length() > 12) {
+            return null;
+        }
+        List<String> result = new ArrayList<String>();
+
+        StringBuilder builder = new StringBuilder();
+        for (int i = 1; i <= 3; ++i) {
+            int first = Integer.valueOf(s.substring(0, i));
+            if (first > 255) {
+                continue;
+            }
+            builder.append(first);
+            builder.append(".");
+
+            for (int j = 1; j <= 3; ++j) {
+                if (i + j >= s.length()) {
+                    continue;
+                }
+                int second = Integer.valueOf(s.substring(i, i + j));
+                if (second > 255) {
+                    continue;
+                }
+                builder.append(second);
+                builder.append(".");
+
+                for (int k = 1; k <= 3; k++) {
+                    if (i + j + k >= s.length()) {
+                        continue;
+                    }
+                    int third = Integer.valueOf(s.substring(i + j, i + j + k));
+                    if (third > 255) {
+                        continue;
+                    }
+                    builder.append(third);
+                    builder.append(".");
+
+                    for (int l = 1; l <= 3; l++) {
+                        if (i + j + k + l != s.length()) {
+                            continue;
+                        }
+                        int forth = Integer.valueOf(s.substring(i + j + k, i + j + k + l));
+                        if (forth > 255) {
+                            continue;
+                        }
+                        builder.append(forth);
+                        if (builder.length() == s.length() + 3) {
+                            result.add(builder.toString());
+                        }
+                        builder.delete(builder.length() - String.valueOf(forth).length(), builder.length());
+                    }
+                    builder.delete(builder.length() - String.valueOf(third).length() - 1, builder.length());
+                }
+                builder.delete(builder.length() - String.valueOf(second).length() - 1, builder.length());
+            }
+            builder.delete(0, builder.length());
+        }
+
+        return result;
+    }
+
+
+    /**
+     * A message containing letters from A-Z is being encoded to numbers using the following mapping:
+     * 'A' -> 1
+     * 'B' -> 2
+     * ...
+     * 'Z' -> 26
+     * Given an encoded message containing digits, determine the total number of ways to decode it.
+     * For example,
+     * Given encoded message "12", it could be decoded as "AB" (1 2) or "L" (12).
+     * The number of ways decoding "12" is 2.
+     */
+    public static int numDecodings(String s) {
+        if (s == null || s.length() == 0) {
+            return 0;
+        }
+        if (s.length() == 1) {
+            return Integer.valueOf(s) == 0 ? 0 : 1;
+        }
+        if (s.length() == 2) {
+
+            int num = Integer.valueOf(s);
+            if (num == 10 || num > 26) {
+                return 1;
+            } else {
+                return 2;
+            }
+        }
+
+        int num1 = Integer.valueOf(s.substring(0, 1));
+        int num2 = Integer.valueOf(s.substring(0, 2));
+        if (num1 == 0) {
+            return 0;
+        }
+        if (num2 == 10 || num2 > 26) {
+            return numDecodings(s.substring(2));
+        } else {
+            return numDecodings(s.substring(2)) + numDecodings(s.substring(1));
+        }
+    }
+
+    /**
+     * The gray code is a binary numeral system where two successive values differ in only one bit.
+     * Given a non-negative integer n representing the total number of bits in the code, print the sequence of gray
+     * code. A gray code sequence must begin with 0.
+     * For example, given n = 2, return [0,1,3,2]. Its gray code sequence is:
+     * 00 - 0
+     * 01 - 1
+     * 11 - 3
+     * 10 - 2
+     * Note:
+     * For a given n, a gray code sequence is not uniquely defined.
+     * For example, [0,2,3,1] is also a valid gray code sequence according to the above definition.
+     * For now, the judge is able to judge based on one instance of gray code sequence. Sorry about that.
+     */
+    public static List<Integer> grayCode(int n) {
+        return null;
     }
 
     /**
@@ -2863,38 +2980,39 @@ public class Utils {
          *      /
          *      3(11)
          */
-        TreeNode n1 = new TreeNode(10);
-        TreeNode n2 = new TreeNode(5);
-        TreeNode n3 = new TreeNode(12);
-        TreeNode n4 = new TreeNode(2);
-        TreeNode n5 = new TreeNode(11);
-        TreeNode n6 = new TreeNode(15);
-        TreeNode n7 = new TreeNode(1);
-        TreeNode n8 = new TreeNode(14);
-        TreeNode n9 = new TreeNode(14);
-        TreeNode n10 = new TreeNode(18);
-        TreeNode n11 = new TreeNode(3);
-
-        n1.left = n2;
-        n1.right = n3;
-
-        n2.left = n4;
-
-        n3.left = n5;
-        n3.right = n6;
-
-        n4.left = n7;
-        n4.right = n8;
-
-        n6.left = n9;
-        n6.right = n10;
-
-        n8.left = n11;
-
-        System.out.println(isValidBST(n1));
-        //        for (List<Integer> list : lists) {
-        //            System.out.println(list.toString());
-        //        }
+//        TreeNode n1 = new TreeNode(10);
+//        TreeNode n2 = new TreeNode(5);
+//        TreeNode n3 = new TreeNode(12);
+//        TreeNode n4 = new TreeNode(2);
+//        TreeNode n5 = new TreeNode(11);
+//        TreeNode n6 = new TreeNode(15);
+//        TreeNode n7 = new TreeNode(1);
+//        TreeNode n8 = new TreeNode(14);
+//        TreeNode n9 = new TreeNode(14);
+//        TreeNode n10 = new TreeNode(18);
+//        TreeNode n11 = new TreeNode(3);
+//
+//        n1.left = n2;
+//        n1.right = n3;
+//
+//        n2.left = n4;
+//
+//        n3.left = n5;
+//        n3.right = n6;
+//
+//        n4.left = n7;
+//        n4.right = n8;
+//
+//        n6.left = n9;
+//        n6.right = n10;
+//
+//        n8.left = n11;
+//
+        System.out.println(numDecodings("101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010"));
+//        List<String> ips = restoreIpAddresses("010010");
+//        for (String ip : ips) {
+//            System.out.println(ip);
+//        }
     }
 }
 
