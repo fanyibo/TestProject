@@ -2936,6 +2936,102 @@ public class Utils {
     }
 
     /**
+     * Given a 2D board containing 'X' and 'O', capture all regions surrounded by 'X'.
+     * A region is captured by flipping all 'O's into 'X's in that surrounded region.
+     * For example,
+     * X X X X
+     * X O O X
+     * X X O X
+     * X O X X
+     * After running your function, the board should be:
+     * X X X X
+     * X X X X
+     * X X X X
+     * X O X X
+     */
+    public static void solve(char[][] board) {
+
+        if (board == null || board.length == 0) {
+            return;
+        }
+        int rows = board.length;
+        int cols = board[0].length;
+        if (rows < 3 || cols < 3) {
+            return;
+        }
+
+        List<Integer> indexX = new ArrayList<Integer>();
+        List<Integer> indexY = new ArrayList<Integer>();
+
+        int[][] marks = new int[rows][cols];
+        for (int i = 0; i < rows; i++) {
+            if (board[i][0] != 'X' && marks[i][0] != 1) {
+                indexX.add(i);
+                indexY.add(0);
+            }
+            if (board[i][cols - 1] != 'X' && marks[i][cols - 1] != 1) {
+                indexX.add(i);
+                indexY.add(cols - 1);
+            }
+        }
+        for (int j = 1; j < cols - 1; j++) {
+            if (board[0][j] != 'X' && marks[0][j] != 1) {
+                indexX.add(0);
+                indexY.add(j);
+            }
+            if (board[rows - 1][j] != 'X' && marks[rows - 1][j] != 1) {
+                indexX.add(rows - 1);
+                indexY.add(j);
+            }
+        }
+
+
+        while (!indexX.isEmpty()) {
+
+            int x = indexX.remove(0);
+            int y = indexY.remove(0);
+
+            marks[x][y] = 1;
+
+            int leftX = x;
+            int leftY = y - 1;
+            int upX = x - 1;
+            int upY = y;
+            int rightX = x;
+            int rightY = y + 1;
+            int downX = x + 1;
+            int downY = y;
+
+            if (rightY < cols && marks[rightX][rightY] != 1 && board[rightX][rightY] != 'X') {
+                indexX.add(rightX);
+                indexY.add(rightY);
+            }
+            if (downX < rows && marks[downX][downY] != 1 && board[downX][downY] != 'X') {
+                indexX.add(downX);
+                indexY.add(downY);
+            }
+            if (upX >= 0 && marks[upX][upY] != 1 && board[upX][upY] != 'X') {
+                indexX.add(upX);
+                indexY.add(upY);
+            }
+            if (leftY >= 0 && marks[leftX][leftY] != 1 && board[leftX][leftY] != 'X') {
+                indexX.add(leftX);
+                indexY.add(leftY);
+            }
+        }
+
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                if (marks[i][j] != 1) {
+                    board[i][j] = 'X';
+                }
+            }
+        }
+
+    }
+
+
+    /**
      * The gray code is a binary numeral system where two successive values differ in only one bit.
      * Given a non-negative integer n representing the total number of bits in the code, print the sequence of gray
      * code. A gray code sequence must begin with 0.
@@ -2950,6 +3046,180 @@ public class Utils {
      * For now, the judge is able to judge based on one instance of gray code sequence. Sorry about that.
      */
     public static List<Integer> grayCode(int n) {
+
+        List<Integer> result = new ArrayList<Integer>();
+        if (n >= 0) {
+            for (int i = 0; i <= n; i++) {
+                if (i == 0) {
+                    result.add(0);
+                } else {
+                    int head = (int) Math.pow(2, (i - 1));
+                    int size = result.size();
+                    for (int j = 0; j < size; j++) {
+                        result.add(size, (head + result.get(j)));
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Given two words (start and end), and a dictionary, find the length of shortest transformation sequence from
+     * start
+     * to end, such that:
+     * Only one letter can be changed at a time
+     * Each intermediate word must exist in the dictionary
+     * For example,
+     * Given:
+     * start = "hit"
+     * end = "cog"
+     * dict = ["hot","dot","dog","lot","log"]
+     * As one shortest transformation is "hit" -> "hot" -> "dot" -> "dog" -> "cog",
+     * return its length 5.
+     * Note:
+     * Return 0 if there is no such transformation sequence.
+     * All words have the same length.
+     * All words contain only lowercase alphabetic characters.
+     */
+    public static int ladderLength(String start, String end, Set<String> dict) {
+        return 0;
+    }
+
+    /**
+     * Given a sorted linked list, delete all nodes that have duplicate numbers, leaving only distinct numbers from the
+     * original list.
+     * For example,
+     * Given 1->2->3->3->4->4->5, return 1->2->5.
+     * Given 1->1->1->2->3, return 2->3.
+     */
+    public static ListNode deleteDuplicates1(ListNode head) {
+        return null;
+    }
+
+    /**
+     * Follow up for "Search in Rotated Sorted Array":
+     * What if duplicates are allowed?
+     * Would this affect the run-time complexity? How and why?
+     * Write a function to determine if a given target is in the array.
+     */
+    public static boolean search(int[] A, int target) {
+        return false;
+    }
+
+    /**
+     * Follow up for "Remove Duplicates":
+     * What if duplicates are allowed at most twice?
+     * For example,
+     * Given sorted array A = [1,1,1,2,2,3],
+     * Your function should return length = 5, and A is now [1,1,2,2,3].
+     */
+    public static int removeDuplicates2(int[] A) {
+        return 0;
+    }
+
+    /**
+     * Given a set of distinct integers, S, return all possible subsets.
+     * Note:
+     * Elements in a subset must be in non-descending order.
+     * The solution set must not contain duplicate subsets.
+     * For example,
+     * If S = [1,2,3], a solution is:
+     * [
+     * [3],
+     * [1],
+     * [2],
+     * [1,2,3],
+     * [1,3],
+     * [2,3],
+     * [1,2],
+     * []
+     * ]
+     */
+    public static List<List<Integer>> subsets(int[] S) {
+        return null;
+    }
+
+    /**
+     * Given two integers n and k, return all possible combinations of k numbers out of 1 ... n.
+     * For example,
+     * If n = 4 and k = 2, a solution is:
+     * [
+     * [2,4],
+     * [3,4],
+     * [2,3],
+     * [1,2],
+     * [1,3],
+     * [1,4],
+     * ]
+     */
+    public static List<List<Integer>> combine(int n, int k) {
+        return null;
+    }
+
+    /**
+     * Given a m x n matrix, if an element is 0, set its entire row and column to 0. Do it in place.
+     * click to show follow up.
+     * Follow up:
+     * Did you use extra space?
+     * A straight forward solution using O(mn) space is probably a bad idea.
+     * A simple improvement uses O(m + n) space, but still not the best solution.
+     * Could you devise a constant space solution?
+     */
+    public static void setZeroes(int[][] matrix) {
+
+    }
+
+    /**
+     * Given an absolute path for a file (Unix-style), simplify it.
+     * For example,
+     * path = "/home/", => "/home"
+     * path = "/a/./b/../../c/", => "/c"
+     * click to show corner cases.
+     * Corner Cases:
+     * Did you consider the case where path = "/../"?
+     * In this case, you should return "/".
+     * Another corner case is the path might contain multiple slashes '/' together, such as "/home//foo/".
+     * In this case, you should ignore redundant slashes and return "/home/foo".
+     */
+    public static String simplifyPath(String path) {
+        return null;
+    }
+
+    /**
+     * A robot is located at the top-left corner of a m x n grid (marked 'Start' in the diagram below).
+     * The robot can only move either down or right at any point in time. The robot is trying to reach the bottom-right
+     * corner of the grid (marked 'Finish' in the diagram below).
+     * How many possible unique paths are there?
+     * Above is a 3 x 7 grid. How many possible unique paths are there?
+     * Note: m and n will be at most 100.
+     */
+    public static int uniquePaths(int m, int n) {
+        return 0;
+    }
+
+    /**
+     * Given a collection of intervals, merge all overlapping intervals.
+     * For example,
+     * Given [1,3],[2,6],[8,10],[15,18],
+     * return [1,6],[8,10],[15,18].
+     */
+    public static class Interval {
+        int start;
+        int end;
+
+        Interval() {
+            start = 0;
+            end = 0;
+        }
+
+        Interval(int s, int e) {
+            start = s;
+            end = e;
+        }
+    }
+
+    public static List<Interval> merge(List<Interval> intervals) {
         return null;
     }
 
@@ -2969,17 +3239,10 @@ public class Utils {
 
     public static void main(String[] args) {
 
-        /**
-         *        10(1)
-         *     /      \
-         *    5(2)     12(3)
-         *    /        /    \
-         *  2(4)   11(5)   15(6)
-         *  /   \           /  \
-         * 1(7) 14(8)      14(9) 18(10)
-         *      /
-         *      3(11)
-         */
+        List<Integer> list = grayCode(2);
+        System.out.println(list.toString());
+
+
 //        TreeNode n1 = new TreeNode(10);
 //        TreeNode n2 = new TreeNode(5);
 //        TreeNode n3 = new TreeNode(12);
@@ -3008,7 +3271,7 @@ public class Utils {
 //
 //        n8.left = n11;
 //
-        System.out.println(numDecodings("101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010"));
+        //       System.out.println(numDecodings("101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010"));
 //        List<String> ips = restoreIpAddresses("010010");
 //        for (String ip : ips) {
 //            System.out.println(ip);
