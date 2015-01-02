@@ -306,7 +306,48 @@ public final class Utils2 {
      * What is the minimum candies you must give?
      */
     public static int candy(int[] ratings) {
-        return 0;
+
+        if (ratings == null || ratings.length == 0) {
+            return 0;
+        }
+        int length = ratings.length;
+        int[] candies = new int[length];
+        candies[0] = 1;
+        int i;
+        for (i = 1; i < length; i++) {
+            candies[i] = 1;
+            if (ratings[i] > ratings[i - 1]) {
+                candies[i] = candies[i - 1] + 1;
+            } else if (ratings[i] < ratings[i - 1]) {
+                candies[i] = candies[i - 1] - 1;
+            }
+            if (i < length - 1 && ratings[i] < ratings[i - 1] && ratings[i] <= ratings[i + 1]) {
+                ReAdjustCandy(ratings, candies, i);
+            }
+            if (i == length - 1 && ratings[i] < ratings[i - 1]) {
+                ReAdjustCandy(ratings, candies, i);
+            }
+        }
+
+        int total = 0;
+        for (i = 0; i < length; i++) {
+            total += candies[i];
+        }
+        return total;
+    }
+
+    public static void ReAdjustCandy(int[] ratings,
+                                     int[] candy,
+                                     int startIndex) {
+        int k = startIndex;
+        int diff = 1 - candy[k];
+        while (k > 0 && ratings[k - 1] > ratings[k]) {
+            candy[k] = candy[k] + diff;
+            k--;
+        }
+        if (diff > 0) {
+            candy[k] += diff;
+        }
     }
 
     /**
@@ -324,8 +365,55 @@ public final class Utils2 {
      */
     public static List<List<Integer>> combinationSum(int[] candidates,
                                                      int target) {
-        return null;
+
+        if (candidates == null || candidates.length == 0) {
+            return new ArrayList<List<Integer>>();
+        }
+        Arrays.sort(candidates);
+        if (target < candidates[0]) {
+            return new ArrayList<List<Integer>>();
+        }
+        Set<List<Integer>> set = getCombinationSum(candidates, target, 0);
+        return new ArrayList<List<Integer>>(set);
     }
+
+    public static Set<List<Integer>> getCombinationSum(int[] candidates,
+                                                       int sum,
+                                                       int start) {
+
+        if (start >= candidates.length || candidates[start] > sum) {
+            return new HashSet<List<Integer>>();
+        }
+        Set<List<Integer>> set = new HashSet<List<Integer>>();
+        if (candidates[start] == sum) {
+            List<Integer> list = new ArrayList<Integer>();
+            list.add(candidates[start]);
+            set.add(list);
+        } else {
+            int count = sum / candidates[start];
+            for (int i = 0; i <= count; i++) {
+                Set<List<Integer>> _set = getCombinationSum(candidates, sum - candidates[start] * i, start + 1);
+                if (i == count && sum % candidates[start] == 0) {
+                    List<Integer> list = new ArrayList<Integer>();
+                    for (int j = 0; j < i; j++) {
+                        list.add(candidates[start]);
+                    }
+                    set.add(list);
+                } else {
+                    for (List<Integer> _s : _set) {
+                        List<Integer> list = new ArrayList<Integer>();
+                        for (int j = 0; j < i; j++) {
+                            list.add(candidates[start]);
+                        }
+                        list.addAll(_s);
+                        set.add(list);
+                    }
+                }
+            }
+        }
+        return set;
+    }
+
 
     /**
      * Given a collection of candidate numbers (C) and a target number (T), find all unique combinations in C where the
@@ -344,9 +432,753 @@ public final class Utils2 {
      */
     public static List<List<Integer>> combinationSum2(int[] num,
                                                       int target) {
-        return null;
+
+        if (num == null || num.length == 0) {
+            return new ArrayList<List<Integer>>();
+        }
+        Arrays.sort(num);
+        if (target < num[0]) {
+            return new ArrayList<List<Integer>>();
+        }
+        Set<List<Integer>> set = getUnqiueCombinationSum(num, target, 0);
+        return new ArrayList<List<Integer>>(set);
     }
 
+    public static Set<List<Integer>> getUnqiueCombinationSum(int[] candidates,
+                                                             int sum,
+                                                             int start) {
+
+        if (start >= candidates.length || candidates[start] > sum) {
+            return new HashSet<List<Integer>>();
+        }
+        Set<List<Integer>> set = new HashSet<List<Integer>>();
+        if (candidates[start] == sum) {
+            List<Integer> list = new ArrayList<Integer>();
+            list.add(candidates[start]);
+            set.add(list);
+        } else {
+            for (int i = 0; i <= 1; i++) {
+                Set<List<Integer>> _set = getUnqiueCombinationSum(candidates, sum - candidates[start] * i, start + 1);
+                for (List<Integer> _s : _set) {
+                    List<Integer> list = new ArrayList<Integer>();
+                    for (int j = 0; j < i; j++) {
+                        list.add(candidates[start]);
+                    }
+                    list.addAll(_s);
+                    set.add(list);
+                }
+            }
+        }
+        return set;
+    }
+
+    /**
+     * Given two integers n and k, return all possible combinations of k numbers out of 1 ... n.
+     * For example,
+     * If n = 4 and k = 2, a solution is:
+     * [
+     * [2,4],
+     * [3,4],
+     * [2,3],
+     * [1,2],
+     * [1,3],
+     * [1,4],
+     * ]
+     */
+    public static List<List<Integer>> combine(int n,
+                                              int k) {
+
+
+        if (n <= 0 || k <= 0) {
+            return new ArrayList<List<Integer>>();
+        }
+        Set<List<Integer>> set = new HashSet<List<Integer>>();
+        for (int i = 1; i <= n - k + 1; i++) {
+            set.addAll(_combinations(n, i, k));
+        }
+        return new ArrayList<List<Integer>>(set);
+    }
+
+    public static List<List<Integer>> _combinations(int n,
+                                                    int start,
+                                                    int k) {
+
+        if (start > n || k <= 0 || k > (n - start + 1)) {
+            return new ArrayList<List<Integer>>();
+        }
+        if (k == 1) {
+            List<List<Integer>> lists = new ArrayList<List<Integer>>();
+            for (int i = start; i <= n; i++) {
+                List<Integer> list = new ArrayList<Integer>();
+                list.add(i);
+                lists.add(list);
+            }
+            return lists;
+        } else {
+            List<List<Integer>> lists = new ArrayList<List<Integer>>();
+            for (int i = start + 1; i <= n - k + 2; i++) {
+                List<List<Integer>> _lists = _combinations(n, i, k - 1);
+                for (int j = 0; j < _lists.size(); j++) {
+                    _lists.get(j).add(0, start);
+                }
+                lists.addAll(_lists);
+            }
+            return lists;
+        }
+    }
+
+    /**
+     * A linked list is given such that each node contains an additional random pointer which could point to any node
+     * in
+     * the list or null.
+     * Return a deep copy of the list.
+     */
+    public static class RandomListNode {
+        int            label;
+        RandomListNode next, random;
+
+        RandomListNode(int x) {
+            this.label = x;
+        }
+    }
+
+    public static RandomListNode copyRandomList(RandomListNode head) {
+
+        RandomListNode newHead = null;
+        RandomListNode oriTemp1 = head;
+        RandomListNode newTemp1 = null;
+
+        HashMap<Integer, List<RandomListNode>> map = new HashMap<Integer, List<RandomListNode>>();
+
+        while (oriTemp1 != null) {
+
+            int label = oriTemp1.label;
+
+            if (newHead == null) {
+                newHead = new RandomListNode(label);
+                newTemp1 = newHead;
+            } else {
+                RandomListNode temp = new RandomListNode(label);
+                newTemp1.next = temp;
+                newTemp1 = newTemp1.next;
+            }
+            List<RandomListNode> list = new ArrayList<RandomListNode>();
+            list.add(oriTemp1);
+            list.add(newTemp1);
+            map.put(oriTemp1.hashCode(), list);
+            oriTemp1 = oriTemp1.next;
+        }
+
+        for (Integer hasCode : map.keySet()) {
+            List<RandomListNode> list = map.get(hasCode);
+            RandomListNode original = list.get(0);
+            RandomListNode newNode = list.get(1);
+            if (original.random != null) {
+                Integer oriRandomHashCode = original.random.hashCode();
+                newNode.random = map.get(oriRandomHashCode).get(1);
+            }
+        }
+
+        return newHead;
+    }
+
+
+    /**
+     * Given a set of distinct integers, S, return all possible subsets.
+     * Note:
+     * Elements in a subset must be in non-descending order.
+     * The solution set must not contain duplicate subsets.
+     * For example,
+     * If S = [1,2,3], a solution is:
+     * [
+     * [3],
+     * [1],
+     * [2],
+     * [1,2,3],
+     * [1,3],
+     * [2,3],
+     * [1,2],
+     * []
+     * ]
+     */
+    public static List<List<Integer>> subsets(int[] S) {
+
+        List<List<Integer>> lists = new ArrayList<List<Integer>>();
+        if (S != null && S.length > 0) {
+            Arrays.sort(S);
+            for (int i = 0; i < S.length; i++) {
+                List<Integer> list;
+                int length = lists.size();
+                for (int j = 0; j < length; j++) {
+                    list = new ArrayList<Integer>(lists.get(j));
+                    list.add(S[i]);
+                    lists.add(list);
+                }
+                list = new ArrayList<Integer>();
+                list.add(S[i]);
+                lists.add(list);
+            }
+        }
+        lists.add(new ArrayList<Integer>());
+        return lists;
+    }
+
+
+    /**
+     * Given a m x n matrix, if an element is 0, set its entire row and column to 0. Do it in place.
+     * click to show follow up.
+     * Follow up:
+     * Did you use extra space?
+     * A straight forward solution using O(mn) space is probably a bad idea.
+     * A simple improvement uses O(m + n) space, but still not the best solution.
+     * Could you devise a constant space solution?
+     */
+    public static void setZeroes(int[][] matrix) {
+
+        if (matrix == null) {
+            return;
+        }
+        Set<Integer> rows = new HashSet<Integer>();
+        Set<Integer> cols = new HashSet<Integer>();
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix[i].length; j++) {
+                if (matrix[i][j] == 0) {
+                    rows.add(i);
+                    cols.add(j);
+                }
+            }
+        }
+
+        for (Integer x : rows) {
+            for (int i = 0; i < matrix[x].length; i++) {
+                matrix[x][i] = 0;
+            }
+        }
+        for (Integer y : cols) {
+            for (int i = 0; i < matrix.length; i++) {
+                matrix[i][y] = 0;
+            }
+        }
+    }
+
+    /**
+     * Given an absolute path for a file (Unix-style), simplify it.
+     * For example,
+     * path = "/home/", => "/home"
+     * path = "/a/./b/../../c/", => "/c"
+     * click to show corner cases.
+     * Corner Cases:
+     * Did you consider the case where path = "/../"?
+     * In this case, you should return "/".
+     * Another corner case is the path might contain multiple slashes '/' together, such as "/home//foo/".
+     * In this case, you should ignore redundant slashes and return "/home/foo".
+     */
+    public static String simplifyPath(String path) {
+
+        List<String> list = new ArrayList<String>();
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < path.length(); i++) {
+            char c = path.charAt(i);
+            if (c == '/') {
+                if (builder.length() > 0) {
+                    list.add(builder.toString());
+                    builder.delete(0, builder.length());
+                }
+            } else {
+                builder.append(c);
+            }
+        }
+        if (builder.length() > 0) {
+            list.add(builder.toString());
+            builder.delete(0, builder.length());
+        }
+        builder.delete(0, builder.length());
+        Deque<String> queue = new ArrayDeque<String>();
+        queue.addFirst("/");
+        for (String elem : list) {
+            if (elem.equals(".")) {
+                // continue;
+            } else if (elem.equals("..")) {
+                if (!queue.isEmpty()) {
+                    String removed = queue.removeLast();
+                    if (removed.equals("/")) {
+                        queue.addLast("/");
+                    }
+                } else {
+                    queue.addLast("/");
+                }
+            } else {
+                queue.addLast(elem);
+            }
+        }
+        while (!queue.isEmpty()) {
+            String elem = queue.removeFirst();
+            builder.append(elem);
+            if (!elem.equals("/") && !queue.isEmpty()) {
+                builder.append("/");
+            }
+        }
+        return builder.toString();
+    }
+
+    /**
+     * A robot is located at the top-left corner of a m x n grid (marked 'Start' in the diagram below).
+     * The robot can only move either down or right at any point in time. The robot is trying to reach the bottom-right
+     * corner of the grid (marked 'Finish' in the diagram below).
+     * How many possible unique paths are there?
+     * Above is a 3 x 7 grid. How many possible unique paths are there?
+     * Note: m and n will be at most 100.
+     */
+    public static int uniquePaths(int m,
+                                  int n) {
+
+        if (m <= 0 || n <= 0) {
+            return 0;
+        }
+
+        int[][] paths = new int[m][n];
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                if (i == 0 || j == 0) {
+                    paths[i][j] = 1;
+                } else {
+                    paths[i][j] = paths[i][j - 1] + paths[i - 1][j];
+                }
+            }
+        }
+        return paths[m - 1][n - 1];
+    }
+
+    /**
+     * Given a collection of intervals, merge all overlapping intervals.
+     * For example,
+     * Given [1,3],[2,6],[8,10],[15,18],
+     * return [1,6],[8,10],[15,18].
+     */
+    public static class Interval {
+        int start;
+        int end;
+
+        Interval() {
+            start = 0;
+            end = 0;
+        }
+
+        Interval(int s,
+                 int e) {
+            start = s;
+            end = e;
+        }
+
+        @Override public String toString() {
+            return "Interval{" +
+                    "start=" + start +
+                    ", end=" + end +
+                    '}';
+        }
+    }
+
+    public static List<Interval> mergeIntervals(List<Interval> intervals) {
+
+        if (intervals == null || intervals.size() == 0) {
+            return new ArrayList<Interval>();
+        }
+
+        List<Interval> result = new ArrayList<Interval>();
+
+        for (int i = 0; i < intervals.size(); i++) {
+            insertInterval(result, intervals.get(i));
+        }
+        return result;
+    }
+
+    public static void insertInterval(List<Interval> intervals,
+                                      Interval newInterval) {
+        int i = 0;
+        while (i < intervals.size()) {
+
+            int start = intervals.get(i).start;
+            int end = intervals.get(i).end;
+
+            if (start == newInterval.start && end == newInterval.end) {
+                return;
+            }
+
+            if (newInterval.end < start) {
+                intervals.add(i, newInterval);
+                return;
+            } else if (newInterval.start > end) {
+                i++;
+            } else {
+                newInterval.start = Math.min(newInterval.start, start);
+                newInterval.end = Math.max(newInterval.end, end);
+                intervals.remove(i);
+            }
+        }
+        intervals.add(newInterval);
+    }
+
+    /**
+     * Given an array of non-negative integers, you are initially positioned at the first index of the array.
+     * Each element in the array represents your maximum jump length at that position.
+     * Determine if you are able to reach the last index.
+     * For example:
+     * A = [2,3,1,1,4], return true.
+     * A = [3,2,1,0,4], return false.
+     */
+    public static boolean canJump(int[] A) {
+
+        if (A == null || A.length <= 1) {
+            return true;
+        }
+        //5,9,3,2,1,0,2,3,3,1,0,0
+        int length = A.length;
+        int last = length - 1;
+        int[] records = new int[length];
+        int current = 0;
+        records[current] = 1;
+        int longst = 0;
+        while (current <= last && records[current] == 1) {
+
+            for (int i = longst; i <= current + A[current]; i++) {
+                if (i >= last) {
+                    return true;
+                } else {
+                    records[i] = 1;
+                    longst = i;
+                }
+            }
+            current++;
+        }
+        return records[last] == 1;
+    }
+
+    /**
+     * Given an array of non-negative integers, you are initially positioned at the first index of the array.
+     * Each element in the array represents your maximum jump length at that position.
+     * Your goal is to reach the last index in the minimum number of jumps.
+     * For example:
+     * Given array A = [2,3,1,1,4]
+     * The minimum number of jumps to reach the last index is 2. (Jump 1 step from index 0 to 1, then 3 steps to the
+     * last index.)
+     */
+    public static int jump(int[] A) {
+
+        if (A == null || A.length == 0) {
+            return 0;
+        }
+        if (A.length == 1 || A[0] >= A.length - 1) {
+            return 1;
+        }
+
+        int length = A.length;
+        int[] dist = new int[length];
+        dist[0] = 0;
+        for (int i = 0; i < length; i++) {
+            int outbound = Math.min(length - 1, i + A[i]);
+            for (int j = i + 1; j <= outbound; j++) {
+                if (dist[j] == 0 || dist[j] > dist[i] + 1) {
+                    dist[j] = dist[i] + 1;
+                }
+            }
+        }
+        return dist[length - 1];
+    }
+
+    /**
+     * Given a column title as appear in an Excel sheet, return its corresponding column number.
+     * For example:
+     * A -> 1
+     * B -> 2
+     * C -> 3
+     * ...
+     * Z -> 26
+     * AA -> 27
+     * AB -> 28
+     */
+    public static int titleToNumber(String s) {
+
+        if (s == null || s.length() == 0) {
+            return 0;
+        }
+        int length = s.length();
+
+        int total = 0;
+        for (int i = 0; i < length; i++) {
+            int val = (int) s.charAt(i) - 64;
+            total = 26 * total + val;
+        }
+        return total;
+    }
+
+    /**
+     * Implement an iterator over a binary search tree (BST). Your iterator will be initialized with the root node of a
+     * BST.
+     * Calling next() will return the next smallest number in the BST.
+     * Note: next() and hasNext() should run in average O(1) time and uses O(h) memory, where h is the height of the
+     * tree.
+     */
+    public static class BSTIterator {
+
+        private List<TreeNode> inorder = new ArrayList<TreeNode>();
+
+        public BSTIterator(TreeNode root) {
+            if (root != null) {
+                inorderDFS(root);
+            }
+        }
+
+        private void inorderDFS(TreeNode node) {
+            if (node.left != null) {
+                inorderDFS(node.left);
+            }
+            inorder.add(node);
+            if (node.right != null) {
+                inorderDFS(node.right);
+            }
+        }
+
+        public boolean hasNext() {
+
+            return !inorder.isEmpty();
+        }
+
+        public int next() {
+            return inorder.remove(0).val;
+        }
+    }
+
+    /**
+     * A message containing letters from A-Z is being encoded to numbers using the following mapping:
+     * 'A' -> 1
+     * 'B' -> 2
+     * ...
+     * 'Z' -> 26
+     * Given an encoded message containing digits, determine the total number of ways to decode it.
+     * For example,
+     * Given encoded message "12", it could be decoded as "AB" (1 2) or "L" (12).
+     * The number of ways decoding "12" is 2.
+     */
+    public static int numDecodings(String s) {
+        if (s == null || s.length() == 0) {
+            return 0;
+        } else if (s.length() <= 2) {
+            int num = Integer.valueOf(s);
+            if (num == 0 || (num < 10 && s.length() == 1)) {
+                return 0;
+            } else if (num <= 10 || num > 26) {
+                return 1;
+            } else {
+                return 2;
+            }
+        }
+
+        if (Integer.valueOf(s.substring(0, 1)) == 0) {
+            return 0;
+        }
+
+        int num2 = Integer.valueOf(s.substring(0, 2));
+        if (num2 == 10 || num2 > 26) {
+            return numDecodings(s.substring(2));
+        } else {
+            return numDecodings(s.substring(1)) + numDecodings(s.substring(2));
+        }
+    }
+
+
+    /**
+     * Given a string S and a string T, count the number of distinct subsequences of T in S.
+     * A subsequence of a string is a new string which is formed from the original string by deleting some (can be
+     * none)
+     * of the characters without disturbing the relative positions of the remaining characters. (ie, "ACE" is a
+     * subsequence of "ABCDE" while "AEC" is not).
+     * Here is an example:
+     * S = "rabbbit", T = "rabbit"
+     * Return 3.
+     */
+    public static int numDistinct(String S,
+                                  String T) {
+
+        if (S == null || S.length() == 0 || T == null || T.length() == 0 || T.length() > S.length()) {
+            return 0;
+        } else if (T.length() == S.length()) {
+            return T.equals(S) ? 1 : 0;
+        }
+        int sLength = S.length();
+        int tLength = T.length();
+
+        HashMap<Character, List<Integer>> mapChar = new HashMap<Character, List<Integer>>();
+        for (int i = 0; i < tLength; i++) {
+            mapChar.put(T.charAt(i), new ArrayList<Integer>());
+        }
+        for (int i = 0; i < sLength; i++) {
+            char c = S.charAt(i);
+            if (mapChar.containsKey(c)) {
+                mapChar.get(c).add(i);
+            }
+        }
+        HashMap<Integer, List<Integer>> mapIndex = new HashMap<Integer, List<Integer>>();
+        int maxCol = 0;
+        for (int i = 0; i < tLength; i++) {
+            List<Integer> vals = mapChar.get(T.charAt(i));
+            maxCol = maxCol < vals.size() ? vals.size() : maxCol;
+            mapIndex.put(i, new ArrayList<Integer>(vals));
+        }
+        int[][] ways = new int[tLength][maxCol];
+        for (int i = tLength - 1; i >= 0; i--) {
+            List<Integer> list = mapIndex.get(i);
+            if (i == tLength - 1) {
+                for (int j = 0; j < list.size(); j++) {
+                    ways[i][j] = 1;
+                }
+            } else {
+                List<Integer> nextList = mapIndex.get(i + 1);
+                for (int j = 0; j < list.size(); j++) {
+                    for (int k = 0; k < nextList.size(); k++) {
+                        if (list.get(j) < nextList.get(k)) {
+                            ways[i][j] += ways[i + 1][k];
+                        }
+                    }
+                }
+            }
+        }
+
+        int result = 0;
+        for (int j = 0; j < ways[0].length; j++) {
+            result += ways[0][j];
+        }
+        return result;
+    }
+
+    /**
+     * Divide two integers without using multiplication, division and mod operator.
+     * If it is overflow, return MAX_INT.
+     */
+    public static int divide(int dividend,
+                             int divisor) {
+
+        if (dividend == 0)
+            return 0;
+        if (divisor == 0)
+            return Integer.MAX_VALUE;
+
+        boolean isNegative = false;
+        long left = dividend;
+        long right = divisor;
+        if (dividend < 0) {
+            isNegative = true;
+            left = -left;
+        }
+        if (divisor < 0) {
+            isNegative = !isNegative;
+            right = -right;
+        }
+        long result = 0;
+        while (left >= right) {
+            long temp = right;
+            int i = 1;
+            while (left >= temp) {
+                left -= temp;
+                result += i;
+                temp <<= 1;
+                i <<= 1;
+            }
+        }
+        if (result > Integer.MAX_VALUE && !isNegative) {
+            return Integer.MAX_VALUE;
+        } else if (result - 1 > Integer.MAX_VALUE && isNegative) {
+            return Integer.MAX_VALUE;
+        }
+        return isNegative ? (int) -result : (int) result;
+    }
+
+
+    /**
+     * Suppose a sorted array is rotated at some pivot unknown to you beforehand.
+     * (i.e., 0 1 2 4 5 6 7 might become 4 5 6 7 0 1 2).
+     * Find the minimum element.
+     * The array may contain duplicates.
+     */
+    public static int findMin(int[] num) {
+        if (num == null || num.length == 0) {
+            return Integer.MIN_VALUE;
+        } else if (num.length == 1) {
+            return num[0];
+        }
+        int min = num[0];
+        int left = 0;
+        int right = num.length - 1;
+        while (left < right - 1) {
+            int mid = (left + right) / 2;
+            if (num[left] > num[mid]) {
+                min = Math.min(min, num[mid]);
+                right = mid - 1;
+            } else if (num[left] < num[mid]) {
+                min = Math.min(min, num[left]);
+                left = mid + 1;
+            } else {
+                left++;
+            }
+        }
+        min = Math.min(min, Math.min(num[left], num[right]));
+        return min;
+    }
+
+    /**
+     * Given an integer n, return the number of trailing zeroes in n!.
+     * Note: Your solution should be in logarithmic time complexity.
+     */
+    public static int trailingZeroes(int n) {
+        return 0;
+    }
+
+    /**
+     * Given an integer, convert it to a roman numeral.
+     * Input is guaranteed to be within the range from 1 to 3999.
+     */
+    public static String intToRoman(int num) {
+        return "";
+    }
+
+    /**
+     * Given s1, s2, s3, find whether s3 is formed by the interleaving of s1 and s2.
+     * For example,
+     * Given:
+     * s1 = "aabcc",
+     * s2 = "dbbca",
+     * When s3 = "aadbbcbcac", return true.
+     * When s3 = "aadbbbaccc", return false.
+     */
+    public static boolean isInterleave(String s1,
+                                       String s2,
+                                       String s3) {
+        return false;
+    }
+
+
+    /**
+     * Given an unsorted integer array, find the first missing positive integer.
+     * For example,
+     * Given [1,2,0] return 3,
+     * and [3,4,-1,1] return 2.
+     * Your algorithm should run in O(n) time and uses constant space.
+     */
+    public static int firstMissingPositive(int[] A) {
+        return 0;
+    }
+
+    /**
+     * Given two words word1 and word2, find the minimum number of steps required to convert word1 to word2. (each
+     * operation is counted as 1 step.)
+     * You have the following 3 operations permitted on a word:
+     * a) Insert a character
+     * b) Delete a character
+     * c) Replace a character
+     */
+    public static int minDistance(String word1,
+                                  String word2) {
+        return 0;
+    }
 
     /**
      * Given two words (start and end), and a dictionary, find the length of shortest transformation sequence from
@@ -373,115 +1205,6 @@ public final class Utils2 {
     }
 
     /**
-     * Given a set of distinct integers, S, return all possible subsets.
-     * Note:
-     * Elements in a subset must be in non-descending order.
-     * The solution set must not contain duplicate subsets.
-     * For example,
-     * If S = [1,2,3], a solution is:
-     * [
-     * [3],
-     * [1],
-     * [2],
-     * [1,2,3],
-     * [1,3],
-     * [2,3],
-     * [1,2],
-     * []
-     * ]
-     */
-    public static List<List<Integer>> subsets(int[] S) {
-        return null;
-    }
-
-    /**
-     * Given two integers n and k, return all possible combinations of k numbers out of 1 ... n.
-     * For example,
-     * If n = 4 and k = 2, a solution is:
-     * [
-     * [2,4],
-     * [3,4],
-     * [2,3],
-     * [1,2],
-     * [1,3],
-     * [1,4],
-     * ]
-     */
-    public static List<List<Integer>> combine(int n,
-                                              int k) {
-        return null;
-    }
-
-    /**
-     * Given a m x n matrix, if an element is 0, set its entire row and column to 0. Do it in place.
-     * click to show follow up.
-     * Follow up:
-     * Did you use extra space?
-     * A straight forward solution using O(mn) space is probably a bad idea.
-     * A simple improvement uses O(m + n) space, but still not the best solution.
-     * Could you devise a constant space solution?
-     */
-    public static void setZeroes(int[][] matrix) {
-
-    }
-
-    /**
-     * Given an absolute path for a file (Unix-style), simplify it.
-     * For example,
-     * path = "/home/", => "/home"
-     * path = "/a/./b/../../c/", => "/c"
-     * click to show corner cases.
-     * Corner Cases:
-     * Did you consider the case where path = "/../"?
-     * In this case, you should return "/".
-     * Another corner case is the path might contain multiple slashes '/' together, such as "/home//foo/".
-     * In this case, you should ignore redundant slashes and return "/home/foo".
-     */
-    public static String simplifyPath(String path) {
-        return null;
-    }
-
-    /**
-     * A robot is located at the top-left corner of a m x n grid (marked 'Start' in the diagram below).
-     * The robot can only move either down or right at any point in time. The robot is trying to reach the bottom-right
-     * corner of the grid (marked 'Finish' in the diagram below).
-     * How many possible unique paths are there?
-     * Above is a 3 x 7 grid. How many possible unique paths are there?
-     * Note: m and n will be at most 100.
-     */
-    public static int uniquePaths(int m,
-                                  int n) {
-        return 0;
-    }
-
-    /**
-     * Given a collection of intervals, merge all overlapping intervals.
-     * For example,
-     * Given [1,3],[2,6],[8,10],[15,18],
-     * return [1,6],[8,10],[15,18].
-     */
-    public static class Interval {
-        int start;
-        int end;
-
-        Interval() {
-            start = 0;
-            end = 0;
-        }
-
-        Interval(int s,
-                 int e) {
-            start = s;
-            end = e;
-        }
-
-    }
-
-    public static List<Interval> merge(List<Interval> intervals) {
-        return null;
-    }
-
-    /**
      * Given n, generate all structurally unique BST's (binary search trees) that store values 1...n.
      * For example,
      * Given n = 3, your program should return all 5 unique BST's shown below.
@@ -502,9 +1225,45 @@ public final class Utils2 {
 
     public static void main(String[] args) {
 
-        String[] strs = {"", ""};
-        List<String> list = anagrams(strs);
-        System.out.println(list.toString());
+        int[] num = {3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 5, 6, 1, 1, 1, 1, 1, 1, 1, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3};
+        System.out.println(findMin(num));
+
+        //        int[] A = new int[25000];
+        //        for (int i = 0; i < A.length; i++) {
+        //            A[i] = A.length - i;
+        //        }
+        //        int[] B = {2, 3, 1, 1, 4, 5, 3, 6};
+        //        System.out.println(jump(A));
+        //        System.out.println(jump(B));
+
+        //        Interval i1 = new Interval(0, 0);
+        //        Interval i2 = new Interval(4, 5);
+        //        Interval i3 = new Interval(5, 6);
+        //        Interval i4 = new Interval(5, 5);
+        //        Interval i5 = new Interval(2, 3);
+        //        Interval i6 = new Interval(5, 7);
+        //        Interval i7 = new Interval(0, 0);
+        //
+        //
+        //        List<Interval> intervals = new ArrayList<Interval>();
+        //        intervals.add(i1);
+        //        intervals.add(i2);
+        //        intervals.add(i3);
+        //        intervals.add(i4);
+        //        intervals.add(i5);
+        //        intervals.add(i6);
+        //        intervals.add(i7);
+        //
+        //        List<Interval> result = mergeIntervals(intervals);
+        //        for (Interval interval : result) {
+        //            PRINT(interval);
+        //        }
+
+
+        //        List<List<Integer>> lists = combine(4, 3);
+        //        for (List<Integer> list : lists) {
+        //            PRINT(list);
+        //        }
 
         //        int[] num = {0, 1, 2, 3, 4, 5, 6};
         //        HashMap<List<Integer>, Integer> map = _combination(num, 0, 3);
