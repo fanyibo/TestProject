@@ -23,8 +23,7 @@ public final class Utils2 {
      * (-1, 0, 1)
      * (-1, -1, 2)
      */
-    public static List<List<Integer>> threeSum(int[] num,
-                                               int sum) {
+    public static List<List<Integer>> threeSum(int[] num, int sum) {
         if (num == null || num.length < 3) {
             return new ArrayList<List<Integer>>();
         }
@@ -54,9 +53,7 @@ public final class Utils2 {
         return new ArrayList<List<Integer>>(set);
     }
 
-    public static HashMap<List<Integer>, Integer> _combination(int[] num,
-                                                               int start,
-                                                               int count) {
+    public static HashMap<List<Integer>, Integer> _combination(int[] num, int start, int count) {
         if (start < 0 || start >= num.length || count <= 0) {
             return null;
         }
@@ -87,10 +84,7 @@ public final class Utils2 {
         }
     }
 
-    public static Set<List<Integer>> _threeSum(int[] num,
-                                               int startIndex,
-                                               int target,
-                                               int count) {
+    public static Set<List<Integer>> _threeSum(int[] num, int startIndex, int target, int count) {
 
         if (startIndex < 0 || startIndex > num.length - count || count <= 0) {
             return null;
@@ -126,8 +120,7 @@ public final class Utils2 {
      * For example, given array S = {-1 2 1 -4}, and target = 1.
      * The sum that is closest to the target is 2. (-1 + 2 + 1 = 2).
      */
-    public static int threeSumClosest(int[] num,
-                                      int target) {
+    public static int threeSumClosest(int[] num, int target) {
         if (num == null || num.length < 3) {
             return 0;
         }
@@ -173,8 +166,7 @@ public final class Utils2 {
      * (-2, -1, 1, 2)
      * (-2,  0, 0, 2)
      */
-    public static List<List<Integer>> fourSum(int[] num,
-                                              int target) {
+    public static List<List<Integer>> fourSum(int[] num, int target) {
         if (num == null || num.length < 3) {
             return new ArrayList<List<Integer>>();
         }
@@ -213,8 +205,7 @@ public final class Utils2 {
      * Input: (2 -> 4 -> 3) + (5 -> 6 -> 4)
      * Output: 7 -> 0 -> 8
      */
-    public static ListNode addTwoNumbers(ListNode l1,
-                                         ListNode l2) {
+    public static ListNode addTwoNumbers(ListNode l1, ListNode l2) {
 
         if (l1 == null) {
             return l2;
@@ -336,9 +327,7 @@ public final class Utils2 {
         return total;
     }
 
-    public static void ReAdjustCandy(int[] ratings,
-                                     int[] candy,
-                                     int startIndex) {
+    public static void ReAdjustCandy(int[] ratings, int[] candy, int startIndex) {
         int k = startIndex;
         int diff = 1 - candy[k];
         while (k > 0 && ratings[k - 1] > ratings[k]) {
@@ -363,8 +352,7 @@ public final class Utils2 {
      * [7]
      * [2, 2, 3]
      */
-    public static List<List<Integer>> combinationSum(int[] candidates,
-                                                     int target) {
+    public static List<List<Integer>> combinationSum(int[] candidates, int target) {
 
         if (candidates == null || candidates.length == 0) {
             return new ArrayList<List<Integer>>();
@@ -377,9 +365,7 @@ public final class Utils2 {
         return new ArrayList<List<Integer>>(set);
     }
 
-    public static Set<List<Integer>> getCombinationSum(int[] candidates,
-                                                       int sum,
-                                                       int start) {
+    public static Set<List<Integer>> getCombinationSum(int[] candidates, int sum, int start) {
 
         if (start >= candidates.length || candidates[start] > sum) {
             return new HashSet<List<Integer>>();
@@ -430,8 +416,7 @@ public final class Utils2 {
      * [2, 6]
      * [1, 1, 6]
      */
-    public static List<List<Integer>> combinationSum2(int[] num,
-                                                      int target) {
+    public static List<List<Integer>> combinationSum2(int[] num, int target) {
 
         if (num == null || num.length == 0) {
             return new ArrayList<List<Integer>>();
@@ -444,9 +429,7 @@ public final class Utils2 {
         return new ArrayList<List<Integer>>(set);
     }
 
-    public static Set<List<Integer>> getUnqiueCombinationSum(int[] candidates,
-                                                             int sum,
-                                                             int start) {
+    public static Set<List<Integer>> getUnqiueCombinationSum(int[] candidates, int sum, int start) {
 
         if (start >= candidates.length || candidates[start] > sum) {
             return new HashSet<List<Integer>>();
@@ -485,8 +468,7 @@ public final class Utils2 {
      * [1,4],
      * ]
      */
-    public static List<List<Integer>> combine(int n,
-                                              int k) {
+    public static List<List<Integer>> combine(int n, int k) {
 
 
         if (n <= 0 || k <= 0) {
@@ -499,9 +481,7 @@ public final class Utils2 {
         return new ArrayList<List<Integer>>(set);
     }
 
-    public static List<List<Integer>> _combinations(int n,
-                                                    int start,
-                                                    int k) {
+    public static List<List<Integer>> _combinations(int n, int start, int k) {
 
         if (start > n || k <= 0 || k > (n - start + 1)) {
             return new ArrayList<List<Integer>>();
@@ -729,8 +709,7 @@ public final class Utils2 {
      * Above is a 3 x 7 grid. How many possible unique paths are there?
      * Note: m and n will be at most 100.
      */
-    public static int uniquePaths(int m,
-                                  int n) {
+    public static int uniquePaths(int m, int n) {
 
         if (m <= 0 || n <= 0) {
             return 0;
@@ -764,13 +743,13 @@ public final class Utils2 {
             end = 0;
         }
 
-        Interval(int s,
-                 int e) {
+        Interval(int s, int e) {
             start = s;
             end = e;
         }
 
-        @Override public String toString() {
+        @Override
+        public String toString() {
             return "Interval{" +
                     "start=" + start +
                     ", end=" + end +
@@ -792,8 +771,7 @@ public final class Utils2 {
         return result;
     }
 
-    public static void insertInterval(List<Interval> intervals,
-                                      Interval newInterval) {
+    public static void insertInterval(List<Interval> intervals, Interval newInterval) {
         int i = 0;
         while (i < intervals.size()) {
 
@@ -996,8 +974,7 @@ public final class Utils2 {
      * S = "rabbbit", T = "rabbit"
      * Return 3.
      */
-    public static int numDistinct(String S,
-                                  String T) {
+    public static int numDistinct(String S, String T) {
 
         if (S == null || S.length() == 0 || T == null || T.length() == 0 || T.length() > S.length()) {
             return 0;
@@ -1054,13 +1031,14 @@ public final class Utils2 {
      * Divide two integers without using multiplication, division and mod operator.
      * If it is overflow, return MAX_INT.
      */
-    public static int divide(int dividend,
-                             int divisor) {
+    public static int divide(int dividend, int divisor) {
 
-        if (dividend == 0)
+        if (dividend == 0) {
             return 0;
-        if (divisor == 0)
+        }
+        if (divisor == 0) {
             return Integer.MAX_VALUE;
+        }
 
         boolean isNegative = false;
         long left = dividend;
@@ -1129,15 +1107,71 @@ public final class Utils2 {
      * Note: Your solution should be in logarithmic time complexity.
      */
     public static int trailingZeroes(int n) {
-        return 0;
+
+        int k = 0;
+        long powerFive = (long) Math.pow(5, k);
+        while (powerFive <= n) {
+            powerFive *= 5;
+            k++;
+        }
+        int result = 0;
+        for (int i = 1; i <= k; i++) {
+            result += Math.floor(n / Math.pow(5, i));
+        }
+        return result;
     }
 
     /**
      * Given an integer, convert it to a roman numeral.
      * Input is guaranteed to be within the range from 1 to 3999.
      */
+    private static final HashMap<Integer, String> ROMAN_NUM_DICT = new HashMap<Integer, String>();
+
+    static {
+        ROMAN_NUM_DICT.put(1, "I");
+        ROMAN_NUM_DICT.put(4, "IV")
+
+        ROMAN_NUM_DICT.put(5, "V");
+        ROMAN_NUM_DICT.put(9, "IX");
+
+        ROMAN_NUM_DICT.put(10, "X");
+        ROMAN_NUM_DICT.put(40, "X");
+        ROMAN_NUM_DICT.put(50, "L");
+        ROMAN_NUM_DICT.put(100, "C");
+        ROMAN_NUM_DICT.put(500, "D");
+        ROMAN_NUM_DICT.put(1000, "M");
+    }
+
     public static String intToRoman(int num) {
-        return "";
+
+        char[] romanChar = {'M', 'D', 'C', 'L', 'X', 'V', 'I'};
+
+        StringBuilder builder = new StringBuilder();
+
+        int visited = 0;
+        int digit = 1;
+        while (visited != num) {
+            int times = num % (int) Math.pow(10, digit);
+            int current = (times - visited) / (int) Math.pow(10, digit - 1);
+            int last = times - visited;
+            visited = times;
+
+            if (last == 0) {
+                continue;
+            }
+            if (current == 4 || current == 9) {
+
+            } else {
+
+            }
+
+            System.out.println(last + "  " + times + " " + digit + "  " + current);
+
+
+            digit++;
+        }
+
+        return builder.reverse().toString();
     }
 
     /**
@@ -1149,9 +1183,7 @@ public final class Utils2 {
      * When s3 = "aadbbcbcac", return true.
      * When s3 = "aadbbbaccc", return false.
      */
-    public static boolean isInterleave(String s1,
-                                       String s2,
-                                       String s3) {
+    public static boolean isInterleave(String s1, String s2, String s3) {
         return false;
     }
 
@@ -1175,8 +1207,7 @@ public final class Utils2 {
      * b) Delete a character
      * c) Replace a character
      */
-    public static int minDistance(String word1,
-                                  String word2) {
+    public static int minDistance(String word1, String word2) {
         return 0;
     }
 
@@ -1198,9 +1229,7 @@ public final class Utils2 {
      * All words have the same length.
      * All words contain only lowercase alphabetic characters.
      */
-    public static int ladderLength(String start,
-                                   String end,
-                                   Set<String> dict) {
+    public static int ladderLength(String start, String end, Set<String> dict) {
         return 0;
     }
 
@@ -1225,9 +1254,7 @@ public final class Utils2 {
 
     public static void main(String[] args) {
 
-        int[] num = {3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 5, 6, 1, 1, 1, 1, 1, 1, 1, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3};
-        System.out.println(findMin(num));
-
+        System.out.println(intToRoman(189));
         //        int[] A = new int[25000];
         //        for (int i = 0; i < A.length; i++) {
         //            A[i] = A.length - i;
@@ -1270,7 +1297,11 @@ public final class Utils2 {
         //        for (List<Integer> key : map.keySet()) {
         //            System.out.println(key.toString() + " => " + map.get(key));
         //        }
-        //int[] num = {6, -18, -20, -7, -15, 9, 18, 10, 1, -20, -17, -19, -3, -5, -19, 10, 6, -11, 1, -17, -15, 6, 17, -18, -3, 16, 19, -20, -3, -17, -15, -3, 12, 1, -9, 4, 1, 12, -2, 14, 4, -4, 19, -20, 6, 0, -19, 18, 14, 1, -15, -5, 14, 12, -4, 0, -10, 6, 6, -6, 20, -8, -6, 5, 0, 3, 10, 7, -2, 17, 20, 12, 19, -13, -1, 10, -1, 14, 0, 7, -3, 10, 14, 14, 11, 0, -4, -15, -8, 3, 2, -5, 9, 10, 16, -4, -3, -9, -8, -14, 10, 6, 2, -12, -7, -16, -6, 10};
+        //int[] num = {6, -18, -20, -7, -15, 9, 18, 10, 1, -20, -17, -19, -3, -5, -19, 10, 6, -11, 1, -17, -15, 6,
+        // 17, -18, -3, 16, 19, -20, -3, -17, -15, -3, 12, 1, -9, 4, 1, 12, -2, 14, 4, -4, 19, -20, 6, 0, -19, 18,
+        // 14, 1, -15, -5, 14, 12, -4, 0, -10, 6, 6, -6, 20, -8, -6, 5, 0, 3, 10, 7, -2, 17, 20, 12, 19, -13, -1, 10,
+        // -1, 14, 0, 7, -3, 10, 14, 14, 11, 0, -4, -15, -8, 3, 2, -5, 9, 10, 16, -4, -3, -9, -8, -14, 10, 6, 2, -12,
+        // -7, -16, -6, 10};
         //        int[] num = {1, 0, -1, 0, -2, 2};
         //        int target = 0;
         //        //System.out.println(threeSumClosest(num, target));
