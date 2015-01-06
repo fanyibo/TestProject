@@ -23,7 +23,8 @@ public final class Utils2 {
      * (-1, 0, 1)
      * (-1, -1, 2)
      */
-    public static List<List<Integer>> threeSum(int[] num, int sum) {
+    public static List<List<Integer>> threeSum(int[] num,
+                                               int sum) {
         if (num == null || num.length < 3) {
             return new ArrayList<List<Integer>>();
         }
@@ -53,7 +54,9 @@ public final class Utils2 {
         return new ArrayList<List<Integer>>(set);
     }
 
-    public static HashMap<List<Integer>, Integer> _combination(int[] num, int start, int count) {
+    public static HashMap<List<Integer>, Integer> _combination(int[] num,
+                                                               int start,
+                                                               int count) {
         if (start < 0 || start >= num.length || count <= 0) {
             return null;
         }
@@ -84,7 +87,10 @@ public final class Utils2 {
         }
     }
 
-    public static Set<List<Integer>> _threeSum(int[] num, int startIndex, int target, int count) {
+    public static Set<List<Integer>> _threeSum(int[] num,
+                                               int startIndex,
+                                               int target,
+                                               int count) {
 
         if (startIndex < 0 || startIndex > num.length - count || count <= 0) {
             return null;
@@ -120,7 +126,8 @@ public final class Utils2 {
      * For example, given array S = {-1 2 1 -4}, and target = 1.
      * The sum that is closest to the target is 2. (-1 + 2 + 1 = 2).
      */
-    public static int threeSumClosest(int[] num, int target) {
+    public static int threeSumClosest(int[] num,
+                                      int target) {
         if (num == null || num.length < 3) {
             return 0;
         }
@@ -166,7 +173,8 @@ public final class Utils2 {
      * (-2, -1, 1, 2)
      * (-2,  0, 0, 2)
      */
-    public static List<List<Integer>> fourSum(int[] num, int target) {
+    public static List<List<Integer>> fourSum(int[] num,
+                                              int target) {
         if (num == null || num.length < 3) {
             return new ArrayList<List<Integer>>();
         }
@@ -205,7 +213,8 @@ public final class Utils2 {
      * Input: (2 -> 4 -> 3) + (5 -> 6 -> 4)
      * Output: 7 -> 0 -> 8
      */
-    public static ListNode addTwoNumbers(ListNode l1, ListNode l2) {
+    public static ListNode addTwoNumbers(ListNode l1,
+                                         ListNode l2) {
 
         if (l1 == null) {
             return l2;
@@ -327,7 +336,9 @@ public final class Utils2 {
         return total;
     }
 
-    public static void ReAdjustCandy(int[] ratings, int[] candy, int startIndex) {
+    public static void ReAdjustCandy(int[] ratings,
+                                     int[] candy,
+                                     int startIndex) {
         int k = startIndex;
         int diff = 1 - candy[k];
         while (k > 0 && ratings[k - 1] > ratings[k]) {
@@ -352,7 +363,8 @@ public final class Utils2 {
      * [7]
      * [2, 2, 3]
      */
-    public static List<List<Integer>> combinationSum(int[] candidates, int target) {
+    public static List<List<Integer>> combinationSum(int[] candidates,
+                                                     int target) {
 
         if (candidates == null || candidates.length == 0) {
             return new ArrayList<List<Integer>>();
@@ -365,7 +377,9 @@ public final class Utils2 {
         return new ArrayList<List<Integer>>(set);
     }
 
-    public static Set<List<Integer>> getCombinationSum(int[] candidates, int sum, int start) {
+    public static Set<List<Integer>> getCombinationSum(int[] candidates,
+                                                       int sum,
+                                                       int start) {
 
         if (start >= candidates.length || candidates[start] > sum) {
             return new HashSet<List<Integer>>();
@@ -416,7 +430,8 @@ public final class Utils2 {
      * [2, 6]
      * [1, 1, 6]
      */
-    public static List<List<Integer>> combinationSum2(int[] num, int target) {
+    public static List<List<Integer>> combinationSum2(int[] num,
+                                                      int target) {
 
         if (num == null || num.length == 0) {
             return new ArrayList<List<Integer>>();
@@ -429,7 +444,9 @@ public final class Utils2 {
         return new ArrayList<List<Integer>>(set);
     }
 
-    public static Set<List<Integer>> getUnqiueCombinationSum(int[] candidates, int sum, int start) {
+    public static Set<List<Integer>> getUnqiueCombinationSum(int[] candidates,
+                                                             int sum,
+                                                             int start) {
 
         if (start >= candidates.length || candidates[start] > sum) {
             return new HashSet<List<Integer>>();
@@ -468,7 +485,8 @@ public final class Utils2 {
      * [1,4],
      * ]
      */
-    public static List<List<Integer>> combine(int n, int k) {
+    public static List<List<Integer>> combine(int n,
+                                              int k) {
 
 
         if (n <= 0 || k <= 0) {
@@ -481,7 +499,9 @@ public final class Utils2 {
         return new ArrayList<List<Integer>>(set);
     }
 
-    public static List<List<Integer>> _combinations(int n, int start, int k) {
+    public static List<List<Integer>> _combinations(int n,
+                                                    int start,
+                                                    int k) {
 
         if (start > n || k <= 0 || k > (n - start + 1)) {
             return new ArrayList<List<Integer>>();
@@ -709,7 +729,8 @@ public final class Utils2 {
      * Above is a 3 x 7 grid. How many possible unique paths are there?
      * Note: m and n will be at most 100.
      */
-    public static int uniquePaths(int m, int n) {
+    public static int uniquePaths(int m,
+                                  int n) {
 
         if (m <= 0 || n <= 0) {
             return 0;
@@ -743,7 +764,8 @@ public final class Utils2 {
             end = 0;
         }
 
-        Interval(int s, int e) {
+        Interval(int s,
+                 int e) {
             start = s;
             end = e;
         }
@@ -771,7 +793,8 @@ public final class Utils2 {
         return result;
     }
 
-    public static void insertInterval(List<Interval> intervals, Interval newInterval) {
+    public static void insertInterval(List<Interval> intervals,
+                                      Interval newInterval) {
         int i = 0;
         while (i < intervals.size()) {
 
@@ -974,7 +997,8 @@ public final class Utils2 {
      * S = "rabbbit", T = "rabbit"
      * Return 3.
      */
-    public static int numDistinct(String S, String T) {
+    public static int numDistinct(String S,
+                                  String T) {
 
         if (S == null || S.length() == 0 || T == null || T.length() == 0 || T.length() > S.length()) {
             return 0;
@@ -1031,7 +1055,8 @@ public final class Utils2 {
      * Divide two integers without using multiplication, division and mod operator.
      * If it is overflow, return MAX_INT.
      */
-    public static int divide(int dividend, int divisor) {
+    public static int divide(int dividend,
+                             int divisor) {
 
         if (dividend == 0) {
             return 0;
@@ -1186,7 +1211,9 @@ public final class Utils2 {
      * When s3 = "aadbbcbcac", return true.
      * When s3 = "aadbbbaccc", return false.
      */
-    public static boolean isInterleave(String s1, String s2, String s3) {
+    public static boolean isInterleave(String s1,
+                                       String s2,
+                                       String s3) {
 
         int length1 = s1.length();
         int length2 = s2.length();
@@ -1250,7 +1277,8 @@ public final class Utils2 {
      * b) Delete a character
      * c) Replace a character
      */
-    public static int minDistance(String word1, String word2) {
+    public static int minDistance(String word1,
+                                  String word2) {
 
         int length1 = word1.length();
         int length2 = word2.length();
@@ -1296,7 +1324,8 @@ public final class Utils2 {
      * All words have the same length.
      * All words contain only lowercase alphabetic characters.
      */
-    public static boolean isNeighbor(String word1, String word2) {
+    public static boolean isNeighbor(String word1,
+                                     String word2) {
         int diff = 0;
         for (int i = 0; i < word1.length(); i++) {
             if (word1.charAt(i) != word2.charAt(i)) {
@@ -1309,7 +1338,9 @@ public final class Utils2 {
         return diff == 1;
     }
 
-    public static int ladderLength(String start, String end, Set<String> dict) {
+    public static int ladderLength(String start,
+                                   String end,
+                                   Set<String> dict) {
 
         if (start.equals(end)) {
             return 0;
@@ -1459,7 +1490,9 @@ public final class Utils2 {
         }
     }
 
-    public static List<List<String>> findLadders(String start, String end, Set<String> dict) {
+    public static List<List<String>> findLadders(String start,
+                                                 String end,
+                                                 Set<String> dict) {
 
         LadderNode root = new LadderNode(end);
         LadderNode leaf = new LadderNode(start);
@@ -1529,7 +1562,8 @@ public final class Utils2 {
      * The longest consecutive elements sequence is [1, 2, 3, 4]. Return its length: 4.
      * Your algorithm should run in O(n) complexity.
      */
-    public static int calcLongestConsecutive(HashMap<Integer, Boolean> visited, HashMap<Integer, Integer> lengths,
+    public static int calcLongestConsecutive(HashMap<Integer, Boolean> visited,
+                                             HashMap<Integer, Integer> lengths,
                                              int current) {
         if (visited.containsKey(current)) {
             if (!visited.get(current)) {
@@ -1741,7 +1775,8 @@ public final class Utils2 {
      * Given n and k, return the kth permutation sequence.
      * Note: Given n will be between 1 and 9 inclusive.
      */
-    public static String getPermutation(int n, int k) {
+    public static String getPermutation(int n,
+                                        int k) {
 
         if (n == 0) {
             return "";
@@ -1801,15 +1836,30 @@ public final class Utils2 {
      */
     public static void nextPermutation(int[] num) {
 
-        for (int i = num.length - 1; i > 0; i--) {
+        int i = num.length - 1;
+        for (; i > 0; i--) {
             if (num[i] > num[i - 1]) {
+                int index = -1;
+                for (int j = i + 1; j < num.length; j++) {
+                    if (num[j] > num[i - 1] && num[j] < num[i]) {
+                        if (index == -1) {
+                            index = j;
+                        } else if (num[index] > num[j]) {
+                            index = j;
+                        }
+                    }
+                }
+                if (index == -1) {
+                    index = i;
+                }
                 int temp = num[i - 1];
-                num[i - 1] = num[i];
-                num[i] = temp;
-                return;
+                num[i - 1] = num[index];
+                num[index] = temp;
+                break;
             }
         }
-        Arrays.sort(num);
+        // sort [i, length-1]
+        Arrays.sort(num, i, num.length);
     }
 
 
@@ -1820,14 +1870,39 @@ public final class Utils2 {
      * [1,2,3], [1,3,2], [2,1,3], [2,3,1], [3,1,2], and [3,2,1].
      */
     public static List<List<Integer>> permute(int[] num) {
-        return null;
+        List<Integer> indexes = new ArrayList<Integer>();
+        for (int i = 0; i < num.length; i++) {
+            indexes.add(i);
+        }
+        return permute(num, indexes);
     }
 
-    public static List<List<Integer>> permute(int[] num, int startIndex, int endIndex) {
+    public static List<List<Integer>> permute(int[] num,
+                                              List<Integer> indexes) {
 
-
-        List<List<Integer>> others = permute(num, startIndex + 1, endIndex);
-        return null;
+        List<List<Integer>> result = new ArrayList<List<Integer>>();
+        if (indexes.size() == 0) {
+        } else if (indexes.size() == 1) {
+            List<Integer> list = new ArrayList<Integer>();
+            list.add(num[indexes.get(0)]);
+            result.add(list);
+        } else {
+            for (int i = 0; i < indexes.size(); ++i) {
+                int headIndex = indexes.get(i);
+                List<Integer> newIndexes = new ArrayList<Integer>();
+                for (int j = 0; j < indexes.size(); j++) {
+                    if (j != i) {
+                        newIndexes.add(indexes.get(j));
+                    }
+                }
+                List<List<Integer>> others = permute(num, newIndexes);
+                for (List<Integer> list : others) {
+                    list.add(0, num[headIndex]);
+                    result.add(list);
+                }
+            }
+        }
+        return result;
     }
 
     /**
@@ -1837,7 +1912,126 @@ public final class Utils2 {
      * [1,1,2], [1,2,1], and [2,1,1].
      */
     public static List<List<Integer>> permuteUnique(int[] num) {
-        return null;
+
+        HashMap<Integer, HashMap<Integer, Boolean>> visited = new HashMap<Integer, HashMap<Integer, Boolean>>();
+        for (int i = 0; i < num.length; i++) {
+            HashMap<Integer, Boolean> level = new HashMap<Integer, Boolean>();
+            for (int j = 1; j <= num.length; j++) {
+                level.put(j, false);
+            }
+            visited.put(num[i], level);
+        }
+
+        List<Integer> indexes = new ArrayList<Integer>();
+        for (int i = 0; i < num.length; i++) {
+            indexes.add(i);
+        }
+        return permuteUnique(num, indexes, visited);
+    }
+
+    public static List<List<Integer>> permuteUnique(int[] num,
+                                                    List<Integer> indexes,
+                                                    HashMap<Integer, HashMap<Integer, Boolean>> visited) {
+
+        List<List<Integer>> result = new ArrayList<List<Integer>>();
+        if (indexes.size() == 0) {
+        } else {
+            int level = indexes.size();
+
+            if (level == 1) {
+
+                int target = num[indexes.get(0)];
+                HashMap<Integer, Boolean> targetMap = visited.get(target);
+                if (!targetMap.get(level)) {
+                    List<Integer> list = new ArrayList<Integer>();
+                    list.add(target);
+                    result.add(list);
+                    targetMap.put(level, true);
+                }
+            } else {
+                for (int i = 0; i < level; ++i) {
+                    for (Integer key : visited.keySet()) {
+                        HashMap<Integer, Boolean> map = visited.get(key);
+                        for (Integer _level : map.keySet()) {
+                            if (_level < level) {
+                                map.put(_level, false);
+                            }
+                        }
+                    }
+                    int headIndex = indexes.get(i);
+                    int target = num[headIndex];
+                    HashMap<Integer, Boolean> targetMap = visited.get(target);
+                    if (!targetMap.get(level)) {
+                        List<Integer> newIndexes = new ArrayList<Integer>();
+                        for (int j = 0; j < level; j++) {
+                            if (j != i) {
+                                newIndexes.add(indexes.get(j));
+                            }
+                        }
+                        List<List<Integer>> others = permuteUnique(num, newIndexes, visited);
+                        for (List<Integer> list : others) {
+                            list.add(0, num[headIndex]);
+                            result.add(list);
+                        }
+                        targetMap.put(level, true);
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Given an unsorted array, find the maximum difference between the successive elements in its sorted form.
+     * Try to solve it in linear time/space.
+     * Return 0 if the array contains less than 2 elements.
+     * You may assume all elements in the array are non-negative integers and fit in the 32-bit signed integer range.
+     */
+    public static int maximumGap(int[] num) {
+        int length = num.length;
+        if (length <= 2) {
+            return 0;
+        }
+        int min = num[0];
+        int max = num[0];
+        for (int i = 0; i < length; i++) {
+            int current = num[i];
+            if (max < current) {
+                max = current;
+            }
+            if (min > current) {
+                min = current;
+            }
+        }
+
+        int numBuckets = (max - min) / length + 1;
+        int[][] buckets = new int[numBuckets][2];
+
+        for (int i = 0; i < length; i++) {
+            int current = num[i];
+            int iBucket = (int) Math.floor((current - min) / length);
+            int[] bucket = buckets[iBucket];
+            if (bucket[0] == 0) {
+                bucket[0] = current;
+            } else if (bucket[0] > current) {
+                bucket[0] = current;
+            }
+            if (bucket[1] == 0) {
+                bucket[1] = current;
+            } else if (bucket[1] < current) {
+                bucket[1] = current;
+            }
+        }
+
+        int gap = 0;
+        int prev = 0;
+        for (int i = 1; i < buckets.length; i++) {
+            if (buckets[i][0] == 0) continue;
+            gap = Math.max(gap, buckets[i][0] - buckets[prev][1]);
+            prev = i;
+        }
+
+        return gap;
     }
 
 
@@ -1862,17 +2056,8 @@ public final class Utils2 {
 
     public static void main(String[] args) {
 
-        int[] A = {1, 2, 3};
-        nextPermutation(A);
-        System.out.println("1,3,2 == " + Arrays.toString(A));
-
-        int[] B = {3, 2, 1};
-        nextPermutation(B);
-        System.out.println("1, 2, 3 == " + Arrays.toString(B));
-
-        int[] C = {1, 3, 2};
-        nextPermutation(C);
-        System.out.println("2, 1, 3 == " + Arrays.toString(C));
+        int[] num = {601408776, 63967816, 431363697, 242509930, 15970592, 60284088, 228037800, 147629558, 220782926, 55455864, 456541040, 106650540, 17290078, 52153098, 103139530, 294196042, 16568100, 426864152, 61916064, 657788565, 166159446, 1741650, 101791800, 28206276, 6223796, 524849590, 125389882, 84399672, 153834912, 164568204, 1866165, 283209696, 560993994, 16266096, 219635658, 9188983, 485969304, 782013650, 120332636, 44659356, 444517408, 36369045, 47370708, 18542592, 98802990, 137690000, 124889895, 56062800, 265421676, 309417680, 4634176, 801661539, 510541206, 258227892, 398938089, 47255754, 152260962, 409663140, 102847688, 45756553, 377936600, 269498, 375738702, 263761134, 53797945, 329493948, 224442208, 508336845, 189507850, 40944620, 127879560, 119629476, 186894520, 62409156, 693721503, 4289916, 523899936, 28955240, 266488028, 20356650, 40769391, 483694272, 97988044, 84102, 67246047, 310688630, 41288643, 58965588, 42881432, 152159462, 94786355, 174917835, 119224652, 525034376, 261516, 274800528, 62643819, 23613832, 8397240, 797832131, 855155367, 337066320, 26341480, 61932200, 20661075, 515542796, 390337500, 522552030, 43538516, 150800550, 116747540, 152989123, 488640056, 700610304, 233604, 344277340, 21439176, 9397864, 16365822, 73027584, 453041413, 197374275, 157735188, 15273822, 187081152, 379611084, 865005504, 223099767, 80478651, 377729400, 186738219, 34738263, 16634072, 112791343, 99631856, 119364960, 477106486, 583953920, 624509809, 188442472, 294181256, 213023715, 146645884, 149530380, 497592753, 132170327, 72770643, 126683010, 405141255, 590214306, 26670714, 95582385, 162080790, 231120099, 8946432, 204967980, 592849110, 54120698, 375915096, 602145859, 5346440, 226337825, 425156369, 653591624, 578483360, 572410800, 32290700, 381384563, 149939976, 183225375, 155695620, 38307636, 457513760, 97085778, 75200576, 8068176, 221650296, 556889418, 252495726, 895020231, 19932465, 156334887, 191383314, 348432526, 368701264, 14315598, 148936587, 279419435, 237325542, 252587218, 322929504, 26331343, 355297676, 600420786, 652017765, 51673622, 159015675};
+        System.out.println(maximumGap(num));
 
 
         //System.out.println(longestValidParentheses("()()()(((())()()()))))(())()())))))(())((())))))(()()))"));
