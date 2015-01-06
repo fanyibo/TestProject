@@ -23,8 +23,7 @@ public final class Utils2 {
      * (-1, 0, 1)
      * (-1, -1, 2)
      */
-    public static List<List<Integer>> threeSum(int[] num,
-                                               int sum) {
+    public static List<List<Integer>> threeSum(int[] num, int sum) {
         if (num == null || num.length < 3) {
             return new ArrayList<List<Integer>>();
         }
@@ -54,9 +53,7 @@ public final class Utils2 {
         return new ArrayList<List<Integer>>(set);
     }
 
-    public static HashMap<List<Integer>, Integer> _combination(int[] num,
-                                                               int start,
-                                                               int count) {
+    public static HashMap<List<Integer>, Integer> _combination(int[] num, int start, int count) {
         if (start < 0 || start >= num.length || count <= 0) {
             return null;
         }
@@ -87,10 +84,7 @@ public final class Utils2 {
         }
     }
 
-    public static Set<List<Integer>> _threeSum(int[] num,
-                                               int startIndex,
-                                               int target,
-                                               int count) {
+    public static Set<List<Integer>> _threeSum(int[] num, int startIndex, int target, int count) {
 
         if (startIndex < 0 || startIndex > num.length - count || count <= 0) {
             return null;
@@ -126,8 +120,7 @@ public final class Utils2 {
      * For example, given array S = {-1 2 1 -4}, and target = 1.
      * The sum that is closest to the target is 2. (-1 + 2 + 1 = 2).
      */
-    public static int threeSumClosest(int[] num,
-                                      int target) {
+    public static int threeSumClosest(int[] num, int target) {
         if (num == null || num.length < 3) {
             return 0;
         }
@@ -173,8 +166,7 @@ public final class Utils2 {
      * (-2, -1, 1, 2)
      * (-2,  0, 0, 2)
      */
-    public static List<List<Integer>> fourSum(int[] num,
-                                              int target) {
+    public static List<List<Integer>> fourSum(int[] num, int target) {
         if (num == null || num.length < 3) {
             return new ArrayList<List<Integer>>();
         }
@@ -213,8 +205,7 @@ public final class Utils2 {
      * Input: (2 -> 4 -> 3) + (5 -> 6 -> 4)
      * Output: 7 -> 0 -> 8
      */
-    public static ListNode addTwoNumbers(ListNode l1,
-                                         ListNode l2) {
+    public static ListNode addTwoNumbers(ListNode l1, ListNode l2) {
 
         if (l1 == null) {
             return l2;
@@ -336,9 +327,7 @@ public final class Utils2 {
         return total;
     }
 
-    public static void ReAdjustCandy(int[] ratings,
-                                     int[] candy,
-                                     int startIndex) {
+    public static void ReAdjustCandy(int[] ratings, int[] candy, int startIndex) {
         int k = startIndex;
         int diff = 1 - candy[k];
         while (k > 0 && ratings[k - 1] > ratings[k]) {
@@ -363,8 +352,7 @@ public final class Utils2 {
      * [7]
      * [2, 2, 3]
      */
-    public static List<List<Integer>> combinationSum(int[] candidates,
-                                                     int target) {
+    public static List<List<Integer>> combinationSum(int[] candidates, int target) {
 
         if (candidates == null || candidates.length == 0) {
             return new ArrayList<List<Integer>>();
@@ -377,9 +365,7 @@ public final class Utils2 {
         return new ArrayList<List<Integer>>(set);
     }
 
-    public static Set<List<Integer>> getCombinationSum(int[] candidates,
-                                                       int sum,
-                                                       int start) {
+    public static Set<List<Integer>> getCombinationSum(int[] candidates, int sum, int start) {
 
         if (start >= candidates.length || candidates[start] > sum) {
             return new HashSet<List<Integer>>();
@@ -430,8 +416,7 @@ public final class Utils2 {
      * [2, 6]
      * [1, 1, 6]
      */
-    public static List<List<Integer>> combinationSum2(int[] num,
-                                                      int target) {
+    public static List<List<Integer>> combinationSum2(int[] num, int target) {
 
         if (num == null || num.length == 0) {
             return new ArrayList<List<Integer>>();
@@ -444,9 +429,7 @@ public final class Utils2 {
         return new ArrayList<List<Integer>>(set);
     }
 
-    public static Set<List<Integer>> getUnqiueCombinationSum(int[] candidates,
-                                                             int sum,
-                                                             int start) {
+    public static Set<List<Integer>> getUnqiueCombinationSum(int[] candidates, int sum, int start) {
 
         if (start >= candidates.length || candidates[start] > sum) {
             return new HashSet<List<Integer>>();
@@ -485,8 +468,7 @@ public final class Utils2 {
      * [1,4],
      * ]
      */
-    public static List<List<Integer>> combine(int n,
-                                              int k) {
+    public static List<List<Integer>> combine(int n, int k) {
 
 
         if (n <= 0 || k <= 0) {
@@ -499,9 +481,7 @@ public final class Utils2 {
         return new ArrayList<List<Integer>>(set);
     }
 
-    public static List<List<Integer>> _combinations(int n,
-                                                    int start,
-                                                    int k) {
+    public static List<List<Integer>> _combinations(int n, int start, int k) {
 
         if (start > n || k <= 0 || k > (n - start + 1)) {
             return new ArrayList<List<Integer>>();
@@ -729,8 +709,7 @@ public final class Utils2 {
      * Above is a 3 x 7 grid. How many possible unique paths are there?
      * Note: m and n will be at most 100.
      */
-    public static int uniquePaths(int m,
-                                  int n) {
+    public static int uniquePaths(int m, int n) {
 
         if (m <= 0 || n <= 0) {
             return 0;
@@ -764,8 +743,7 @@ public final class Utils2 {
             end = 0;
         }
 
-        Interval(int s,
-                 int e) {
+        Interval(int s, int e) {
             start = s;
             end = e;
         }
@@ -793,8 +771,7 @@ public final class Utils2 {
         return result;
     }
 
-    public static void insertInterval(List<Interval> intervals,
-                                      Interval newInterval) {
+    public static void insertInterval(List<Interval> intervals, Interval newInterval) {
         int i = 0;
         while (i < intervals.size()) {
 
@@ -997,8 +974,7 @@ public final class Utils2 {
      * S = "rabbbit", T = "rabbit"
      * Return 3.
      */
-    public static int numDistinct(String S,
-                                  String T) {
+    public static int numDistinct(String S, String T) {
 
         if (S == null || S.length() == 0 || T == null || T.length() == 0 || T.length() > S.length()) {
             return 0;
@@ -1055,8 +1031,7 @@ public final class Utils2 {
      * Divide two integers without using multiplication, division and mod operator.
      * If it is overflow, return MAX_INT.
      */
-    public static int divide(int dividend,
-                             int divisor) {
+    public static int divide(int dividend, int divisor) {
 
         if (dividend == 0) {
             return 0;
@@ -1211,9 +1186,7 @@ public final class Utils2 {
      * When s3 = "aadbbcbcac", return true.
      * When s3 = "aadbbbaccc", return false.
      */
-    public static boolean isInterleave(String s1,
-                                       String s2,
-                                       String s3) {
+    public static boolean isInterleave(String s1, String s2, String s3) {
 
         int length1 = s1.length();
         int length2 = s2.length();
@@ -1277,8 +1250,7 @@ public final class Utils2 {
      * b) Delete a character
      * c) Replace a character
      */
-    public static int minDistance(String word1,
-                                  String word2) {
+    public static int minDistance(String word1, String word2) {
 
         int length1 = word1.length();
         int length2 = word2.length();
@@ -1324,8 +1296,7 @@ public final class Utils2 {
      * All words have the same length.
      * All words contain only lowercase alphabetic characters.
      */
-    public static boolean isNeighbor(String word1,
-                                     String word2) {
+    public static boolean isNeighbor(String word1, String word2) {
         int diff = 0;
         for (int i = 0; i < word1.length(); i++) {
             if (word1.charAt(i) != word2.charAt(i)) {
@@ -1338,9 +1309,7 @@ public final class Utils2 {
         return diff == 1;
     }
 
-    public static int ladderLength(String start,
-                                   String end,
-                                   Set<String> dict) {
+    public static int ladderLength(String start, String end, Set<String> dict) {
 
         if (start.equals(end)) {
             return 0;
@@ -1490,9 +1459,7 @@ public final class Utils2 {
         }
     }
 
-    public static List<List<String>> findLadders(String start,
-                                                 String end,
-                                                 Set<String> dict) {
+    public static List<List<String>> findLadders(String start, String end, Set<String> dict) {
 
         LadderNode root = new LadderNode(end);
         LadderNode leaf = new LadderNode(start);
@@ -1562,8 +1529,7 @@ public final class Utils2 {
      * The longest consecutive elements sequence is [1, 2, 3, 4]. Return its length: 4.
      * Your algorithm should run in O(n) complexity.
      */
-    public static int calcLongestConsecutive(HashMap<Integer, Boolean> visited,
-                                             HashMap<Integer, Integer> lengths,
+    public static int calcLongestConsecutive(HashMap<Integer, Boolean> visited, HashMap<Integer, Integer> lengths,
                                              int current) {
         if (visited.containsKey(current)) {
             if (!visited.get(current)) {
@@ -1775,8 +1741,7 @@ public final class Utils2 {
      * Given n and k, return the kth permutation sequence.
      * Note: Given n will be between 1 and 9 inclusive.
      */
-    public static String getPermutation(int n,
-                                        int k) {
+    public static String getPermutation(int n, int k) {
 
         if (n == 0) {
             return "";
@@ -1877,8 +1842,7 @@ public final class Utils2 {
         return permute(num, indexes);
     }
 
-    public static List<List<Integer>> permute(int[] num,
-                                              List<Integer> indexes) {
+    public static List<List<Integer>> permute(int[] num, List<Integer> indexes) {
 
         List<List<Integer>> result = new ArrayList<List<Integer>>();
         if (indexes.size() == 0) {
@@ -1929,8 +1893,7 @@ public final class Utils2 {
         return permuteUnique(num, indexes, visited);
     }
 
-    public static List<List<Integer>> permuteUnique(int[] num,
-                                                    List<Integer> indexes,
+    public static List<List<Integer>> permuteUnique(int[] num, List<Integer> indexes,
                                                     HashMap<Integer, HashMap<Integer, Boolean>> visited) {
 
         List<List<Integer>> result = new ArrayList<List<Integer>>();
@@ -2026,12 +1989,100 @@ public final class Utils2 {
         int gap = 0;
         int prev = 0;
         for (int i = 1; i < buckets.length; i++) {
-            if (buckets[i][0] == 0) continue;
+            if (buckets[i][0] == 0) {
+                continue;
+            }
             gap = Math.max(gap, buckets[i][0] - buckets[prev][1]);
             prev = i;
         }
 
         return gap;
+    }
+
+    /**
+     * Given a string s, partition s such that every substring of the partition is a palindrome.
+     * Return all possible palindrome partitioning of s.
+     * For example, given s = "aab",
+     * Return
+     * [
+     * ["aa","b"],
+     * ["a","a","b"]
+     * ]
+     */
+    public static List<List<String>> partition(String s) {
+        return null;
+    }
+
+    /**
+     * Given a string s, partition s such that every substring of the partition is a palindrome.
+     * Return the minimum cuts needed for a palindrome partitioning of s.
+     * For example, given s = "aab",
+     * Return 1 since the palindrome partitioning ["aa","b"] could be produced using 1 cut.
+     * d[i,j]
+     * if i==j:  d[i,j] = true
+     * otherwise d[i,j] = A[i]==A[j] (d[i+1],[j-1])
+     */
+    public static int minCut(String s) {
+
+        int length = s.length();
+        int[][] d = new int[length][length];
+        boolean[][] v = new boolean[length][length];
+        for (int i = length - 2; i >= 0; i--) {
+            for (int j = i; j < length; j++) {
+                if (i == j) {
+                    d[i][j] = 0;
+                } else {
+                    d[i][j] = length - 1;
+                }
+            }
+        }
+        for (int i = length - 2; i >= 0; i--) {
+            for (int j = i; j < length; j++) {
+                if (i == j) {
+                    d[i][j] = 0;
+                    v[i][j] = true;
+                } else {
+                    v[i][j] = s.charAt(i) == s.charAt(j) && v[i + 1][j - 1];
+                    if (v[i][j]) {
+                        d[i][j] = 0;
+                    } else {
+                        for (int k = i; k <= j; k++) {
+                            for (int l = k + 1; l <= j; l++) {
+                                int left = d[i][k];
+                                int right = d[l][j];
+                                d[i][j] = Math.min(d[i][j], left + right + 1);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return d[0][length - 1];
+    }
+
+    /**
+     * Given a string s and a dictionary of words dict, determine if s can be segmented into a space-separated
+     * sequence of one or more dictionary words.
+     * For example, given
+     * s = "leetcode",
+     * dict = ["leet", "code"].
+     * Return true because "leetcode" can be segmented as "leet code".
+     */
+    public static boolean wordBreak1(String s, Set<String> dict) {
+        return false;
+    }
+
+    /**
+     * Given a string s and a dictionary of words dict, add spaces in s to construct a sentence where each word is a
+     * valid dictionary word.
+     * Return all such possible sentences.
+     * For example, given
+     * s = "catsanddog",
+     * dict = ["cat", "cats", "and", "sand", "dog"].
+     * A solution is ["cats and dog", "cat sand dog"].
+     */
+    public static List<String> wordBreak2(String s, Set<String> dict) {
+        return null;
     }
 
 
@@ -2056,744 +2107,9 @@ public final class Utils2 {
 
     public static void main(String[] args) {
 
-        int[] num = {601408776, 63967816, 431363697, 242509930, 15970592, 60284088, 228037800, 147629558, 220782926, 55455864, 456541040, 106650540, 17290078, 52153098, 103139530, 294196042, 16568100, 426864152, 61916064, 657788565, 166159446, 1741650, 101791800, 28206276, 6223796, 524849590, 125389882, 84399672, 153834912, 164568204, 1866165, 283209696, 560993994, 16266096, 219635658, 9188983, 485969304, 782013650, 120332636, 44659356, 444517408, 36369045, 47370708, 18542592, 98802990, 137690000, 124889895, 56062800, 265421676, 309417680, 4634176, 801661539, 510541206, 258227892, 398938089, 47255754, 152260962, 409663140, 102847688, 45756553, 377936600, 269498, 375738702, 263761134, 53797945, 329493948, 224442208, 508336845, 189507850, 40944620, 127879560, 119629476, 186894520, 62409156, 693721503, 4289916, 523899936, 28955240, 266488028, 20356650, 40769391, 483694272, 97988044, 84102, 67246047, 310688630, 41288643, 58965588, 42881432, 152159462, 94786355, 174917835, 119224652, 525034376, 261516, 274800528, 62643819, 23613832, 8397240, 797832131, 855155367, 337066320, 26341480, 61932200, 20661075, 515542796, 390337500, 522552030, 43538516, 150800550, 116747540, 152989123, 488640056, 700610304, 233604, 344277340, 21439176, 9397864, 16365822, 73027584, 453041413, 197374275, 157735188, 15273822, 187081152, 379611084, 865005504, 223099767, 80478651, 377729400, 186738219, 34738263, 16634072, 112791343, 99631856, 119364960, 477106486, 583953920, 624509809, 188442472, 294181256, 213023715, 146645884, 149530380, 497592753, 132170327, 72770643, 126683010, 405141255, 590214306, 26670714, 95582385, 162080790, 231120099, 8946432, 204967980, 592849110, 54120698, 375915096, 602145859, 5346440, 226337825, 425156369, 653591624, 578483360, 572410800, 32290700, 381384563, 149939976, 183225375, 155695620, 38307636, 457513760, 97085778, 75200576, 8068176, 221650296, 556889418, 252495726, 895020231, 19932465, 156334887, 191383314, 348432526, 368701264, 14315598, 148936587, 279419435, 237325542, 252587218, 322929504, 26331343, 355297676, 600420786, 652017765, 51673622, 159015675};
-        System.out.println(maximumGap(num));
+        System.out.println(
+                minCut("apjesgpsxoeiokmqmfgvjslcjukbqxpsobyhjpbgdfruqdkeiszrlmtwgfxyfostpqczidfljwfbbrflkgdvtytbgqalguewnhvvmcgxboycffopmtmhtfizxkmeftcucxpobxmelmjtuzigsxnncxpaibgpuijwhankxbplpyejxmrrjgeoevqozwdtgospohznkoyzocjlracchjqnggbfeebmuvbicbvmpuleywrpzwsihivnrwtxcukwplgtobhgxukwrdlszfaiqxwjvrgxnsveedxseeyeykarqnjrtlaliyudpacctzizcftjlunlgnfwcqqxcqikocqffsjyurzwysfjmswvhbrmshjuzsgpwyubtfbnwajuvrfhlccvfwhxfqthkcwhatktymgxostjlztwdxritygbrbibdgkezvzajizxasjnrcjwzdfvdnwwqeyumkamhzoqhnqjfzwzbixclcxqrtniznemxeahfozp"));
 
 
-        //System.out.println(longestValidParentheses("()()()(((())()()()))))(())()())))))(())((())))))(()()))"));
-        //System.out.println(longestValidParentheses("))())))())(((())))()"));
-        //        System.out.println(longestValidParentheses(
-        //                "((())))()())))(((()()(())))((()(())()((()))())())())()())))))))(((()(())(()))(()()(()()((
-        // ()))()(())(" +
-        //                        "()(())))))()(())(()()(((()(()()))))((()()))))))()((()())()()))((())()((((()))()()
-        // ()((()())))" +
-        //                        "())((())))))))(()()((((((()))(((((((()()))((())()(()())()()()(()())(()())(())))()
-        // ()))))()(((" +
-        //                        "())(())(()())()))()(()))(())((()))))(())))()))((()((()(())(()()()()()))(())())()))
-        // ))()(()(((" +
-        //                        "())))()()()(((()((()))(()((((((())((()))(()(())(()))(())())))()()))))())(()((()()
-        // ())()))((((" +
-        //                        "()(()))()()))(()())))((()))(()((((()(())(())()((()))(()))())))(((()(())))((())()(
-        // ()(((())))" +
-        //                        "())())()()()())((()()))))))(()))(())()(((()))()()((()))(()))(((()))))))))(()(())()
-        // )(()((())(" +
-        //                        "()()))((())))(()())((((())))(()(()))())(((()(()((()(())((())())(()))(())))()()(())
-        // ((()()))((" +
-        //                        "()()((()()())())()))())()))())()))())(()(()))(()))()(())))((((())()())()()())((()
-        // ())(()())(" +
-        //                        "()()))()(())(())))))()()()((()(())(((()(())()()))(()()((()(((()))))))))(((()((()()
-        // ((()(((((" +
-        //                        "())((()((()((((((((())()))())((())((()((()(()((())(((()(()))())))))))))))))()((()(
-        // ())())))()" +
-        //                        "(()))(((()))())()(((()))))((()(())(()())(((()(((()((((())()))))(())((()(((((()((()
-        // (()()()()(" +
-        //                        "(()((((((((((((())()(()))()()(()())()(()(((()((()(()()()())))((())()))())()()))())
-        // (((()(()))" +
-        //                        ")))()()()(((())))((()(()(((())(())(()((((()(((()(())(((((())()))())())()()(()())((
-        // ((()(())))" +
-        //                        "((()())))))))))()(()(())))))))()))()())))((())(()()()()()()()(())(()())))))())((()
-        // ()))))()))" +
-        //                        "))((())((()(((()))))(((()()))()(()((()()())()))(((()(()((())(()(()(()()))()((()(()
-        // )))()((())" +
-        //                        "))))(())()(())()))((())(((((()))()())(())))((((()((())())(())))(())))))((())())())
-        // ((((()((()" +
-        //                        ")))()()((()()()))()())())(()())(((()))()()))))(()(())(()))()())(()())(()))(((((((
-        // ()(()))())" +
-        //                        "()())()())((()(((((()())(((())))()())))(()(()(())()((())()))(())))())()))((((()))
-        // ())((()))(" +
-        //                        "())))))(()))))))(()))))(())))())()()())()()(())()()(((((()))(((()()))()(()((((()(
-        // ()(()(())))" +
-        //                        "())))())(()()())()(()))())(()()))(()()((()()))))))(())((()()))(())))())())(())((((
-        // ()))))()))" +
-        //                        "()))()()()))))((((()((())(()))(()()))(())()())(()())))(()(()(())((()())()((())(())
-        // )()))())))" +
-        //                        ")((())))(())(()))()()()()()))((())(((()(())))(((((((()(()))(()))())()((()))(()(())
-        // ((()((()((" +
-        //                        "())))()()((())))))((((())()())(()()(((()()((()))()()((())))(((()())((((()(())())))
-        // ())()()()(" +
-        //                        "())()))))))()()((()))())(()(((()()))((())))())())())((((()(((()(())())()())((()((
-        // ()(()((())" +
-        //                        "()(()))()((())))()(()))))(((()))())())(()((()))))()()(((((()))())))(()(()(())((((
-        // ())())))((" +
-        //                        "()()())(((((((()(()(()))(())))))()))(()(((((())()))((()()()()((()))()(()()()()))(
-        // ()))))())()" +
-        //                        ")()))()(()()(((())((()))(()())))((()()(((())())))))))(())))((()(()(((())((((()))))
-        // (()()())))" +
-        //                        ")(((((((())(()(()))(()(())((())(()(()(()(()())(())()(())(()()(()(()))())(())()()((
-        // (()())(())" +
-        //                        "(()(((()()(())()((((()()))())(((()(((((()())()(())))()))))(()(()()(()(()()(((()))
-        // ()))((()())" +
-        //                        "))()(()(())))))))())((((()()))(()))))()((()))(()))())()))()))))(()(())()()()))((((
-        // (()))()())" +
-        //                        "())(()())())))()())))))()()()())))))(())(((()))((())((()()))))()((((()(()(()))))(
-        // ()(())(((()" +
-        //                        ")(()()(((()(())()())(()()(()(()())))()())))(((()()((()())()()((()))()))(((()((((()
-        // (((()(((()" +
-        //                        "(()())((()))))()(()())(())()(()(((())((()))(())()(())()(()(())()))())()))()())(())
-        // )))()))))(" +
-        //                        "(()()()((()(()()(())))())(())()(()()))))))))()((()))((((())))())))((()()()(()(()((
-        // ((()((()))" +
-        //                        "()()((())((())(()))))(())())(((()()(()))))))(()()))()))((()(()(())()))(((())()))(
-        // ())(()((((" +
-        //                        "()((()()()))()()))(()()(())())((((((())(())((()())()(()())))()))())(()()(()(()()()
-        // (()()()())" +
-        //                        ")(()(()()())())((()()()(((()((()())()()((()()(()((()())()())()((()))(()((()())))))
-        // ))(())((((" +
-        //                        "())(((((())(((())(()))(((()((()()())()((()(()))()()()(()((((())))(())())))((())))(
-        // ()(((((()" +
-        //                        "()()((())((((((((()()((((())))())())())))))))(((()())(((()))())))()))((())())())))
-        // ))))))(()" +
-        //                        "()(((())))))(())()()))((())()))(()(()))((()(()((((()(()(((()))))()))(()(()))())())
-        // ()()(((())" +
-        //                        "())(((()))))(((()())))()(()())()())()))())())(()()(((()()))(())(((()((())((((())))
-        // ))((()))))" +
-        //                        "(()((()(())))()(())((()(())((()(()())())))()))))(())())(()())()()()((())))((()()))
-        // ()()()((((" +
-        //                        "()())))))()))))()))())()((()(())()()(())(((()((()))(()(()()))(()))()))))))))))))(
-        // ()()))(((()" +
-        //                        ")((()(((()()()(()())((((()(()()()))())))())(()())))(()((((()))((()()())(((()))()()
-        // )(()(()((" +
-        //                        "()(()))))(())()()((()())((()(()(()))((()((()())(((()(((((()()()))(()()(()(((()(()
-        // ())()()()))" +
-        //                        "((()(()())))())(()(()))(())()())))()()()))()())(()(((((()))()()((((()()()()))()()(
-        // ()((()))(" +
-        //                        "()))))))))))()))()(()((((((())(()))()((())))(((((())))))(()))))()()(()()()(((((())
-        // )()())()((" +
-        //                        "((()()))()(())())))(((()((())))))))))(()()()((()))(()())((())))()()((()())))()()(
-        // ()))))))))" +
-        //                        "()(((()(()))()())((((((())))(((()(()())())))(())())())()()((((()(()(((())(()()((((
-        // (()))(()(" +
-        //                        "())()))))))()))()())))()()(()))(((()))()())))((())(((()()))((((((())))(((())()()(
-        // ()((()))())" +
-        //                        "(()((()()(((())())()))()()())())(()()((((((((())))()(((())(()))))()()())()(())))((
-        // (((()())((" +
-        //                        "(())()()))))()((())())(())()(()(()()((()))()(()(((()))))()()())(())()()()(((()((()
-        // ()()(()())" +
-        //                        "())(())()(((((()())(())()((((()()()))()((())()((()(()(((()(()))()())())()())()(()
-        // ()(()(((())" +
-        //                        ")()(())(()())(())((())()((()()())(()))))()(()()))))((())()()((()((()()(()((()()())
-        // (())))))()" +
-        //                        ")))()))))(((((()(()())(()))((()))()(()())())())))()(()()(()((())))))()()))((())(((
-        // (()))))())" +
-        //                        "((()))())((())((()(()((()))()()()))()((((((())((((((()((((((((()))(()(((()((((((((
-        // (())(())()" +
-        //                        ")()())))))))())())))()))(()))))()(()))(())))()()()((()()))(())(()))(()()(()())))()
-        // (()()()()" +
-        //                        "())))(())((((()))(((((())(()(((((())((()((((()))(((((()))(()())()))))())()))()(()
-        // ()))((((())" +
-        //                        ")()())(())))()((())))(((((()()((()()((()))))()((())())()))(((((((((()((())((((())
-        // ()())))(())" +
-        //                        "())()))())))())()))()(()()(()))(()()()((())((()))())))()(()())()(((((((()))))(()()
-        // ()((()(())" +
-        //                        "))())()))((())())(()(()(())()()())))))(()()()))())()))()())(((())(())))()(())())))
-        // ()((()(()(" +
-        //                        "())()()()((()))()))((())((((()((((((()()()))()))())())))))()(())(()())))()(((()())
-        // (((())))((" +
-        //                        "())()()))((())())()()(()()())()))())(((()((()(((()())(()(())(((())))()))))))())()(
-        // (((((())))" +
-        //                        ")))()(()))()))())))())((((())(())()(())()))()))((((((((()()(())())((((())))((((()(
-        // ())()()(()" +
-        //                        ")()))())()))(((()((()))()(((((()()()))))(()(()())))(((()(((()(())())((((())(()((()
-        // ((()(()()(" +
-        //                        "()()))()))()()))()))))))())()(())())))(((())))((()))((()(())())((())))((()))()))((
-        // (()))))(()" +
-        //                        "())()())())()())))())))(())))(())())()((()())()()))((()()())(((((()())))())))()()
-        // ()((((((())" +
-        //                        "())()((())()))(()))()(()())()())(())()())((()((())(())()()()()((())(()())()()((())
-        // ))()(((()(" +
-        //                        "()(((((()(())))()(()))()(()))()))())()))()())()(()))))()()())(((())((()((())(()(()
-        // ))()((()))" +
-        //                        "))))(())(()(())())()()((())((())((((())))))(()()())(()()())(())())(((()()(())(()))
-        // )()()))(()" +
-        //                        ")))))())(())()(((())())))((()(((())))(()((())()))()))((()()())()(((((())((((())))(
-        // ())()()((" +
-        //                        "()()(()()))(()((()))((())())))))))()())))())())((()(()()()()()))))()))((())(((((()
-        // ())(()))((" +
-        //                        "())))((()(())))))))))(((())(()(())(()(())((()((()))()((())())()())()((()(())())()(
-        // ((()()((()" +
-        //                        "(()())))))())((())(((()())(((()(()((())((()(((())(()()((((((()))())))())(()(()(()
-        // ()())())((" +
-        //                        "()))((())(())(())())))()(()())()))())(())((((())()((())))))(()()((())(((((()))()()
-        // ))()()())(" +
-        //                        "()(((()))())()()()))(((()()))(()(()((())(())))()()((((()()))()(())()())()()()()()(
-        // ()()))(((" +
-        //                        "())(((()()()((((((((((()()()(((()))))))())))()(((((((()((((((((()))()(((())())())
-        // ())((((((()" +
-        //                        "()))(()))()))))(())()())))())(()))(((())()()()((()()((())(()))((()(()())))()(()((
-        // ()((())()()" +
-        //                        "()()(())()()((())())())()()))()()))))((()()((())(((())(())())))((())())())(()))))
-        // ())))))()((" +
-        //                        "()(()(()))))()))((((())((())())(()))))()((()))(())((()()))()()((())(())())))(())))
-        // ))()()(()" +
-        //                        "())((()(())(((()((())))()())))()))()))))(())()(()))((()()()()))(())))(()()(())(((
-        // ()(((()()))" +
-        //                        "()((()))())()))(()(()))())))))))()((()(()))(((())())(())(()))(())(()((()))))))(()
-        // ())(()()()(" +
-        //                        "((()(((((()))((()))))(()))(())())(((()(()())(()()()()))())(()((()(()))()))())))(((
-        // ()(()))))" +
-        //                        "()))(()()((())())(()()())((()))(())))()()))(())))())))(()((())((()))((()))))())()
-        // ()()((((((" +
-        //                        "())((())()))(()))(())(())())))()())()((())))((()()())(()))(((()))())())))(())(())
-        // ())()())())" +
-        //                        ")((((()()()()))(())))((((())))(())(()((((()))())()))))))()()()))())))()((())))))((
-        // ())())))()" +
-        //                        "()(()()(()(()()()())((((())))(())(((())(()(()((((())(()()()(()(()((())(())(()())((
-        // ((()((()((" +
-        //                        "((((()((((())(((()())()((((()((())()(()(()(()((()()()(()(()())(((()(())(()(())(())
-        // (()))()(((" +
-        //                        "(((((()()(())))(()()(((())()(()(((((()())((()(())()())(((()(()(())()((((((((())()(
-        // (()()((((" +
-        //                        "())(((()(()((()((((()((((()(()(())())()(((()()))))))(()(((())()(((()())))((()))))(
-        // ()()))))(" +
-        //                        "()))))))((())())((())))()()()(()((()))()))()))()()()()()))(((((((()((()))((())()(
-        // ()(()))()((" +
-        //                        "((((((((((()(())))))(()())))()(()()(()(()()))))(((((()()((())()))())()()()))(())()
-        // )()())()()" +
-        //                        "((()()(()(()()(()))))))()()))(()()((()))))()((()()()())))(((()(((()()(())(())(()((
-        // (())(()((" +
-        //                        "()(()))(()()((())()(()()())()))))))(()()((())((()())))(())(()))()(()))(()))()))()(
-        // ())()(()()" +
-        //                        ")))(()))(()()(((()))))())))))((())())))))()()()))(()))((()())())()()))(((())((()((
-        // ())()(()))" +
-        //                        "()((()))()(())))))))()()())())))(()()(())(()))(())))))()(()))(()()))))))))((((()()
-        // ()()()))(" +
-        //                        "()))((()((())))(()())(((()()()(())))))()))()())())(()()()))))))((()())))((())))(()
-        // )()((()))" +
-        //                        "()(()())())))))(((()()(()(())()())(((((()))((()(())(())))))))()()))))))((()((((()
-        // ()))()))(()" +
-        //                        "()))(()()(())))))(((()()))(()())))(())()((()((()(((()()()()((()())())(()(((((((()(
-        // (((())(()(" +
-        //                        "(((()()(())))))(()())))))(()())))())(())))((()(()))(()())(((())))((((())))))((()))
-        // ()(((((((" +
-        //                        "())())())((())))))))(()))))))))()((()()())((())))(())))((()(((()(())(())))()()()()
-        // ))(())(()(" +
-        //                        "())()())(())))()())((()((()((()()((())())))(()((())()()))()))((()()(()))(((((((())
-        // )((())((()" +
-        //                        ")((())()()((((((((()())()()()))(()()(((()(())()))()))()))()()(()(((((()))))((())((
-        // (()))()(((" +
-        //                        "(((((()()()()(()))()(()))()(())))))))()((((()()((()(())()((()))((()()(()()))))))))
-        // ))(())(())" +
-        //                        ")()()((((())))()((())(()((()((()(())()))()()((((()))))()))())))))())(((()()))()))
-        // ()(()))(())" +
-        //                        ")()((()((((((())())))()))()((())(()(())))))))()))(()()()())())()))((()))(()((()((
-        // ()())))))((" +
-        //                        "((())()()())(())())()((()((()())()())()(()))))((()())))()))()()))))()((())))())(()
-        // ))()))(()(" +
-        //                        "(())(()))))()()))(()()((((()()))(((()()())(()(()(((()))())))((((()())()()()(())()
-        // ()()((())))" +
-        //                        ")((()()(()()))()())))(((((()(())())))))(()))))())))(())())()))))((()))))))(((())((
-        // (())()(((" +
-        //                        "())))(()))()())(((()(()(((()))))()(()()(())())))))())())()()((())))()(())((()))((
-        // ())(()())(" +
-        //                        "()()()(()()())((())())))))((()(()())()()))))(()()(()()()(()()))((((((()))(()())(()
-        // )(())())((" +
-        //                        "())(()(()))((()()(()))))()))()(())))())))())(()((())))((())(()()()(()))((()((((((
-        // ()())()()))" +
-        //                        "))()))((()((())()))()((((()()()(((())())))()()()())())())(()())()))()(())(())()))
-        // ())((()((((" +
-        //                        "(()))(())(((((()))(()())(()(()(())()((()(()(()))()(()))))()(((())(()((((((()))(()(
-        // ((()()())" +
-        //                        "()())((()())))((()((()())()((((((())()))(()))))(()()()()))())())((((((((())((((()
-        // ()()))(())" +
-        //                        "()()))(()(()()(()(()))))(()))(()()()(())()()(())(()))())((()()((()(()))()))))())((
-        // ()())())((" +
-        //                        "(((()(()()))((()()()))()()(()(()(((()())(((((((((()))()())(()(()(())(((((()()))))(
-        // ()())(()()" +
-        //                        ")())(())))))((()))())(((()((((()))()))(()(()(((()()(()(((()()))(())))((((()(()()))
-        // ))((((()()" +
-        //                        "())()))())()))))((())((((((())()()))()))()(((()((())(()((((()())())((((((((((()(((
-        // ((()())()" +
-        //                        "()(()))))))()((((())())(((()()((((()()())()(((((())))()))(())())(((()(((())()))()
-        // ()()()(()))" +
-        //                        ")(()(((()(()))())))()(((()()()()()(()(((()(((()))()(())(())()()))()((()))))))()(((
-        // ((()(()()(" +
-        //                        "(())(())((())))()(()())(())))())((())(()(()()(((())((()()(()()((()))))())))()(()))
-        // ()))))))()" +
-        //                        ")())))((((((()())))(())(()))()()))()(())))))))((()))(()()()()))()())()()()()))()()
-        // ())))))))(" +
-        //                        "(())(())))(()))(())((()())))(()(((()))((((())())))(())((())())))))(((()())(())()(
-        // ())))((()()" +
-        //                        "()((()(()))()))(())))((()(()()((()()()))((()))((()))()))(()())()()(((((((((()(()))
-        // ()())()((" +
-        //                        "())((((((((()(())()(((()((())()((((((((()))())))(()((()((())())())((()()())))(()(
-        // ()((((((())" +
-        //                        ")))((((())))((()()(())()())()()())(())(((()(()()(())(((())((((())()()(()()(((())()
-        // (())((()(" +
-        //                        "()(((()(()())))()))((()()())(())))))(()(()))()))()(()))))(()((()))()())(())(())(()
-        // ))((()())" +
-        //                        "()))())()())((((()))))())())(((()))(((()()((()((())(())()()))))(((()((((()((((((((
-        // (())()()()" +
-        //                        "(())((()(()()(()()(()()(())()())(((((()))))()(())(((()((((()())(()(((()))))()))())
-        // ((((()()((" +
-        //                        "()(()))))((())(())(()(()))()()(((()))(((((((((()())))((())()(()(((((((()))))))()()
-        // (())(((()(" +
-        //                        "()())()()))((()()))((((()(())())))((()())))))()))))))))()()(((())())((()))())((())
-        // ((()()))()" +
-        //                        ")((((((((())((()((())())))))()()))))))()()(())))))()))()()(((()))))(())((((()()()
-        // ()))((()(((" +
-        //                        "(()()(())(((((()())()))))))())())()((((((((((()))()))((()))(())())(()(()(())((()()
-        // (()((())(" +
-        //                        "())((((())(()()(()((()((()(((((()(()()((((())(())())(()()())()())((()(())()(())())
-        // )))"));
-        //        int[] num = {9, 53, 55, 56, -3, -4, -2, 10, 20, 35, 51, 54, -1, -5, 58, -6, 0, 1, 57, 59, 60, 61};
-        //        System.out.println(longestConsecutive(num));
-        //        {
-        //            String start = "hit";
-        //            String end = "cog";
-        //            String[] strs = {"hot", "hit", "cog", "dot", "dog"};
-        //            Set<String> dict = new HashSet<String>(Arrays.asList(strs));
-        //            System.out.println("5 => " + ladderLength(start, end, dict));
-        //        }
-        //        {
-        //            String start = "red";
-        //            String end = "tax";
-        //            String[] strs = {"ted", "tex", "red", "tax", "tad", "den", "rex", "pee"};
-        //            Set<String> dict = new HashSet<String>(Arrays.asList(strs));
-        //            System.out.println("4 => " + ladderLength(start, end, dict));
-        //        }
-        //        {
-        //            String start = "raining";
-        //            String end = "cellini";
-        //            String[] strs = {"heaping", "conning", "nipping", "wadding", "pulling", "lunging", "figging",
-        // "donning", "jamming", "coating", "foaling", "ousting", "dowsing", "busting", "penning", "lapping",
-        // "yanking", "sapping", "tasking", "rigging", "ranking", "larking", "farming", "dunging", "nutting",
-        // "gouging", "barfing", "fasting", "belting", "boiling", "boating", "dipping", "kilning", "barking",
-        // "furling", "calving", "veiling", "decking", "ricking", "salting", "lucking", "sending", "taiping",
-        // "marking", "martina", "warping", "bulking", "seaming", "topping", "larding", "jilting", "besting",
-        // "weeding", "nesting", "baiting", "jibbing", "pelting", "bushing", "garbing", "banting", "keeping",
-        // "venting", "rapping", "binning", "mulling", "smiting", "hatting", "tapping", "writing", "footing",
-        // "carding", "ratting", "bagging", "sitting", "dousing", "pinking", "testing", "passing", "gelling",
-        // "gassing", "ranging", "hefting", "vamping", "wetting", "paining", "rolling", "sinking", "yakking",
-        // "shaking", "nabbing", "licking", "sparing", "hamming", "celling", "halving", "matting", "landing",
-        // "kooking", "pinning", "hagging", "narking", "soaping", "winding", "dealing", "earring", "cunning",
-        // "moating", "skiting", "jutting", "fueling", "hooping", "guiling", "mapping", "hailing", "gutting",
-        // "firming", "bunting", "mealing", "rending", "jobbing", "pauling", "foiling", "peeking", "rollins",
-        // "lansing", "felling", "whiting", "vealing", "resting", "saltine", "earning", "purging", "mullins",
-        // "pausing", "colling", "banning", "wasting", "sealing", "gigging", "scaring", "pocking", "massing",
-        // "curring", "storing", "dinging", "handing", "pitting", "faining", "cupping", "staring", "riffing",
-        // "gowning", "hipping", "vanning", "darting", "maiming", "damping", "deaning", "bellini", "kipling",
-        // "marting", "hawking", "fending", "kicking", "beading", "curving", "wending", "yelling", "foaming",
-        // "rifting", "surging", "gaining", "stoking", "panging", "winking", "nursing", "oinking", "looking",
-        // "tolling", "bailing", "tanking", "hacking", "warming", "cooping", "wanting", "rotting", "kinking",
-        // "bugging", "purling", "wincing", "joining", "belling", "wilting", "tensing", "fellini", "wilding",
-        // "binding", "bugling", "sagging", "nagging", "binging", "tatting", "cellini", "silting", "belying",
-        // "ripping", "crating", "slaking", "killing", "hurting", "running", "harming", "banding", "rinking",
-        // "staying", "touting", "hasting", "melting", "nibbing", "talking", "ganging", "bonging", "rilling",
-        // "damning", "pooling", "porting", "sinning", "collins", "barbing", "bunking", "smiling", "hanging",
-        // "tending", "bulging", "ginning", "coiling", "lolling", "molting", "letting", "mending", "hinging",
-        // "gunning", "melding", "dilling", "shaving", "harping", "basting", "cobbing", "carting", "leading",
-        // "styling", "fowling", "goading", "yowling", "zipping", "wagging", "gaoling", "panning", "valving",
-        // "peeling", "titling", "sailing", "harding", "parring", "haloing", "quiting", "punting", "reeling",
-        // "batting", "signing", "pegging", "bogging", "mashing", "rankine", "seeding", "sassing", "wafting",
-        // "winging", "framing", "rooting", "longing", "sabling", "bulbing", "whiling", "balking", "canting",
-        // "dashing", "dueling", "renting", "booting", "whaling", "vatting", "veining", "fencing", "yucking",
-        // "slaving", "welling", "sunning", "lulling", "purring", "dawning", "sensing", "meaning", "wording",
-        // "hogging", "parsing", "falling", "yelping", "dinning", "vetting", "hulling", "reading", "lapsing",
-        // "tooling", "hoaxing", "roiling", "forming", "ramming", "gelding", "felting", "popping", "walling",
-        // "costing", "welding", "washing", "filling", "lasting", "couping", "cabling", "getting", "winning",
-        // "carping", "martins", "bilking", "burning", "jelling", "sicking", "tinting", "ceiling", "totting",
-        // "balding", "kenning", "tinging", "hugging", "westing", "burring", "pasting", "pecking", "parking",
-        // "slaying", "pigging", "heating", "manning", "bucking", "bussing", "gagging", "goaling", "rowling",
-        // "netting", "funking", "pitying", "jarring", "tasting", "putting", "beating", "funding", "mauling",
-        // "balling", "molding", "shining", "perkins", "dialing", "panting", "looping", "welting", "relying",
-        // "dulling", "dumping", "tanning", "warring", "gatling", "staging", "finding", "farting", "petting",
-        // "picking", "swaying", "toiling", "jambing", "bawling", "minting", "wedding", "hulking", "keeling",
-        // "nanking", "railing", "heading", "cutting", "gosling", "vesting", "sighing", "mucking", "copping",
-        // "polling", "raising", "fooling", "hooting", "titting", "calming", "seating", "rifling", "soiling",
-        // "dubbing", "jesting", "posting", "sacking", "corking", "yipping", "lathing", "bopping", "setting",
-        // "coaxing", "poshing", "fawning", "heeling", "warning", "napping", "vending", "mooting", "hurling",
-        // "supping", "nanjing", "pipping", "tagging", "mopping", "souping", "palming", "gulling", "kirking",
-        // "gilding", "docking", "wefting", "dusting", "sharing", "darling", "bowling", "lauding", "bidding",
-        // "hopping", "honking", "hunting", "pepping", "busying", "damming", "patting", "hitting", "gusting",
-        // "jigging", "gabbing", "hosting", "sidling", "telling", "rusting", "daubing", "reining", "memling",
-        // "healing", "gashing", "betting", "lilting", "hashing", "salving", "firring", "gabling", "ducking",
-        // "waiving", "skating", "worming", "waiting", "burying", "booking", "corning", "suiting", "hooking",
-        // "gonging", "listing", "hulaing", "sulking", "digging", "fouling", "zincing", "cocking", "packing",
-        // "scaling", "pooping", "zinging", "banging", "bolling", "punning", "palling", "sipping", "bunging",
-        // "minding", "choking", "yapping", "nicking", "warding", "gorging", "canning", "culling", "lending",
-        // "spaying", "lashing", "pupping", "fanning", "banking", "pinging", "roaming", "sopping", "fonding",
-        // "searing", "fucking", "rooking", "tooting", "raining", "billing", "pulsing", "curbing", "cashing",
-        // "calking", "harking", "tarring", "tacking", "whining", "tarting", "pauline", "rasping", "howling",
-        // "helling", "curling", "pucking", "hauling", "coaling", "lopping", "mailing", "wailing", "lugging",
-        // "ticking", "staving", "snaking", "selling", "masking", "jabbing", "mewling", "heaving", "soaring",
-        // "fagging", "cording", "begging", "ridging", "jetting", "backing", "dotting", "lacking", "parting",
-        // "jotting", "dunning", "tinning", "stiling", "stating", "zapping", "hearing", "fitting", "barging",
-        // "galling", "wigging", "feeding", "tenting", "looting", "cabbing", "cursing", "dunking", "dabbing",
-        // "ragging", "bedding", "witting", "pouting", "burping", "slating", "tamping", "basking", "failing",
-        // "papping", "narcing", "lancing", "furlong", "tabling", "dolling", "tailing", "pawning", "collies",
-        // "lamming", "coifing", "bolting", "sucking", "rafting", "morning", "ranting", "tabbing", "rinding",
-        // "bandung", "bashing", "bending", "ducting", "casting", "camping", "flaming", "hinting", "sanding",
-        // "carving", "lagging", "helping", "keening", "jolting", "temping", "junking", "manging", "dimming",
-        // "ringing", "tipping", "spiking", "malling", "pursing", "soaking", "willing", "fulling", "causing",
-        // "jacking", "furring", "singing", "halting", "tucking", "ruining", "denting", "calling", "barring",
-        // "fopping", "yawning", "tilling", "nilling", "downing", "cooling", "martini", "budging", "lapwing",
-        // "mincing", "rinsing", "cowling", "marring", "coining", "sibling", "potting", "tauting", "bulling",
-        // "lurking", "sorting", "poohing", "bathing", "spicing", "nailing", "spiting", "racking", "lusting",
-        // "rutting", "gulping", "tilting", "pairing", "peaking", "capping", "gobbing", "finking"};
-        //            Set<String> dict = new HashSet<String>(Arrays.asList(strs));
-        //            System.out.println("? => " + ladderLength(start, end, dict));
-        //        }
-        //        {
-        //            String start = "charge";
-        //            String end = "comedo";
-        //            String[] strs = {"shanny", "shinny", "whinny", "whiney", "shiver", "sharer", "scarer",
-        // "scaler", "render", "fluxes", "teases", "starks", "clinks", "messrs", "crewed", "donner", "blurts",
-        // "bettye", "powell", "castes", "hackee", "hackle", "heckle", "deckle", "decile", "defile", "define",
-        // "refine", "repine", "rapine", "ravine", "raving", "roving", "chased", "roping", "coping", "coming",
-        // "homing", "pointy", "hominy", "homily", "homely", "comely", "comedy", "comedo", "vagues", "crocus",
-        // "spiked", "bobbed", "dourer", "smells", "feared", "wooden", "stings", "loafer", "pleads", "gaiter",
-        // "meeter", "denser", "bather", "deaves", "wetted", "pleats", "cadger", "curbed", "grover", "hinged",
-        // "budget", "gables", "larked", "flunks", "fibbed", "bricks", "bowell", "yonder", "grimes", "clewed",
-        // "triads", "legion", "lacier", "ridden", "bogied", "camper", "damien", "spokes", "flecks", "goosed",
-        // "snorer", "choked", "choler", "leakey", "vagued", "flumes", "scanty", "bugger", "tablet", "nilled",
-        // "julies", "roomed", "ridges", "snared", "singes", "slicks", "toiled", "verged", "shitty", "clicks",
-        // "farmed", "stunts", "dowsed", "brisks", "skunks", "linens", "hammer", "naiver", "duster", "elates",
-        // "kooked", "whacky", "mather", "loomed", "soured", "mosses", "keeled", "drains", "drafty", "cricks",
-        // "glower", "brayed", "jester", "mender", "burros", "arises", "barker", "father", "creaks", "prayed",
-        // "bulges", "heaped", "called", "volley", "girted", "forded", "huffed", "bergen", "grated", "douses",
-        // "jagger", "grovel", "lashes", "creeds", "bonier", "snacks", "powder", "curled", "milker", "posers",
-        // "ribbed", "tracts", "stoked", "russel", "bummer", "cusses", "gouged", "nailed", "lobbed", "novels",
-        // "stands", "caches", "swanks", "jutted", "zinged", "wigged", "lunges", "divers", "cranny", "pinter",
-        // "guides", "tigers", "traces", "berber", "purges", "hoaxer", "either", "bribed", "camped", "funked",
-        // "creaky", "noises", "paused", "splits", "morrow", "faults", "ladies", "dinged", "smoker", "calved",
-        // "deters", "kicker", "wisher", "ballad", "filled", "fobbed", "tucker", "steams", "rubber", "staled",
-        // "chived", "warred", "draped", "curfew", "chafed", "washer", "tombed", "basket", "limned", "rapped",
-        // "swills", "gashed", "loaner", "settee", "layers", "bootee", "rioted", "prance", "sharps", "wigner",
-        // "ranted", "hanker", "leaden", "groped", "dalian", "robbed", "peeled", "larder", "spoofs", "pushed",
-        // "hallie", "maiden", "waller", "pashas", "grains", "pinked", "lodged", "zipper", "sneers", "bootie",
-        // "drives", "former", "deepen", "carboy", "snouts", "fained", "wilmer", "trance", "bugles", "chimps",
-        // "deeper", "bolder", "cupped", "mauser", "pagers", "proven", "teaser", "plucky", "curved", "shoots",
-        // "barged", "mantes", "reefer", "coater", "clotho", "wanner", "likens", "swamis", "troyes", "breton",
-        // "fences", "pastas", "quirky", "boiler", "canoes", "looted", "caries", "stride", "adorns", "dwells",
-        // "hatred", "cloths", "rotted", "spooks", "canyon", "lances", "denied", "beefed", "diaper", "wiener",
-        // "rifled", "leader", "ousted", "sprays", "ridged", "mousey", "darken", "guiled", "gasses", "suited",
-        // "drools", "bloody", "murals", "lassie", "babied", "fitter", "lessee", "chiles", "wrongs", "malian",
-        // "leaves", "redder", "funnel", "broths", "gushes", "grants", "doyens", "simmer", "locked", "spoors",
-        // "berger", "landed", "mosley", "scorns", "whiten", "hurled", "routed", "careen", "chorus", "chasms",
-        // "hopped", "cadged", "kicked", "slewed", "shrewd", "mauled", "saucer", "jested", "shriek", "giblet",
-        // "gnarls", "foaled", "roughs", "copses", "sacked", "blends", "slurps", "cashew", "grades", "cramps",
-        // "radius", "tamped", "truths", "cleans", "creams", "manner", "crimps", "hauled", "cheery", "shells",
-        // "asters", "scalps", "quotas", "clears", "clover", "weeder", "homers", "pelted", "hugged", "marked",
-        // "moaned", "steely", "jagged", "glades", "goshes", "masked", "ringer", "eloped", "vortex", "gender",
-        // "spotty", "harken", "hasten", "smiths", "mulled", "specks", "smiles", "vainer", "patted", "harden",
-        // "nicked", "dooley", "begged", "belief", "bushel", "rivers", "sealed", "neuter", "legged", "garter",
-        // "freaks", "server", "crimea", "tossed", "wilted", "cheers", "slides", "cowley", "snotty", "willed",
-        // "bowled", "tortes", "pranks", "yelped", "slaved", "silver", "swords", "miners", "fairer", "trills",
-        // "salted", "copsed", "crusts", "hogged", "seemed", "revert", "gusted", "pixies", "tamika", "franks",
-        // "crowed", "rocked", "fisher", "sheers", "pushes", "drifts", "scouts", "sables", "sallie", "shiner",
-        // "coupes", "napped", "drowse", "traced", "scenes", "brakes", "steele", "beater", "buries", "turned",
-        // "luther", "bowers", "lofted", "blazer", "serves", "cagney", "hansel", "talker", "warmed", "flirts",
-        // "braced", "yukked", "milken", "forged", "dodder", "strafe", "blurbs", "snorts", "jetted", "picket",
-        // "pistil", "valved", "pewter", "crawls", "strews", "railed", "clunks", "smiled", "dealer", "cussed",
-        // "hocked", "spited", "cowers", "strobe", "donned", "brawls", "minxes", "philby", "gavels", "renter",
-        // "losses", "packet", "defied", "hazier", "twines", "balled", "gaoled", "esther", "narrow", "soused",
-        // "crispy", "souped", "corned", "cooley", "rioter", "talley", "keaton", "rocker", "spades", "billie",
-        // "mattel", "billet", "horton", "navels", "sander", "stoker", "winded", "wilder", "cloyed", "blazed",
-        // "itched", "docked", "greene", "boozed", "ticket", "temped", "capons", "bravos", "rinded", "brandi",
-        // "massed", "sobbed", "shapes", "yippee", "script", "lesion", "mallet", "seabed", "medals", "series",
-        // "phases", "grower", "vertex", "dented", "tushed", "barron", "toffee", "bushes", "mouser", "zenger",
-        // "quaked", "marley", "surfed", "harmed", "mormon", "flints", "shamed", "forgot", "jailor", "boater",
-        // "sparer", "shards", "master", "pistol", "tooted", "banned", "drover", "spices", "gobbed", "corals",
-        // "chucks", "kitten", "whales", "nickel", "scrape", "hosted", "hences", "morays", "stomps", "marcel",
-        // "hummed", "wonder", "stoves", "distil", "coffer", "quaker", "curler", "nurses", "cabbed", "jigger",
-        // "grails", "manges", "larger", "zipped", "rovers", "stints", "nudges", "marlin", "exuded", "storey",
-        // "pester", "longer", "creeps", "meaner", "wallop", "dewier", "rivera", "drones", "valued", "bugled",
-        // "swards", "cortes", "charts", "benson", "wreaks", "glares", "levels", "smithy", "slater", "suites",
-        // "paired", "fetter", "rutted", "levied", "menses", "wither", "woolly", "weeded", "planed", "censer",
-        // "tested", "pulled", "hitter", "slicer", "tartar", "chunky", "whirrs", "mewled", "astern", "walden",
-        // "hilton", "cached", "geller", "dolled", "chores", "sorter", "soothe", "reused", "clumps", "fueled",
-        // "hurler", "helled", "packed", "ripped", "tanned", "binder", "flames", "teased", "punker", "jerked",
-        // "cannon", "joists", "whited", "sagged", "heaven", "hansen", "grayer", "turfed", "cranks", "stater",
-        // "bunted", "horsey", "shakes", "brands", "faints", "barber", "gorged", "creamy", "mowers", "scrams",
-        // "gashes", "knacks", "aeries", "sticks", "altars", "hostel", "pumped", "reeves", "litter", "hoaxed",
-        // "mushed", "guided", "ripper", "bought", "gelled", "ranker", "jennie", "blares", "saloon", "bomber",
-        // "mollie", "scoops", "coolie", "hollis", "shrunk", "tattle", "sensed", "gasket", "dodoes", "mapped",
-        // "strips", "dodges", "sailed", "talked", "sorted", "lodges", "livest", "pastel", "ladles", "graded",
-        // "thrice", "thales", "sagger", "mellon", "ganged", "maroon", "fluked", "raised", "nannie", "dearer",
-        // "lither", "triked", "dorset", "clamps", "lonnie", "spates", "larded", "condor", "sinker", "narced",
-        // "quaver", "atones", "farted", "elopes", "winger", "mottle", "loaned", "smears", "joanne", "boozes",
-        // "waster", "digger", "swoops", "smokey", "nation", "drivel", "ceased", "miffed", "faiths", "pisses",
-        // "frames", "fooled", "milled", "dither", "crazed", "darryl", "mulder", "posses", "sumter", "weasel",
-        // "pedals", "brawny", "charge", "welted", "spanks", "sallow", "joined", "shaker", "blocks", "mattie",
-        // "swirls", "driver", "belles", "chomps", "blower", "roared", "ratted", "hailed", "taunts", "steamy",
-        // "parrot", "deafer", "chewed", "spaces", "cuffed", "molded", "winked", "runnel", "hollow", "fluted",
-        // "bedded", "crepes", "stakes", "vested", "parley", "burton", "loiter", "massey", "carnap", "closed",
-        // "bailed", "milder", "heists", "morale", "putter", "snyder", "damion", "conned", "little", "pooped",
-        // "ticced", "cocked", "halves", "wishes", "francs", "goblet", "carlin", "pecked", "julius", "raster",
-        // "shocks", "dawned", "loosen", "swears", "buried", "peters", "treats", "noshed", "hedges", "trumps",
-        // "rabies", "ronnie", "forces", "ticked", "bodies", "proved", "dadoes", "halved", "warner", "divest",
-        // "thumbs", "fettle", "ponies", "testis", "ranked", "clouts", "slates", "tauted", "stools", "dodged",
-        // "chancy", "trawls", "things", "sorrow", "levies", "glides", "battle", "sauced", "doomed", "seller",
-        // "strove", "ballet", "bumper", "gooses", "foiled", "plowed", "glints", "chanel", "petals", "darted",
-        // "seared", "trunks", "hatter", "yokels", "vanned", "tweedy", "rubles", "crones", "nettie", "roofed",
-        // "dusted", "dicker", "fakers", "rusted", "bedder", "darrin", "bigger", "baylor", "crocks", "niches",
-        // "tented", "cashed", "splats", "quoted", "soloed", "tessie", "stiles", "bearer", "hissed", "soiled",
-        // "adored", "bowery", "snakes", "wagers", "rafter", "crests", "plaids", "cordon", "listed", "lawson",
-        // "scared", "brazos", "horded", "greens", "marred", "mushes", "hooper", "halter", "ration", "calked",
-        // "erodes", "plumed", "mummer", "pinged", "curios", "slated", "ranter", "pillow", "frills", "whaled",
-        // "bathos", "madden", "totted", "reamed", "bellow", "golfer", "seaman", "barred", "merger", "hipped",
-        // "silken", "hastes", "strays", "slinks", "hooted", "convex", "singed", "leased", "bummed", "leaner",
-        // "molted", "naught", "caters", "tidied", "forges", "sealer", "gulled", "plumps", "racket", "fitted",
-        // "rafted", "drapes", "nasser", "tamara", "winced", "juliet", "ledger", "bettie", "howell", "reeved",
-        // "spiced", "thebes", "apices", "dorsey", "welled", "feeler", "warded", "reader", "folded", "lepers",
-        // "cranky", "bosses", "ledges", "player", "yellow", "lunged", "mattes", "confer", "malign", "shared",
-        // "brandy", "filmed", "rhinos", "pulsed", "rouses", "stones", "mixers", "cooped", "joiner", "papped",
-        // "liston", "capote", "salvos", "wicker", "ciders", "hoofed", "wefted", "locket", "picker", "nougat",
-        // "limpid", "hooter", "jailer", "peaces", "mashes", "custer", "wallis", "purees", "trends", "irater",
-        // "honied", "wavers", "tanner", "change", "hinges", "tatted", "cookie", "catnap", "carton", "crimed",
-        // "betted", "veined", "surges", "rumped", "merlin", "convey", "placid", "harped", "dianna", "hookey",
-        // "nobles", "carted", "elided", "whined", "glover", "bleats", "stales", "husker", "hearer", "tartan",
-        // "weaker", "skewer", "lumbar", "temper", "gigged", "gawked", "mayors", "pigged", "gather", "valves",
-        // "mitten", "largos", "boreas", "judges", "cozens", "censor", "frilly", "dumbed", "downer", "jogger",
-        // "scolds", "danced", "floras", "funded", "lumped", "dashes", "azores", "quites", "chunks", "washed",
-        // "duller", "bilges", "cruels", "brooks", "fishes", "smoked", "leaped", "hotter", "trials", "heaves",
-        // "rouges", "kissed", "sleety", "manses", "spites", "starts", "banded", "clings", "titted", "vetoed",
-        // "mister", "mildew", "wailed", "sheets", "peeked", "passer", "felted", "broken", "lieges", "ruffed",
-        // "bracts", "buster", "muffed", "lanker", "breaks", "coffey", "sighed", "charms", "balded", "kisser",
-        // "booths", "leaven", "cheeps", "billed", "lauder", "bumped", "career", "stocks", "airier", "limped",
-        // "jeanie", "roamed", "carves", "lilted", "router", "bonnie", "denver", "briggs", "steeps", "nerves",
-        // "oinked", "bucked", "hooves", "dancer", "burris", "parked", "swells", "collie", "perked", "cooler",
-        // "fopped", "wedder", "malted", "sabers", "lidded", "conner", "rogues", "fought", "dapper", "purled",
-        // "crowds", "barnes", "bonner", "globed", "goners", "yankee", "probes", "trains", "sayers", "jersey",
-        // "valley", "vatted", "tauter", "dulled", "mucked", "jotted", "border", "genres", "banked", "filter",
-        // "hitler", "dipper", "dollie", "sieves", "joliet", "tilted", "checks", "sports", "soughs", "ported",
-        // "causes", "gelded", "mooter", "grills", "parred", "tipped", "placer", "slayer", "glided", "basked",
-        // "rinses", "tamper", "bunged", "nabbed", "climbs", "faeces", "hanson", "brainy", "wicket", "crowns",
-        // "calmed", "tarred", "spires", "deanne", "gravel", "messes", "snides", "tugged", "denier", "moslem",
-        // "erased", "mutter", "blahed", "hunker", "fasten", "garbed", "cracks", "braked", "rasped", "ravens",
-        // "mutton", "tester", "tories", "pinker", "titled", "arisen", "softer", "woolen", "disses", "likest",
-        // "dicier", "nagged", "lipton", "plumbs", "manged", "faulty", "sacred", "whiter", "erases", "padres",
-        // "haired", "captor", "metals", "cardin", "yowled", "trusts", "revels", "boxers", "toured", "spouts",
-        // "sodded", "judged", "holley", "figged", "pricey", "lapses", "harper", "beaned", "sewers", "caused",
-        // "willie", "farmer", "pissed", "bevies", "bolled", "bugler", "votive", "person", "linton", "senses",
-        // "supped", "mashed", "pincer", "wetter", "tangos", "sticky", "lodger", "loader", "daunts", "peaked",
-        // "moused", "sleeps", "lasted", "tasked", "awards", "lovely", "gushed", "spurts", "canter", "mantis",
-        // "coaled", "groans", "dannie", "oopses", "sneaky", "vogues", "mobile", "plumes", "chides", "theses",
-        // "marcia", "parser", "flexed", "stayed", "fouler", "tusked", "quartz", "daubed", "clancy", "rouged",
-        // "flaked", "norton", "dunner", "corded", "shelly", "hester", "fucker", "polled", "rodger", "yeager",
-        // "zinced", "livens", "browne", "gonged", "pubbed", "sapped", "thrive", "placed", "jensen", "moises",
-        // "scopes", "stumpy", "stocky", "heller", "levers", "morals", "wheres", "gasped", "jobber", "leaved",
-        // "champs", "rosier", "pallet", "shooed", "parses", "bender", "closet", "pureed", "routes", "verges",
-        // "bulled", "foster", "rummer", "molten", "condos", "better", "cotter", "lassos", "grafts", "vendor",
-        // "thrace", "codded", "tinker", "bullet", "beaker", "garden", "spiels", "popper", "skills", "plated",
-        // "farrow", "flexes", "esters", "brains", "handel", "puller", "dickey", "creeks", "ballot", "singer",
-        // "sicker", "spayed", "spoils", "rubier", "missed", "framed", "bonnet", "molder", "mugger", "waived",
-        // "taster", "robles", "tracks", "nearer", "lister", "horsed", "drakes", "lopped", "lubber", "busied",
-        // "button", "eluded", "ceases", "sought", "realer", "lasers", "pollen", "crisps", "binned", "darrel",
-        // "crafty", "gleams", "lonely", "gordon", "harley", "damian", "whiles", "wilton", "lesser", "mallow",
-        // "kenyon", "wimped", "scened", "risked", "hunter", "rooter", "ramses", "inches", "goaded", "ferber",
-        // "freaky", "nerved", "spoken", "lovers", "letter", "marrow", "bulbed", "braver", "sloped", "breads",
-        // "cannes", "bassos", "orated", "clever", "darren", "bredes", "gouger", "servos", "trites", "troths",
-        // "flunky", "jammed", "bugged", "watter", "motive", "humped", "writer", "pestle", "rilled", "packer",
-        // "foists", "croats", "floury", "napier", "floors", "scotty", "sevens", "harrow", "welter", "quacks",
-        // "daybed", "lorded", "pulses", "pokier", "fatten", "midges", "joints", "snoopy", "looter", "monies",
-        // "canted", "riffed", "misses", "bunker", "piston", "yessed", "earner", "hawked", "wedged", "brewer",
-        // "nested", "graver", "hoaxes", "slaves", "pricks", "magpie", "bernie", "rapier", "roster", "poohed",
-        // "corner", "trysts", "rogers", "whirls", "bathed", "teasel", "opener", "minced", "sister", "dreamy",
-        // "worker", "rinked", "panted", "triton", "mervin", "snowed", "leafed", "thinks", "lesson", "millet",
-        // "larson", "lagged", "likely", "stormy", "fortes", "hordes", "wovens", "kinked", "mettle", "seated",
-        // "shirts", "solver", "giants", "jilted", "leaded", "mendez", "lowers", "bidder", "greats", "pepped",
-        // "flours", "versus", "canton", "weller", "cowper", "tapped", "dueled", "mussed", "rubies", "bonged",
-        // "steals", "formed", "smalls", "sculls", "docket", "ouster", "gunned", "thumps", "curred", "withes",
-        // "putted", "buttes", "bloats", "parsed", "galley", "preses", "tagged", "hanger", "planes", "chords",
-        // "shafts", "carson", "posits", "zinger", "solves", "tensed", "tastes", "rinsed", "kenned", "bitten",
-        // "leslie", "chanty", "candor", "daises", "baggie", "wedded", "paints", "moored", "haloed", "hornet",
-        // "lifted", "fender", "guiles", "swifts", "flicks", "lancer", "spares", "pellet", "passed", "finked",
-        // "joanna", "bidden", "swamps", "lapped", "leered", "served", "shirrs", "choker", "limper", "marker",
-        // "nudged", "triter", "thanks", "peered", "bruins", "loaves", "fabled", "lathes", "pipers", "hooped",
-        // "orates", "burned", "swines", "sprats", "warder", "colder", "crazes", "reined", "prized", "majors",
-        // "darrow", "waifed", "rooked", "rickey", "patter", "shrive", "gropes", "gassed", "throve", "region",
-        // "weaken", "hettie", "walton", "galled", "convoy", "wesson", "exudes", "tinted", "clanks", "blinks",
-        // "slacks", "stilts", "franny", "socket", "wished", "kidded", "knotty", "turves", "cashes", "geared",
-        // "sunned", "glowed", "sadden", "harlem", "testes", "sweets", "becket", "blazes", "batter", "fellow",
-        // "clovis", "copier", "shaped", "husked", "gimlet", "rooney", "taints", "sashes", "bossed", "cootie",
-        // "franck", "probed", "bagged", "smocks", "batten", "spared", "chills", "relics", "meyers", "grader",
-        // "tromps", "dimmer", "pasted", "pepper", "capped", "played", "junket", "easier", "palmed", "pander",
-        // "vaguer", "bulged", "dissed", "borges", "raises", "wallow", "jigged", "bogged", "burped", "neater",
-        // "rammed", "fibers", "castor", "skirts", "cancer", "tilled", "spored", "dander", "denims", "budges",
-        // "trucks", "sowers", "yapped", "cadges", "wrists", "hacker", "graved", "vipers", "noshes", "minted",
-        // "lessor", "cassia", "wrecks", "hidden", "brando", "honeys", "chilli", "ragged", "breded", "punier",
-        // "stacey", "sisses", "jocked", "croaks", "dinned", "walker", "heston", "flares", "coined", "cannot",
-        // "chocks", "leases", "wander", "balder", "warmer", "bawled", "donnie", "damson", "header", "chilly",
-        // "models", "simper", "watery", "milked", "poises", "combed", "toilet", "gallop", "sonnet", "loosed",
-        // "yawned", "splays", "pauses", "bother", "graphs", "shrews", "scones", "manuel", "milers", "hotels",
-        // "bennie", "flores", "spells", "grimed", "tenses", "staged", "puffer", "posies", "motion", "fudged",
-        // "fainer", "tatter", "seraph", "nansen", "months", "muppet", "tamera", "shaman", "falser", "becker",
-        // "lisbon", "clefts", "weeper", "mendel", "girder", "takers", "torsos", "forked", "dances", "stated",
-        // "yelled", "scants", "frothy", "rolled", "yodels", "listen", "craned", "brooms", "suffer", "easter",
-        // "shills", "craves", "bleeps", "belled", "dished", "bordon", "zither", "jacket", "lammer", "kirked",
-        // "shaved", "atoned", "frumpy", "nosier", "vender", "graced", "clingy", "chants", "wrests", "cursed",
-        // "prunes", "tarter", "stripe", "coffee", "veiled", "tweeds", "shrine", "spines", "kegged", "melvin",
-        // "gasser", "market", "marten", "peeped", "sanger", "somber", "spider", "netted", "radium", "slings",
-        // "scarfs", "mended", "creels", "shaves", "payers", "bunked", "movers", "beings", "conked", "cozies",
-        // "benton", "codger", "prints", "gusset", "longed", "burner", "jambed", "mullet", "fogged", "scores",
-        // "carbon", "sleeks", "helped", "waxier", "gilded", "harlot", "winces", "tenser", "lowell", "ramsey",
-        // "kennan", "booted", "beaver", "rested", "shouts", "hickey", "looped", "swings", "wonted", "dilled",
-        // "defers", "lolled", "pupped", "cruets", "solved", "romper", "defter", "chokes", "kithed", "garnet",
-        // "bookie", "stared", "stares", "latter", "lazies", "fanned", "wagged", "dunces", "corked", "cloned",
-        // "prided", "baxter", "pusses", "boomed", "masses", "warren", "weaves", "delves", "handed", "merton",
-        // "lusher", "hepper", "gibber", "sender", "parsec", "snares", "masher", "seamed", "sweats", "welles",
-        // "gagged", "curter", "mother", "beeped", "vealed", "shoved", "slaver", "hacked", "gutted", "ranged",
-        // "bashed", "closer", "storks", "meshed", "cortex", "copper", "severn", "gripes", "carlos", "scares",
-        // "crates", "boiled", "ginned", "mouses", "raided", "greyed", "verier", "slopes", "fenced", "sniper",
-        // "priced", "flawed", "buffed", "spacey", "favors", "platen", "miller", "walled", "cutter", "skated",
-        // "holier", "beamed", "waiter", "drowns", "clomps", "quarks", "bested", "frisks", "purged", "scalds",
-        // "marian", "flower", "howled", "plover", "bikers", "trails", "hagged", "smirks", "sitter", "carmen",
-        // "lanced", "plants", "nobler", "yakked", "thesis", "lassen", "margin", "wagner", "sifter", "houses",
-        // "screws", "booker", "dormer", "meters", "padded", "loaded", "cartel", "sutton", "willis", "chatty",
-        // "dunked", "dreamt", "dalton", "fables", "coveys", "muller", "shanty", "adders", "tailor", "helper",
-        // "liters", "butted", "maiman", "hollie", "gallon", "xavier", "shrank", "mickey", "rather", "powers",
-        // "keened", "doused", "kisses", "flanks", "dotted", "phased", "dumped", "linger", "kramer", "spaced",
-        // "soften", "strife", "rowers", "hovers", "crimes", "crooks", "carrel", "braces", "lander", "shrove",
-        // "skulks", "banker", "itches", "dropsy", "misted", "pulped", "cloche", "fawned", "states", "teared",
-        // "beeper", "raider", "groves", "livery", "aerier", "keenan", "severe", "sabres", "bogies", "coated",
-        // "harlow", "tanked", "mellow", "cozier", "shanks", "spooky", "blamed", "tricks", "sleets", "punted",
-        // "jumped", "caxton", "warped", "halley", "frisky", "shines", "skater", "lumber", "truces", "sliced",
-        // "gibbet", "narked", "chives", "graves", "gummed", "holler", "glazes", "nieves", "hushed", "nought",
-        // "prated", "chored", "cloudy", "kidder", "huston", "straws", "twined", "gifted", "rodney", "haloes",
-        // "france", "wirier", "mercia", "rubbed", "coaxed", "sumner", "snipes", "nipper", "leiden", "madman",
-        // "margie", "footed", "firmed", "budded", "froths", "senior", "hoover", "tailed", "glider", "straps",
-        // "stalks", "billow", "racked", "javier", "zoomed", "shades", "whores", "braids", "roused", "sudden",
-        // "dogies", "fencer", "snaked", "flings", "traded", "gunner", "snider", "staten", "levees", "lathed",
-        // "sailor", "waited", "muster", "clothe", "lulled", "cargos", "revved", "sooths", "flamed", "borers",
-        // "feller", "bladed", "oliver", "collin", "wusses", "murder", "parted", "jailed", "frayed", "doored",
-        // "cheeks", "misled", "belted", "winter", "merges", "shaven", "fudges", "tabbed", "forget", "sloths",
-        // "cachet", "mealed", "sassed", "salter", "haunts", "ranger", "rivets", "deeded", "reaped", "damped",
-        // "crated", "youths", "whacks", "tamers", "misery", "seeped", "eerier", "tiller", "busses", "gloved",
-        // "hushes", "cronus", "pruned", "casket", "direst", "guilds", "motley", "spools", "fevers", "snores",
-        // "greece", "elides", "waists", "rattle", "trader", "juster", "rashes", "stoney", "pipped", "solder",
-        // "sinner", "prides", "rugged", "steers", "gnarly", "titter", "cities", "walter", "stolen", "steaks",
-        // "hawker", "weaned", "jobbed", "jacked", "pikers", "hipper", "spoilt", "beeves", "craved", "gotten",
-        // "balked", "sherry", "looney", "crisis", "callie", "swiped", "fished", "rooted", "bopped", "bowler",
-        // "escher", "chumps", "jerrod", "lefter", "snooty", "fillet", "scales", "comets", "lisped", "decked",
-        // "clowns", "horned", "robber", "bottle", "reeled", "crapes", "banter", "martel", "dowels", "brandt",
-        // "sweeps", "heeled", "tabled", "manors", "danger", "dionne", "prayer", "decker", "millie", "boated",
-        // "damned", "horses", "globes", "failed", "lammed", "nigher", "joyner", "sobers", "chided", "tipper",
-        // "parcel", "flakes", "fugger", "elated", "hinder", "hopper", "crafts", "wipers", "badder", "jessie",
-        // "matted", "wafted", "pealed", "cheats", "elites", "torres", "bushed", "sneaks", "tidies", "brings",
-        // "stalls", "payees", "zonked", "danker", "poshes", "smelts", "stoops", "warden", "chicks", "ramsay",
-        // "budged", "firmer", "glazed", "heated", "slices", "hovels", "belied", "shifts", "pauper", "tinges",
-        // "weston", "casted", "titles", "droves", "roomer", "modals", "seamen", "wearer", "blonde", "berlin",
-        // "libbed", "tensor", "hokier", "lambed", "graped", "headed", "copped", "eroses", "fagged", "filler",
-        // "keener", "stages", "civets", "spills", "tithed", "sullen", "sucked", "briton", "whaler", "hooded",
-        // "tittle", "bucket", "furled", "darned", "planet", "clucks", "batted", "dagger", "brides", "severs",
-        // "pathos", "grainy", "relied", "carpel", "makers", "lancet", "slowed", "messed", "ravels", "faster",
-        // "gabbed", "chance", "grayed", "santos", "spends", "chinos", "saints", "swirly", "dories", "wilson",
-        // "milton", "clangs", "manual", "nodded", "signer", "stript", "etched", "vaster", "wastes", "stored",
-        // "minces", "purred", "marvin", "pinned", "skulls", "heaved", "wadded", "fowled", "hashed", "mullen",
-        // "relief", "hatted", "primed", "chaffs", "canned", "lackey", "showed", "shandy", "chases", "maggie",
-        // "deafen", "bussed", "differ", "worked", "marted", "ducked", "socked", "fussed", "greyer", "herder",
-        // "trusty", "follow", "samson", "babies", "whorls", "stanks", "manson", "cranes", "murrow", "shrink",
-        // "genius", "holder", "lenses", "yucked", "termed", "ruined", "junker", "belies", "joshed", "cooled",
-        // "basted", "greeks", "fuller", "healer", "carver", "havens", "drunks", "sucker", "lotion", "glared",
-        // "healed", "pocked", "rifles", "weaved", "canoed", "punter", "hinton", "settle", "boobed", "hinted",
-        // "scored", "harder", "status", "sloven", "hayden", "golfed", "scoots", "bloods", "slaked", "jugged",
-        // "louses", "cassie", "shaded", "rushed", "pitied", "barked", "honked", "rasher", "forced", "shaver",
-        // "vowels", "holden", "pelvis", "blades", "chests", "preyer", "floods", "deanna", "cation", "mapper",
-        // "falter", "dabbed", "mocker", "nestle", "shucks", "heeded", "ticker", "binges", "summer", "slumps",
-        // "lusted", "scampi", "crofts", "gorges", "pardon", "torses", "smokes", "lashed", "bailey", "jabbed",
-        // "calmer", "preset", "forbes", "hasted", "wormed", "winged", "minors", "banner", "grazed", "hewers",
-        // "kernel", "jolted", "sniped", "clunky", "ratios", "blinds", "ganges", "misers", "spikes", "riders",
-        // "hallow", "grumpy", "barren", "summed", "infers", "places", "jarred", "killer", "plaint", "goofed",
-        // "subbed", "prudes", "sipped", "kookie", "whines", "droopy", "palled", "cherry", "proves", "mobbed",
-        // "spaded", "cheese", "pluses", "bathes", "motels", "spewed", "soaked", "howler", "puffed", "malled",
-        // "shrike", "slided", "fulled", "pouted", "shames", "lessen", "ringed", "teemed", "grands", "linked",
-        // "wooten", "feuded", "deaden", "scents", "flutes", "salton"};
-        //            Set<String> dict = new HashSet<String>(Arrays.asList(strs));
-        //            System.out.println("? => " + ladderLength(start, end, dict));
-        //        }
-        //        {
-        //            String start = "nape";
-        //            String end = "mild";
-        //            String[] strs = {"dose", "ends", "dine", "jars", "prow", "soap", "guns", "hops", "cray",
-        // "hove", "ella", "hour", "lens", "jive", "wiry", "earl", "mara", "part", "flue", "putt", "rory", "bull",
-        // "york", "ruts", "lily", "vamp", "bask", "peer", "boat", "dens", "lyre", "jets", "wide", "rile", "boos",
-        // "down", "path", "onyx", "mows", "toke", "soto", "dork", "nape", "mans", "loin", "jots", "male", "sits",
-        // "minn", "sale", "pets", "hugo", "woke", "suds", "rugs", "vole", "warp", "mite", "pews", "lips", "pals",
-        // "nigh", "sulk", "vice", "clod", "iowa", "gibe", "shad", "carl", "huns", "coot", "sera", "mils", "rose",
-        // "orly", "ford", "void", "time", "eloy", "risk", "veep", "reps", "dolt", "hens", "tray", "melt", "rung",
-        // "rich", "saga", "lust", "yews", "rode", "many", "cods", "rape", "last", "tile", "nosy", "take", "nope",
-        // "toni", "bank", "jock", "jody", "diss", "nips", "bake", "lima", "wore", "kins", "cult", "hart", "wuss",
-        // "tale", "sing", "lake", "bogy", "wigs", "kari", "magi", "bass", "pent", "tost", "fops", "bags", "duns",
-        // "will", "tart", "drug", "gale", "mold", "disk", "spay", "hows", "naps", "puss", "gina", "kara", "zorn",
-        // "boll", "cams", "boas", "rave", "sets", "lego", "hays", "judy", "chap", "live", "bahs", "ohio", "nibs",
-        // "cuts", "pups", "data", "kate", "rump", "hews", "mary", "stow", "fang", "bolt", "rues", "mesh", "mice",
-        // "rise", "rant", "dune", "jell", "laws", "jove", "bode", "sung", "nils", "vila", "mode", "hued", "cell",
-        // "fies", "swat", "wags", "nate", "wist", "honk", "goth", "told", "oise", "wail", "tels", "sore", "hunk",
-        // "mate", "luke", "tore", "bond", "bast", "vows", "ripe", "fond", "benz", "firs", "zeds", "wary", "baas",
-        // "wins", "pair", "tags", "cost", "woes", "buns", "lend", "bops", "code", "eddy", "siva", "oops", "toed",
-        // "bale", "hutu", "jolt", "rife", "darn", "tape", "bold", "cope", "cake", "wisp", "vats", "wave", "hems",
-        // "bill", "cord", "pert", "type", "kroc", "ucla", "albs", "yoko", "silt", "pock", "drub", "puny", "fads",
-        // "mull", "pray", "mole", "talc", "east", "slay", "jamb", "mill", "dung", "jack", "lynx", "nome", "leos",
-        // "lade", "sana", "tike", "cali", "toge", "pled", "mile", "mass", "leon", "sloe", "lube", "kans", "cory",
-        // "burs", "race", "toss", "mild", "tops", "maze", "city", "sadr", "bays", "poet", "volt", "laze", "gold",
-        // "zuni", "shea", "gags", "fist", "ping", "pope", "cora", "yaks", "cosy", "foci", "plan", "colo", "hume",
-        // "yowl", "craw", "pied", "toga", "lobs", "love", "lode", "duds", "bled", "juts", "gabs", "fink", "rock",
-        // "pant", "wipe", "pele", "suez", "nina", "ring", "okra", "warm", "lyle", "gape", "bead", "lead", "jane",
-        // "oink", "ware", "zibo", "inns", "mope", "hang", "made", "fobs", "gamy", "fort", "peak", "gill", "dino",
-        // "dina", "tier"};
-        //            Set<String> dict = new HashSet<String>(Arrays.asList(strs));
-        //            System.out.println("? => " + ladderLength(start, end, dict));
-        //        }
-
-        //        int[] A = new int[25000];
-        //        for (int i = 0; i < A.length; i++) {
-        //            A[i] = A.length - i;
-        //        }
-        //        int[] B = {2, 3, 1, 1, 4, 5, 3, 6};
-        //        System.out.println(jump(A));
-        //        System.out.println(jump(B));
-
-        //        Interval i1 = new Interval(0, 0);
-        //        Interval i2 = new Interval(4, 5);
-        //        Interval i3 = new Interval(5, 6);
-        //        Interval i4 = new Interval(5, 5);
-        //        Interval i5 = new Interval(2, 3);
-        //        Interval i6 = new Interval(5, 7);
-        //        Interval i7 = new Interval(0, 0);
-        //
-        //
-        //        List<Interval> intervals = new ArrayList<Interval>();
-        //        intervals.add(i1);
-        //        intervals.add(i2);
-        //        intervals.add(i3);
-        //        intervals.add(i4);
-        //        intervals.add(i5);
-        //        intervals.add(i6);
-        //        intervals.add(i7);
-        //
-        //        List<Interval> result = mergeIntervals(intervals);
-        //        for (Interval interval : result) {
-        //            PRINT(interval);
-        //        }
-
-
-        //        List<List<Integer>> lists = combine(4, 3);
-        //        for (List<Integer> list : lists) {
-        //            PRINT(list);
-        //        }
-
-        //        int[] num = {0, 1, 2, 3, 4, 5, 6};
-        //        HashMap<List<Integer>, Integer> map = _combination(num, 0, 3);
-        //        for (List<Integer> key : map.keySet()) {
-        //            System.out.println(key.toString() + " => " + map.get(key));
-        //        }
-        //int[] num = {6, -18, -20, -7, -15, 9, 18, 10, 1, -20, -17, -19, -3, -5, -19, 10, 6, -11, 1, -17, -15, 6,
-        // 17, -18, -3, 16, 19, -20, -3, -17, -15, -3, 12, 1, -9, 4, 1, 12, -2, 14, 4, -4, 19, -20, 6, 0, -19, 18,
-        // 14, 1, -15, -5, 14, 12, -4, 0, -10, 6, 6, -6, 20, -8, -6, 5, 0, 3, 10, 7, -2, 17, 20, 12, 19, -13, -1, 10,
-        // -1, 14, 0, 7, -3, 10, 14, 14, 11, 0, -4, -15, -8, 3, 2, -5, 9, 10, 16, -4, -3, -9, -8, -14, 10, 6, 2, -12,
-        // -7, -16, -6, 10};
-        //        int[] num = {1, 0, -1, 0, -2, 2};
-        //        int target = 0;
-        //        //System.out.println(threeSumClosest(num, target));
-        //
-        //        List<List<Integer>> lists = fourSum(num, target);
-        //        if (lists == null) {
-        //            PRINT("NULL");
-        //        } else {
-        //            for (List<Integer> list : lists) {
-        //                PRINT(list);
-        //            }
-        //        }
     }
 }
