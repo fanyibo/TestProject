@@ -244,17 +244,6 @@ public class Utils3 {
 
     }
 
-
-    /**
-     * Median of Two Sorted Arrays
-     * There are two sorted arrays A and B of size m and n respectively. Find the median of the two sorted arrays.
-     * The overall run time complexity should be O(log (m+n)).
-     */
-    public static double findMedianSortedArrays(int A[],
-                                                int B[]) {
-        return 0;
-    }
-
     public static void PRINT(Object obj) {
         System.out.println(obj.toString());
     }
