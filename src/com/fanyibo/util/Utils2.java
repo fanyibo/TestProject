@@ -23,7 +23,8 @@ public final class Utils2 {
      * (-1, 0, 1)
      * (-1, -1, 2)
      */
-    public static List<List<Integer>> threeSum(int[] num, int sum) {
+    public static List<List<Integer>> threeSum(int[] num,
+                                               int sum) {
         if (num == null || num.length < 3) {
             return new ArrayList<List<Integer>>();
         }
@@ -53,7 +54,9 @@ public final class Utils2 {
         return new ArrayList<List<Integer>>(set);
     }
 
-    public static HashMap<List<Integer>, Integer> _combination(int[] num, int start, int count) {
+    public static HashMap<List<Integer>, Integer> _combination(int[] num,
+                                                               int start,
+                                                               int count) {
         if (start < 0 || start >= num.length || count <= 0) {
             return null;
         }
@@ -84,7 +87,10 @@ public final class Utils2 {
         }
     }
 
-    public static Set<List<Integer>> _threeSum(int[] num, int startIndex, int target, int count) {
+    public static Set<List<Integer>> _threeSum(int[] num,
+                                               int startIndex,
+                                               int target,
+                                               int count) {
 
         if (startIndex < 0 || startIndex > num.length - count || count <= 0) {
             return null;
@@ -120,7 +126,8 @@ public final class Utils2 {
      * For example, given array S = {-1 2 1 -4}, and target = 1.
      * The sum that is closest to the target is 2. (-1 + 2 + 1 = 2).
      */
-    public static int threeSumClosest(int[] num, int target) {
+    public static int threeSumClosest(int[] num,
+                                      int target) {
         if (num == null || num.length < 3) {
             return 0;
         }
@@ -166,7 +173,8 @@ public final class Utils2 {
      * (-2, -1, 1, 2)
      * (-2,  0, 0, 2)
      */
-    public static List<List<Integer>> fourSum(int[] num, int target) {
+    public static List<List<Integer>> fourSum(int[] num,
+                                              int target) {
         if (num == null || num.length < 3) {
             return new ArrayList<List<Integer>>();
         }
@@ -205,7 +213,8 @@ public final class Utils2 {
      * Input: (2 -> 4 -> 3) + (5 -> 6 -> 4)
      * Output: 7 -> 0 -> 8
      */
-    public static ListNode addTwoNumbers(ListNode l1, ListNode l2) {
+    public static ListNode addTwoNumbers(ListNode l1,
+                                         ListNode l2) {
 
         if (l1 == null) {
             return l2;
@@ -327,7 +336,9 @@ public final class Utils2 {
         return total;
     }
 
-    public static void ReAdjustCandy(int[] ratings, int[] candy, int startIndex) {
+    public static void ReAdjustCandy(int[] ratings,
+                                     int[] candy,
+                                     int startIndex) {
         int k = startIndex;
         int diff = 1 - candy[k];
         while (k > 0 && ratings[k - 1] > ratings[k]) {
@@ -352,7 +363,8 @@ public final class Utils2 {
      * [7]
      * [2, 2, 3]
      */
-    public static List<List<Integer>> combinationSum(int[] candidates, int target) {
+    public static List<List<Integer>> combinationSum(int[] candidates,
+                                                     int target) {
 
         if (candidates == null || candidates.length == 0) {
             return new ArrayList<List<Integer>>();
@@ -365,7 +377,9 @@ public final class Utils2 {
         return new ArrayList<List<Integer>>(set);
     }
 
-    public static Set<List<Integer>> getCombinationSum(int[] candidates, int sum, int start) {
+    public static Set<List<Integer>> getCombinationSum(int[] candidates,
+                                                       int sum,
+                                                       int start) {
 
         if (start >= candidates.length || candidates[start] > sum) {
             return new HashSet<List<Integer>>();
@@ -416,7 +430,8 @@ public final class Utils2 {
      * [2, 6]
      * [1, 1, 6]
      */
-    public static List<List<Integer>> combinationSum2(int[] num, int target) {
+    public static List<List<Integer>> combinationSum2(int[] num,
+                                                      int target) {
 
         if (num == null || num.length == 0) {
             return new ArrayList<List<Integer>>();
@@ -429,7 +444,9 @@ public final class Utils2 {
         return new ArrayList<List<Integer>>(set);
     }
 
-    public static Set<List<Integer>> getUnqiueCombinationSum(int[] candidates, int sum, int start) {
+    public static Set<List<Integer>> getUnqiueCombinationSum(int[] candidates,
+                                                             int sum,
+                                                             int start) {
 
         if (start >= candidates.length || candidates[start] > sum) {
             return new HashSet<List<Integer>>();
@@ -468,7 +485,8 @@ public final class Utils2 {
      * [1,4],
      * ]
      */
-    public static List<List<Integer>> combine(int n, int k) {
+    public static List<List<Integer>> combine(int n,
+                                              int k) {
 
 
         if (n <= 0 || k <= 0) {
@@ -481,7 +499,9 @@ public final class Utils2 {
         return new ArrayList<List<Integer>>(set);
     }
 
-    public static List<List<Integer>> _combinations(int n, int start, int k) {
+    public static List<List<Integer>> _combinations(int n,
+                                                    int start,
+                                                    int k) {
 
         if (start > n || k <= 0 || k > (n - start + 1)) {
             return new ArrayList<List<Integer>>();
@@ -709,7 +729,8 @@ public final class Utils2 {
      * Above is a 3 x 7 grid. How many possible unique paths are there?
      * Note: m and n will be at most 100.
      */
-    public static int uniquePaths(int m, int n) {
+    public static int uniquePaths(int m,
+                                  int n) {
 
         if (m <= 0 || n <= 0) {
             return 0;
@@ -743,7 +764,8 @@ public final class Utils2 {
             end = 0;
         }
 
-        Interval(int s, int e) {
+        Interval(int s,
+                 int e) {
             start = s;
             end = e;
         }
@@ -771,7 +793,8 @@ public final class Utils2 {
         return result;
     }
 
-    public static void insertInterval(List<Interval> intervals, Interval newInterval) {
+    public static void insertInterval(List<Interval> intervals,
+                                      Interval newInterval) {
         int i = 0;
         while (i < intervals.size()) {
 
@@ -974,7 +997,8 @@ public final class Utils2 {
      * S = "rabbbit", T = "rabbit"
      * Return 3.
      */
-    public static int numDistinct(String S, String T) {
+    public static int numDistinct(String S,
+                                  String T) {
 
         if (S == null || S.length() == 0 || T == null || T.length() == 0 || T.length() > S.length()) {
             return 0;
@@ -1031,7 +1055,8 @@ public final class Utils2 {
      * Divide two integers without using multiplication, division and mod operator.
      * If it is overflow, return MAX_INT.
      */
-    public static int divide(int dividend, int divisor) {
+    public static int divide(int dividend,
+                             int divisor) {
 
         if (dividend == 0) {
             return 0;
@@ -1186,7 +1211,9 @@ public final class Utils2 {
      * When s3 = "aadbbcbcac", return true.
      * When s3 = "aadbbbaccc", return false.
      */
-    public static boolean isInterleave(String s1, String s2, String s3) {
+    public static boolean isInterleave(String s1,
+                                       String s2,
+                                       String s3) {
 
         int length1 = s1.length();
         int length2 = s2.length();
@@ -1250,7 +1277,8 @@ public final class Utils2 {
      * b) Delete a character
      * c) Replace a character
      */
-    public static int minDistance(String word1, String word2) {
+    public static int minDistance(String word1,
+                                  String word2) {
 
         int length1 = word1.length();
         int length2 = word2.length();
@@ -1296,7 +1324,8 @@ public final class Utils2 {
      * All words have the same length.
      * All words contain only lowercase alphabetic characters.
      */
-    public static boolean isNeighbor(String word1, String word2) {
+    public static boolean isNeighbor(String word1,
+                                     String word2) {
         int diff = 0;
         for (int i = 0; i < word1.length(); i++) {
             if (word1.charAt(i) != word2.charAt(i)) {
@@ -1309,7 +1338,9 @@ public final class Utils2 {
         return diff == 1;
     }
 
-    public static int ladderLength(String start, String end, Set<String> dict) {
+    public static int ladderLength(String start,
+                                   String end,
+                                   Set<String> dict) {
 
         if (start.equals(end)) {
             return 0;
@@ -1459,7 +1490,9 @@ public final class Utils2 {
         }
     }
 
-    public static List<List<String>> findLadders(String start, String end, Set<String> dict) {
+    public static List<List<String>> findLadders(String start,
+                                                 String end,
+                                                 Set<String> dict) {
 
         LadderNode root = new LadderNode(end);
         LadderNode leaf = new LadderNode(start);
@@ -1529,7 +1562,8 @@ public final class Utils2 {
      * The longest consecutive elements sequence is [1, 2, 3, 4]. Return its length: 4.
      * Your algorithm should run in O(n) complexity.
      */
-    public static int calcLongestConsecutive(HashMap<Integer, Boolean> visited, HashMap<Integer, Integer> lengths,
+    public static int calcLongestConsecutive(HashMap<Integer, Boolean> visited,
+                                             HashMap<Integer, Integer> lengths,
                                              int current) {
         if (visited.containsKey(current)) {
             if (!visited.get(current)) {
@@ -1741,7 +1775,8 @@ public final class Utils2 {
      * Given n and k, return the kth permutation sequence.
      * Note: Given n will be between 1 and 9 inclusive.
      */
-    public static String getPermutation(int n, int k) {
+    public static String getPermutation(int n,
+                                        int k) {
 
         if (n == 0) {
             return "";
@@ -1842,7 +1877,8 @@ public final class Utils2 {
         return permute(num, indexes);
     }
 
-    public static List<List<Integer>> permute(int[] num, List<Integer> indexes) {
+    public static List<List<Integer>> permute(int[] num,
+                                              List<Integer> indexes) {
 
         List<List<Integer>> result = new ArrayList<List<Integer>>();
         if (indexes.size() == 0) {
@@ -1893,7 +1929,8 @@ public final class Utils2 {
         return permuteUnique(num, indexes, visited);
     }
 
-    public static List<List<Integer>> permuteUnique(int[] num, List<Integer> indexes,
+    public static List<List<Integer>> permuteUnique(int[] num,
+                                                    List<Integer> indexes,
                                                     HashMap<Integer, HashMap<Integer, Boolean>> visited) {
 
         List<List<Integer>> result = new ArrayList<List<Integer>>();
@@ -2066,7 +2103,8 @@ public final class Utils2 {
      * dict = ["leet", "code"].
      * Return true because "leetcode" can be segmented as "leet code".
      */
-    public static boolean wordBreak1(String s, Set<String> dict) {
+    public static boolean wordBreak1(String s,
+                                     Set<String> dict) {
 
         int length = s.length();
         int dictSize = dict.size();
@@ -2097,7 +2135,8 @@ public final class Utils2 {
      * dict = ["cat", "cats", "and", "sand", "dog"].
      * A solution is ["cats and dog", "cat sand dog"].
      */
-    public static List<String> wordBreak2(String s, Set<String> dict) {
+    public static List<String> wordBreak2(String s,
+                                          Set<String> dict) {
 
         int length = s.length();
         int dictSize = dict.size();
@@ -2222,7 +2261,8 @@ public final class Utils2 {
      * [1,3,5,6], 7 → 4
      * [1,3,5,6], 0 → 0
      */
-    public static int searchInsert(int[] A, int target) {
+    public static int searchInsert(int[] A,
+                                   int target) {
         int length = A.length;
         if (length == 0) {
             return 0;
@@ -2232,7 +2272,10 @@ public final class Utils2 {
         return searchInsert(A, target, 0, length - 1);
     }
 
-    public static int searchInsert(int[] A, int target, int start, int end) {
+    public static int searchInsert(int[] A,
+                                   int target,
+                                   int start,
+                                   int end) {
 
         int length = end - start + 1;
         if (start > end) {
@@ -2268,7 +2311,8 @@ public final class Utils2 {
      * You should return the indices: [0,9].
      * (order does not matter).
      */
-    public static List<Integer> findSubstring(String S, String[] L) {
+    public static List<Integer> findSubstring(String S,
+                                              String[] L) {
 
         List<Integer> result = new ArrayList<Integer>();
         int strLen = S.length();
@@ -2393,7 +2437,8 @@ public final class Utils2 {
         return mergeLinkedList(head1, head2);
     }
 
-    public static ListNode mergeLinkedList(ListNode head1, ListNode head2) {
+    public static ListNode mergeLinkedList(ListNode head1,
+                                           ListNode head2) {
 
         ListNode temp = null;
         ListNode newHead = null;
@@ -2547,7 +2592,8 @@ public final class Utils2 {
      * Given [5, 7, 7, 8, 8, 10] and target value 8,
      * return [3, 4].
      */
-    public static int[] searchRange(int[] A, int target) {
+    public static int[] searchRange(int[] A,
+                                    int target) {
 
         int[] result = {-1, -1};
         int size = A.length;
@@ -2558,7 +2604,10 @@ public final class Utils2 {
         return _searchRange(A, target, 0, size - 1);
     }
 
-    public static int[] _searchRange(int[] A, int target, int start, int end) {
+    public static int[] _searchRange(int[] A,
+                                     int target,
+                                     int start,
+                                     int end) {
 
         int[] result = {-1, -1};
         if (end < start) {
@@ -2619,7 +2668,8 @@ public final class Utils2 {
      * For k = 2, you should return: 2->1->4->3->5
      * For k = 3, you should return: 3->2->1->4->5
      */
-    public static ListNode reverseKGroup(ListNode head, int k) {
+    public static ListNode reverseKGroup(ListNode head,
+                                         int k) {
 
 
         if (head == null || k < 2) {
@@ -2739,7 +2789,8 @@ public final class Utils2 {
      * isMatch("ab", "?*") → true
      * isMatch("aab", "c*a*b") → false
      */
-    public static boolean isMatch(String s, String p) {
+    public static boolean isMatch(String s,
+                                  String p) {
 
         if ((s.equals(p) || p.equals("*")) || (s.length() == 1 && p.equals("?"))) {
             return true;
@@ -2844,7 +2895,8 @@ public final class Utils2 {
      * A line other than the last line might contain only one word. What should you do in this case?
      * In this case, that line should be left-justified.
      */
-    public static List<String> fullJustify(String[] words, int L) {
+    public static List<String> fullJustify(String[] words,
+                                           int L) {
 
         int size = words.length;
         int[] len = new int[size];
@@ -2928,51 +2980,224 @@ public final class Utils2 {
         if (size < 3) {
             return 0;
         }
-        for (int i = 1; i < A.length - 1; i++) {
-            if (A[i] > A[i - 1] && A[i] < A[i + 1]) {
-
+        int[] maxL = new int[size];
+        int[] maxR = new int[size];
+        int max = A[0];
+        for (int i = 0; i < size; i++) {
+            maxL[i] = max;
+            if (max < A[i]) {
+                max = A[i];
             }
         }
-
-
-        return 0;
+        max = A[size - 1];
+        int total = 0;
+        for (int i = size - 1; i >= 0; i--) {
+            maxR[i] = max;
+            int min = Math.min(maxL[i], maxR[i]);
+            if (min > A[i]) {
+                total += (min - A[i]);
+            }
+            if (max < A[i]) {
+                max = A[i];
+            }
+        }
+        return total;
     }
 
     /**
-     * Regular Expression Matching
-     * Implement regular expression matching with support for '.' and '*'.
-     * '.' Matches any single character.
-     * '*' Matches zero or more of the preceding element.
-     * The matching should cover the entire input string (not partial).
-     * The function prototype should be:
-     * bool isMatch(const char *s, const char *p)
-     * Some examples:
-     * isMatch("aa","a") → false
-     * isMatch("aa","aa") → true
-     * isMatch("aaa","aa") → false
-     * isMatch("aa", "a*") → true
-     * isMatch("aa", ".*") → true
-     * isMatch("ab", ".*") → true
-     * isMatch("aab", "c*a*b") → true
+     * Merge k Sorted Lists
+     * Merge k sorted linked lists and return it as one sorted list. Analyze and describe its complexity.
      */
-    public static boolean isMatch2(String s, String p) {
-        return false;
+    public static ListNode mergeKLists(List<ListNode> lists) {
+
+        if (lists == null || lists.size() == 0) {
+            return null;
+        }
+        return mergeKSortedList(lists, 0, lists.size() - 1);
     }
 
+    public static ListNode mergeKSortedList(List<ListNode> lists,
+                                            int left,
+                                            int right) {
+        if (right - left + 1 > 1) {
+            int mid = (left + right) / 2;
+            return mergeTwoLinkedList(mergeKSortedList(lists, left, mid), mergeKSortedList(lists, mid + 1, right));
+        }
+        return lists.get(left);
+    }
+
+    public static ListNode mergeTwoLinkedList(ListNode n1,
+                                              ListNode n2) {
+
+        if (n1 == null) {
+            return n2;
+        } else if (n2 == null) {
+            return n1;
+        }
+        ListNode head = null;
+        ListNode temp = null;
+        ListNode temp1 = n1;
+        ListNode temp2 = n2;
+        while (temp1 != null && temp2 != null) {
+            if (temp1.val <= temp2.val) {
+                if (head == null) {
+                    head = temp1;
+                    temp = head;
+                } else {
+                    temp.next = temp1;
+                    temp = temp.next;
+                }
+                temp1 = temp1.next;
+            } else {
+                if (head == null) {
+                    head = temp2;
+                    temp = head;
+                } else {
+                    temp.next = temp2;
+                    temp = temp.next;
+                }
+                temp2 = temp2.next;
+            }
+        }
+        if (temp1 == null && temp2 != null) {
+            temp.next = temp2;
+        } else if (temp1 != null && temp2 == null) {
+            temp.next = temp1;
+        }
+        return head;
+    }
+
+
     /**
-     * Valid Number
-     * Validate if a given string is numeric.
-     * Some examples:
-     * "0" => true
-     * " 0.1 " => true
-     * "abc" => false
-     * "1 a" => false
-     * "2e10" => true
-     * Note: It is intended for the problem statement to be ambiguous. You should gather all requirements up front
-     * before implementing one.
+     * Minimum Path Sum
+     * Given a m x n grid filled with non-negative numbers, find a path from top left to bottom right which minimizes
+     * the sum of all numbers along its path.
+     * Note: You can only move either down or right at any point in time.
      */
-    public static boolean isNumber(String s) {
-        return false;
+    public static int minPathSum(int[][] grid) {
+
+        int m = grid.length;
+        int n = grid[0].length;
+
+        int[][] vals = new int[m][n];
+        vals[0][0] = grid[0][0];
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                if (i == 0) {
+                    if (j > 0) {
+                        vals[i][j] = vals[i][j - 1] + grid[i][j];
+                    }
+                } else if (j == 0) {
+                    vals[i][j] = vals[i - 1][j] + grid[i][j];
+                } else {
+                    vals[i][j] = Math.min(vals[i - 1][j], vals[i][j - 1]) + grid[i][j];
+                }
+            }
+
+        }
+        return vals[m - 1][n - 1];
+    }
+
+
+    private static final HashMap<Integer, List<String>> phoneDigitMap = new HashMap<Integer, List<String>>();
+
+    static {
+        for (int i = 0; i <= 9; i++) {
+            List<String> chars = new ArrayList<String>();
+            if (i == 0) {
+                chars.add("0");
+            } else if (i == 1) {
+                chars.add("1");
+            } else if (i == 2) {
+                chars.add("a");
+                chars.add("b");
+                chars.add("c");
+            } else if (i == 3) {
+                chars.add("d");
+                chars.add("e");
+                chars.add("f");
+            } else if (i == 4) {
+                chars.add("g");
+                chars.add("h");
+                chars.add("i");
+            } else if (i == 5) {
+                chars.add("j");
+                chars.add("k");
+                chars.add("l");
+            } else if (i == 6) {
+                chars.add("m");
+                chars.add("n");
+                chars.add("o");
+            } else if (i == 7) {
+                chars.add("p");
+                chars.add("q");
+                chars.add("r");
+                chars.add("s");
+            } else if (i == 8) {
+                chars.add("t");
+                chars.add("u");
+                chars.add("v");
+            } else if (i == 9) {
+                chars.add("w");
+                chars.add("x");
+                chars.add("y");
+                chars.add("z");
+            }
+            phoneDigitMap.put(i, chars);
+        }
+    }
+
+    public static List<String> letterCombinations(String digits) {
+
+        List<String> result = new ArrayList<String>();
+
+        for (int i = 0; i < digits.length(); i++) {
+            int digit = (int) digits.charAt(i) - 48;
+            List<String> chars = phoneDigitMap.get(digit);
+
+            int size = result.size();
+            if (size == 0) {
+                for (String _char : chars) {
+                    result.add(_char);
+                }
+            } else {
+                List<String> temp = new ArrayList<String>();
+                for (String _char : chars) {
+                    for (int j = 0; j < size; j++) {
+                        String head = result.get(j);
+                        temp.add(head + _char);
+                    }
+                }
+                result = temp;
+            }
+        }
+        if (result.size() == 0) {
+            result.add("");
+        }
+        return result;
+    }
+
+
+    public static int largestRectangleArea(int[] height) {
+
+        int max = 0;
+        Stack<Integer> stack = new Stack<Integer>();
+        for (int i = 0; i <= height.length; i++) {
+            int h = (i == height.length) ? 0 : height[i];
+            if (stack.isEmpty() || h > height[stack.peek()]) {
+                stack.push(i);
+            } else {
+                int index = stack.pop();
+                int count = i;
+                if (!stack.isEmpty()) {
+                    count -= (1 + stack.peek());
+                }
+                int area = count * height[index];
+                max = Math.max(max, area);
+                i--;
+            }
+        }
+        return max;
     }
 
     /**
@@ -3009,74 +3234,37 @@ public final class Utils2 {
      * Given two strings s1 and s2 of the same length, determine if s2 is a scrambled string of s1.
      */
     public static boolean isScramble(String s1, String s2) {
+        if (s1.equals(s2)) {
+            return true;
+        }
+        int[] chars = new int[256];
+        for (int i = 0; i < s1.length(); i++) {
+            chars[(int) s1.charAt(i)]++;
+        }
+        for (int i = 0; i < s2.length(); i++) {
+            chars[(int) s2.charAt(i)]--;
+        }
+        for (int i = 0; i < chars.length; i++) {
+            if (chars[i] != 0) {
+                return false;
+            }
+        }
+        if (s1.length() == 1 && s2.length() == 1) {
+            return true;
+        }
+        for (int i = 1; i < s1.length(); i++) {
+            boolean vertical = isScramble(s1.substring(0, i), s2.substring(0, i)) && isScramble(s1.substring(i),
+                                                                                                s2.substring(
+                                                                                                        i));
+            boolean result = vertical || (isScramble(s1.substring(0, i), s2.substring(s2.length() - i)) && isScramble(
+                    s1.substring(i), s2.substring(0, s2.length() - i)));
+            if (result) {
+                return true;
+            }
+        }
         return false;
     }
 
-
-    /**
-     * Implement int sqrt(int x).
-     * Compute and return the square root of x.
-     */
-    public static int sqrt(int x) {
-        return 0;
-    }
-
-    /**
-     * Merge k Sorted Lists
-     * Merge k sorted linked lists and return it as one sorted list. Analyze and describe its complexity.
-     */
-    public static ListNode mergeKLists(List<ListNode> lists) {
-        return null;
-    }
-
-
-    /**
-     * Populating Next Right Pointers in Each Node II
-     * Follow up for problem "Populating Next Right Pointers in Each Node".
-     * What if the given tree could be any binary tree? Would your previous solution still work?
-     * Note:
-     * You may only use constant extra space.
-     * For example,
-     * Given the following binary tree,
-     * 1
-     * /  \
-     * 2    3
-     * / \    \
-     * 4   5    7
-     * After calling your function, the tree should look like:
-     * 1 -> NULL
-     * /  \
-     * 2 -> 3 -> NULL
-     * / \    \
-     * 4-> 5 -> 7 -> NULL
-     */
-    public static void connect(Utils.TreeLinkNode root) {
-
-    }
-
-
-    /**
-     * Maximum Subarray
-     * Find the contiguous subarray within an array (containing at least one number) which has the largest sum.
-     * For example, given the array [−2,1,−3,4,−1,2,1,−5,4],
-     * the contiguous subarray [4,−1,2,1] has the largest sum = 6.
-     * click to show more practice.
-     * More practice:
-     * If you have figured out the O(n) solution, try coding another solution using the divide and conquer approach,
-     * which is more subtle.
-     */
-    public static int maxSubArray(int[] A) {
-        return 0;
-    }
-
-    /**
-     * Median of Two Sorted Arrays
-     * There are two sorted arrays A and B of size m and n respectively. Find the median of the two sorted arrays.
-     * The overall run time complexity should be O(log (m+n)).
-     */
-    public static double findMedianSortedArrays(int A[], int B[]) {
-        return 0;
-    }
 
     public static void PRINT(Object obj) {
         System.out.println(obj.toString());
@@ -3084,5 +3272,18 @@ public final class Utils2 {
 
     public static void main(String[] args) {
 
+        PRINT(isScramble("great", "aterg"));
+
+        //        int[] D = {5, 2, 1, 2, 1, 5};
+        //        System.out.println(trap(D));
+        //
+        //        int[] C = {5, 4, 1, 2};
+        //        System.out.println(trap(C));
+        //
+        //        int[] A = {0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1};
+        //        System.out.println(trap(A));
+        //
+        //        int[] B = {1, 0, 2, 1, 4, 1, 3, 0, 2, 5, 3, 4};
+        //        System.out.println(trap(B));
     }
 }
