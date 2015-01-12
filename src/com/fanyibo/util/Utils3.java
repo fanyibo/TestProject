@@ -6,6 +6,10 @@
  */
 package com.fanyibo.util;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 public class Utils3 {
 
 
@@ -151,17 +155,49 @@ public class Utils3 {
         }
     }
 
-    public static int maxPoints(Point[] points) {
-        return 0;
+    public static boolean sameLine(Point p1, Point p2, Point p3) {
+        return p1.x * (p2.y - p3.y) + p2.x * (p3.y - p1.y) + p3.x * (p1.y - p2.y) == 0;
     }
 
-    /**
-     * Maximal Rectangle
-     * Given a 2D binary matrix filled with 0's and 1's, find the largest rectangle containing all ones and return its
-     * area.
-     */
-    public static int maximalRectangle(char[][] matrix) {
-        return 0;
+    public static int maxPoints(Point[] points) {
+        int size = points.length;
+        if (size == 0) {
+            return 0;
+        } else if (size <= 2) {
+            return size;
+        }
+        int max = 0;
+        HashMap<Float, Integer> map = new HashMap<Float, Integer>();
+        for (int i = 0; i < size; i++) {
+            map.clear();
+            int dup = 1;
+            Point p1 = points[i];
+            for (int j = i + 1; j < size; j++) {
+                Point p2 = points[j];
+                if (p1.x == p2.x && p1.y == p2.y) {
+                    dup++;
+                    continue;
+                }
+                float a = (p1.x == p2.x) ? Float.MAX_VALUE : (p2.y == p1.y ? 0 : (float) (p2.y - p1.y) / (float) (p2.x
+                        - p1.x));
+                if (map.containsKey(a)) {
+                    map.put(a, map.get(a) + 1);
+                } else {
+                    map.put(a, 1);
+                }
+            }
+            if (map.isEmpty()) {
+                max = Math.max(max, dup);
+            } else {
+                for (Float key : map.keySet()) {
+                    int val = map.get(key);
+                    if (val + dup > max) {
+                        max = val + dup;
+                    }
+                }
+            }
+        }
+        return max;
     }
 
     /**
@@ -170,6 +206,78 @@ public class Utils3 {
      * overall run time complexity should be O(log (m+n)).
      */
     public static double findMedianSortedArrays(int A[], int B[]) {
+        int m = A.length;
+        int n = B.length;
+        if ((m + n) % 2 == 0) {
+            int m1 = getKthElement(A, 0, m - 1, B, 0, n - 1, (m + n) / 2);
+            int m2 = getKthElement(A, 0, m - 1, B, 0, n - 1, (m + n) / 2 + 1);
+            return (float) (m1 + m2) / 2.0;
+        } else {
+            return getKthElement(A, 0, m - 1, B, 0, n - 1, (m + n - 1) / 2 + 1);
+        }
+    }
+
+    public static int getKthElement(int[] A, int a1, int a2, int[] B, int b1, int b2, int k) {
+
+        if (a1 > a2) {
+            return B[b1 + k - 1];
+        }
+        if (b1 > b2) {
+            return A[a1 + k - 1];
+        }
+        if (k <= 1) {
+            return Math.min(A[a1], B[b1]);
+        } else if (k == 2) {
+            if (A[a1] <= B[b1]) {
+                if (a1 + 1 <= a2) {
+                    return Math.min(A[a1 + 1], B[b1]);
+                }
+                return B[b1];
+            } else {
+                if (b1 + 1 <= b2) {
+                    return Math.min(B[b1 + 1], A[a1]);
+                }
+                return A[a1];
+            }
+        }
+        if (a1 == a2) {
+            if (B[b1 + k - 1] <= A[a1]) {
+                return B[b1 + k - 1];
+            } else {
+                return Math.max(B[b1 + k - 2], A[a1]);
+            }
+        }
+        if (b1 == b2) {
+            if (A[a1 + k - 1] <= B[b1]) {
+                return A[a1 + k - 1];
+            } else {
+                return Math.max(A[a1 + k - 2], B[b1]);
+            }
+        }
+        int midA = (a1 + a2) / 2;
+        int midB = (b1 + b2) / 2;
+        int mid = (midA - a1 + 1 + midB - b1);
+        if (mid >= k - 1) {
+            if (A[midA] >= B[midB]) {
+                return getKthElement(A, a1, midA, B, b1, b2, k);
+            } else {
+                return getKthElement(A, a1, a2, B, b1, midB, k);
+            }
+        } else {
+            if (A[midA] >= B[midB]) {
+                return getKthElement(A, a1, a2, B, midB + 1, b2, k - (midB - b1 + 1));
+            } else {
+                return getKthElement(A, midA + 1, a2, B, b1, b2, k - (midA - a1 + 1));
+            }
+        }
+    }
+
+    /**
+     * Maximal Rectangle
+     * Given a 2D binary matrix filled with 0's and 1's, find the largest rectangle containing all ones and return its
+     * area.
+     */
+    public static int maximalRectangle(char[][] matrix) {
         return 0;
     }
 
@@ -250,8 +358,34 @@ public class Utils3 {
 
     public static void main(String[] args) {
 
-        int[] A = {-2, 1, -3, 4, -1, 2, 1, -5, 4};
-        PRINT(maxSubArray(A));
+        int[] D1 = {1};
+        int[] D2 = {1};
+        PRINT("1 => " + findMedianSortedArrays(D1, D2));
+
+        int[] A1 = {-1, 0, 1, 1, 3, 5, 5, 8, 9};
+        int[] A2 = {-2, -1, 0};
+        PRINT("1 => " + findMedianSortedArrays(A1, A2));
+
+        int[] B1 = {-1, 0, 1, 1, 3, 5, 5, 8, 9};
+        int[] B2 = {9, 10, 11};
+        PRINT("5 => " + findMedianSortedArrays(B1, B2));
+
+        int[] C1 = {-1, 0, 1, 1, 3, 5, 5, 8, 9};
+        int[] C2 = {2, 3, 4, 5};
+        PRINT("3 => " + findMedianSortedArrays(C1, C2));
+
+
+        //        Point p1 = new Point(84, 250);
+        //        Point p2 = new Point(0, 0);
+        //        Point p3 = new Point(1, 0);
+        //        Point p4 = new Point(0, -70);
+        //        Point p5 = new Point(0, -70);
+        //        Point p6 = new Point(1, -1);
+        //        Point p7 = new Point(21, 10);
+        //        Point p8 = new Point(42, 90);
+        //        Point p9 = new Point(-42, -230);
+        //
+        //        Point[] points = {p1, p2, p3, p4, p5, p6, p7, p8, p9};
 
         //        int[] D = {5, 2, 1, 2, 1, 5};
         //        System.out.println(trap(D));
