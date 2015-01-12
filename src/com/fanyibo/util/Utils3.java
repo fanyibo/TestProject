@@ -6,12 +6,13 @@
  */
 package com.fanyibo.util;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import java.util.Stack;
 
 public class Utils3 {
 
+
+    private int[] heights;
 
     /**
      * Determine if a Sudoku is valid, according to: Sudoku Puzzles - The Rules.
@@ -178,8 +179,8 @@ public class Utils3 {
                     dup++;
                     continue;
                 }
-                float a = (p1.x == p2.x) ? Float.MAX_VALUE : (p2.y == p1.y ? 0 : (float) (p2.y - p1.y) / (float) (p2.x
-                        - p1.x));
+                float a = (p1.x == p2.x) ? Float.MAX_VALUE : (p2.y == p1.y ? 0 : (float) (p2.y - p1.y) / (float) (p2
+                        .x - p1.x));
                 if (map.containsKey(a)) {
                     map.put(a, map.get(a) + 1);
                 } else {
@@ -278,7 +279,58 @@ public class Utils3 {
      * area.
      */
     public static int maximalRectangle(char[][] matrix) {
-        return 0;
+
+        int rows = matrix.length;
+        if (rows == 0) {
+            return 0;
+        }
+        int cols = matrix[0].length;
+        if (cols == 0) {
+            return 0;
+        }
+        int[][] h = new int[rows][cols];
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                if (matrix[i][j] != '1') {
+                    h[i][j] = 0;
+                } else if (i == 0) {
+                    h[i][j] = 1;
+                } else {
+                    h[i][j] = h[i - 1][j] + 1;
+                }
+            }
+        }
+        int max = 0;
+        for (int i = 0; i < rows; i++) {
+            int[] heights = h[i];
+            Stack<Integer> stack = new Stack<Integer>();
+            for (int j = 0; j <= cols; j++) {
+                int height = (j == cols) ? 0 : heights[j];
+                if (stack.isEmpty() || height >= heights[stack.peek()]) {
+                    stack.push(j);
+                } else {
+                    int index = stack.pop();
+                    int count = j;
+                    if (!stack.isEmpty()) {
+                        count -= (1 + stack.peek());
+                    }
+                    int area = count * heights[index];
+                    max = Math.max(max, area);
+                    j--;
+                }
+            }
+        }
+
+        return max;
+    }
+
+    /**
+     * Given a list of non negative integers, arrange them such that they form the largest number.
+     * For example, given [3, 30, 34, 5, 9], the largest formed number is 9534330.
+     * Note: The result may be very large, so you need to return a string instead of an integer.
+     */
+    public static String largestNumber(int[] num) {
+        return "";
     }
 
     /**
@@ -298,8 +350,7 @@ public class Utils3 {
      * isMatch("ab", ".*") → true
      * isMatch("aab", "c*a*b") → true
      */
-    public static boolean isMatch2(String s,
-                                   String p) {
+    public static boolean isMatch2(String s, String p) {
         return false;
     }
 
@@ -348,7 +399,16 @@ public class Utils3 {
      * / \    \
      * 4-> 5 -> 7 -> NULL
      */
-    public static void connect(Utils.TreeLinkNode root) {
+    public static class TreeLinkNode {
+        int          val;
+        TreeLinkNode left, right, next;
+
+        TreeLinkNode(int x) {
+            val = x;
+        }
+    }
+
+    public static void connect(TreeLinkNode root) {
 
     }
 
@@ -358,21 +418,28 @@ public class Utils3 {
 
     public static void main(String[] args) {
 
-        int[] D1 = {1};
-        int[] D2 = {1};
-        PRINT("1 => " + findMedianSortedArrays(D1, D2));
+        int[] num1 = {3, 30, 34, 5, 9};
+        PRINT("9534330 => " + largestNumber(num1));
 
-        int[] A1 = {-1, 0, 1, 1, 3, 5, 5, 8, 9};
-        int[] A2 = {-2, -1, 0};
-        PRINT("1 => " + findMedianSortedArrays(A1, A2));
+        int[] num2 = {7, 30, 34, 8, 9};
+        PRINT("9873430 => " + largestNumber(num2));
 
-        int[] B1 = {-1, 0, 1, 1, 3, 5, 5, 8, 9};
-        int[] B2 = {9, 10, 11};
-        PRINT("5 => " + findMedianSortedArrays(B1, B2));
+        int[] num3 = {7, 30, 34, 8, 209};
+        PRINT("873430209 => " + largestNumber(num3));
 
-        int[] C1 = {-1, 0, 1, 1, 3, 5, 5, 8, 9};
-        int[] C2 = {2, 3, 4, 5};
-        PRINT("3 => " + findMedianSortedArrays(C1, C2));
+        //        char[][] rect1 = {{'0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0'},
+        //                          {'0', '1', '1', '1', '0', '0', '0', '1', '1', '1', '0', '0', '0', '0'},
+        //                          {'0', '1', '1', '1', '1', '0', '0', '1', '1', '1', '0', '0', '0', '0'},
+        //                          {'0', '0', '0', '1', '1', '1', '0', '1', '1', '1', '1', '1', '0', '0'},
+        //                          {'0', '0', '0', '1', '1', '1', '0', '0', '0', '0', '1', '1', '0', '0'},
+        //                          {'0', '0', '0', '0', '0', '0', '0', '0', '0', '1', '1', '1', '0', '0'},
+        //                          {'0', '1', '1', '0', '0', '1', '1', '1', '1', '0', '0', '0', '0', '0'},
+        //                          {'0', '1', '1', '0', '0', '1', '1', '1', '0', '0', '0', '0', '0', '0'},
+        //                          {'0', '1', '1', '0', '0', '1', '1', '1', '0', '0', '0', '0', '0', '0'},
+        //                          {'0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0'}};
+        //        PRINT("9 =>" + maximalRectangle(rect1));
+        //        char[][] rect2 = {{'1'}};
+        //        PRINT("1 =>" + maximalRectangle(rect2));
 
 
         //        Point p1 = new Point(84, 250);
