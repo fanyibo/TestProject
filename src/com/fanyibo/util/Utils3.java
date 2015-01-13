@@ -6,7 +6,9 @@
  */
 package com.fanyibo.util;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Stack;
 
 public class Utils3 {
@@ -330,8 +332,207 @@ public class Utils3 {
      * Note: The result may be very large, so you need to return a string instead of an integer.
      */
     public static String largestNumber(int[] num) {
-        return "";
+
+        //        HashMap<Integer, List<String>> map = new HashMap<Integer, List<String>>();
+        //        for (int i = 0; i < num.length; i++) {
+        //            int number = num[i];
+        //            while (number / 10 > 0) {
+        //                number /= 10;
+        //            }
+        //            if (map.containsKey(number)) {
+        //                map.get(number).add(String.valueOf(num[i]));
+        //            } else {
+        //                List<String> list = new ArrayList<String>();
+        //                list.add(String.valueOf(num[i]));
+        //                map.put(number, list);
+        //            }
+        //        }
+        //        StringBuilder builder = new StringBuilder();
+        //        for (int i = 9; i >= 0; i--) {
+        //            if (map.containsKey(i)) {
+        //                List<String> lists = map.get(i);
+        //
+        //            }
+        //        }
+        //        return builder.toString();
+
+
+        String[] strArr = new String[num.length];
+        for (int i = 0; i < num.length; i++) {
+            strArr[i] = Integer.toString(num[i]);
+        }
+        strArr = mergeSort(strArr, 0, strArr.length - 1);
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < strArr.length; i++) {
+            if (builder.length() == 0 && strArr[i].charAt(0) == '0') {
+                continue;
+            }
+            builder.append(strArr[i]);
+        }
+        return builder.length() == 0 ? "0" : builder.toString();
     }
+
+    public static int compare(String str1, String str2) {
+
+        String a = str1 + str2;
+        String b = str2 + str1;
+        int size = str1.length() + str2.length();
+        for (int i = 0; i < size; i++) {
+            int _a = a.charAt(i);
+            int _b = b.charAt(i);
+            if (_a > _b) {
+                return 1;
+            } else if (_a < _b) {
+                return -1;
+            }
+        }
+        return 0;
+    }
+
+    public static String[] mergeSort(String[] arr, int start, int end) {
+
+        int size = end - start + 1;
+        String[] result = new String[size];
+        if (size == 0) {
+            return result;
+        } else if (size == 1) {
+            result[0] = arr[start];
+            return result;
+        }
+        int mid = (start + end) / 2;
+        return merge(mergeSort(arr, start, mid), mergeSort(arr, mid + 1, end));
+    }
+
+    public static String[] merge(String[] arr1, String[] arr2) {
+
+        int size1 = arr1.length;
+        int size2 = arr2.length;
+        String[] result = new String[size1 + size2];
+        int i = 0;
+        int index1 = 0;
+        int index2 = 0;
+
+        while (index1 < size1 && index2 < size2) {
+
+            if (compare(arr1[index1], arr2[index2]) >= 0) {
+                result[i++] = arr1[index1++];
+            } else {
+                result[i++] = arr2[index2++];
+            }
+        }
+        if (index1 == size1 && index2 == size2) {
+            return result;
+        }
+        int leftIndex = 0;
+        String[] leftArr = null;
+        if (index1 == size1 && index2 < size2) {
+            leftIndex = index2;
+            leftArr = arr2;
+        } else {
+            leftIndex = index1;
+            leftArr = arr1;
+        }
+        for (int j = leftIndex; j < leftArr.length; j++, i++) {
+            result[i] = leftArr[j];
+        }
+        return result;
+    }
+
+    /**
+     * Given a string S and a string T, find the minimum window in S which will contain all the characters in T in
+     * complexity O(n).
+     * For example,
+     * S = "ADOBECODEBANC"
+     * T = "ABC"
+     * Minimum window is "BANC".
+     * Note:
+     * If there is no such window in S that covers all characters in T, return the emtpy string "".
+     * If there are multiple such windows, you are guaranteed that there will always be only one unique minimum window
+     * in S.
+     */
+    public static String minWindow(String S, String T) {
+
+        int sizeS = S.length();
+        int sizeT = T.length();
+        String result = "";
+        if (sizeS == 0 || sizeT == 0 || sizeS < sizeT) {
+            return result;
+        }
+        HashMap<Character, Integer> map = new HashMap<Character, Integer>();
+        for (int i = 0; i < sizeT; i++) {
+            char c = T.charAt(i);
+            if (map.containsKey(c)) {
+                map.put(c, map.get(c) + 1);
+            } else {
+                map.put(c, 1);
+            }
+        }
+        List<Integer> indexes = new ArrayList<Integer>();
+        for (int i = 0; i < sizeS; i++) {
+            char c = S.charAt(i);
+            if (map.containsKey(c)) {
+                indexes.add(i);
+            }
+        }
+
+        int size = indexes.size();
+        HashMap<Character, Integer> tempMap = new HashMap<Character, Integer>();
+        int done = 0;
+        result = null;
+        int start = 0;
+        int end = 0;
+        for (; end < size; end++) {
+            int iStart = indexes.get(start);
+            int iEnd = indexes.get(end);
+            char _start = S.charAt(iStart);
+            char _end = S.charAt(iEnd);
+
+            if (tempMap.containsKey(_end)) {
+                tempMap.put(_end, tempMap.get(_end) + 1);
+            } else {
+                tempMap.put(_end, 1);
+            }
+            if (tempMap.get(_end) == map.get(_end)) {
+                done++;
+                if (done == map.size()) {
+                    if (result == null) {
+                        result = S.substring(iStart, iEnd + 1);
+                    } else {
+                        result = iEnd - iStart + 1 < result.length() ? S.substring(iStart, iEnd + 1) : result;
+                    }
+                    if (end - start + 1 == T.length()) {
+                        tempMap.put(_start, tempMap.get(_start) - 1);
+                        if (tempMap.get(_start) < map.get(_start)) {
+                            done--;
+                        }
+                        start++;
+                    } else {
+                        tempMap.put(_start, tempMap.get(_start) - 1);
+                        if (tempMap.get(_start) < map.get(_start)) {
+                            done--;
+                        }
+                        tempMap.put(_end, tempMap.get(_end) - 1);
+                        if (tempMap.get(_end) < map.get(_end) && _start != _end) {
+                            done--;
+                        }
+                        start++;
+                        end--;
+                    }
+                }
+            }
+        }
+        if (done == map.size()) {
+            int iStart = indexes.get(start);
+            int iEnd = indexes.get(end);
+            if (result == null) {
+                result = S.substring(iStart, iEnd + 1);
+            } else {
+                result = iEnd - iStart + 1 < result.length() ? S.substring(iStart, iEnd + 1) : result;
+            }
+        }
+        return result == null ? "" : result;
+    }
+
 
     /**
      * Regular Expression Matching
@@ -350,6 +551,7 @@ public class Utils3 {
      * isMatch("ab", ".*") → true
      * isMatch("aab", "c*a*b") → true
      */
+
     public static boolean isMatch2(String s, String p) {
         return false;
     }
@@ -418,14 +620,77 @@ public class Utils3 {
 
     public static void main(String[] args) {
 
-        int[] num1 = {3, 30, 34, 5, 9};
-        PRINT("9534330 => " + largestNumber(num1));
+        PRINT(minWindow("acbbaca", "aba"));
+        PRINT(minWindow("ADOBECODEBANC", "ABC"));
+        PRINT(minWindow("aa", "aa"));
 
-        int[] num2 = {7, 30, 34, 8, 9};
-        PRINT("9873430 => " + largestNumber(num2));
+        StringBuilder builder1 = new StringBuilder();
+        builder1.append(
+                "kgfidhktkjhlkbgjkylgdracfzjduycghkomrbfbkoowqwgaurizliesjnveoxmvjdjaepdqftmvsuyoogobrutahogxnvux");
+        builder1.append(
+                "yezevfuaaiyufwjtezuxtpycfgasburzytdvazwakuxpsiiyhewctwgycgsgdkhdfnzfmvhwrellmvjvzfzsdgqgolorxvxciwjxtqvmx");
+        builder1.append(
+                "hxlcijeqiytqrzfcpyzlvbvrksmcoybxxpbgyfwgepzvrezgcytabptnjgpxgtweiykgfiolxniqthzwfswihpvtxlseepkopwu");
+        builder1.append(
+                "ueiidyquratphnnqxflqcyiiezssoomlsxtyxlsolngtctjzywrbvajbzeuqsiblhwlehfvtubmwuxyvvpwsrhutlojgwktegekp");
+        builder1.append(
+                "jfidgwzdvxyrpwjgfdzttizquswcwgshockuzlzulznavzgdegwyovqlpmnluhsikeflpghagvcbujeapcyfxosmcizzpthbzomp");
+        builder1.append(
+                "vurbrwenflnwnmdncwbfebevwnzwclnzhgcycglhtbfjnjwrfxwlacixqhvuvivcoxdrfqazrgigrgywdwjgztfrbanwiiayhdrmu");
+        builder1.append(
+                "unlcxstdsrjoapntugwutuedvemyyzusogumanpueyigpybjeyfasjfpqsqotkgjqaxspnmvnxbfvcobcudxflmvfcjanrjfthaiw");
+        builder1.append(
+                "ofllgqglhkndpmiazgfdrfsjracyanwqsjcbakmjubmmowmpeuuwznfspjsryohtyjuawglsjxezvroallymafhpozgpqpiqzcsxkdp");
+        builder1.append(
+                "tcutxnjzawxmwctltvtiljsbkuthgwwbyswxfgzfewubbpowkigvtywdupmankbndyligkqkiknjzchkmnfflekfvyhlijynjlwrxod");
+        builder1.append(
+                "gyrrxvzjhoroavahsapdiacwjpucnifviyohtprceksefunzucdfchbnwxplhxgpvxwrmpvqzowgimgdolirslgqkycrvkgshejuuh");
+        builder1.append(
+                "mvvlcdxkinvqgpdnhnljeiwmadtmzntokqzmtyycltuukahsnuducziedbscqlsbbtpxrobfhxzuximncrjgrrkwvdalqtoumergsu");
+        builder1.append(
+                "lbrmvrwjeydpguiqqdvsrmlfgylzedtrhkfebbohbrwhnhxfmvxdhjlpjwopchgjtnnvodepwdylkxqwsqczznqklezplhafuqcitizsl");
+        builder1.append(
+                "zdvwwupmwqnlhxwlwozdogxekhasisehxbdtvuhrlucurbhppgsdoriyykricxpbyvxupencbqwsreiimclbuvbufudjrslsnkofobhptgkmmu");
+        builder1.append(
+                "uywizqddllxowpijhytvdkymzsulegfzfcjguojhzhxyyghhgbcllazmuuyzafahjjqgxznzinxgvgnbhrmuuljohjpkqpraahgajvzriyy");
+        builder1.append(
+                "dengofskzgtppefzvwrvxadxjaydjydocqvsxpdyxyondvmyrfvqiaptanwllbaquxirmlqkmgzpbnputmldmcwoqvadwavqxeilraxdiwulml");
+        builder1.append(
+                "ffxsilvgcnbcsyeoqdsaolcorkmlxyzfdyznkuwmjxqcxusoxmqlxtzofocdmbiqzhflebzpbprajjqivhuvcvlhjnkwquosevf");
+        builder1.append(
+                "kzfzcwtcietqcamxcikltawrsshkydsiexkgvdidjbuldgkfqvrkxpdpjlakqsuurecmjkstomgrutzlqsxnjacuneedyzzrfbg");
+        builder1.append(
+                "poykcmsvglwtdoqqztvugzakazlrhnxwdxifjccsozlrpckpxfldglpgnbauqzstxcaiecaudmotqyknfvsliiuvlurbvjwulwdsadmera");
+        builder1.append(
+                "zjyjydgrrobnmmjdpeplzcjcujhhpbhqmizlnhcgwftkrcnghctifcmbnvifwsvjcxwpeyycdrmwucedexnlbznquxvtpretoaluajxfajdwnhbu");
+        builder1.append(
+                "ofjpuzmuxflolfenqynzxubjxawgbqmsyvhuwvotaajnfpaxqnwnjzwgzvmdnaxlxeiucwpcyzqfoqcegaspcqybnmgbndomkwgmvyqvxgblzfshim");
+        builder1.append(builder1.toString());
+        builder1.append(builder1.toString());
+        builder1.append(builder1.toString());
+        builder1.append(builder1.toString());
+        builder1.append(builder1.toString());
+        builder1.append(builder1.toString());
+        builder1.append(builder1.toString());
+        builder1.append(builder1.toString());
+        builder1.append(builder1.toString());
 
-        int[] num3 = {7, 30, 34, 8, 209};
-        PRINT("873430209 => " + largestNumber(num3));
+
+        PRINT(minWindow
+                      (builder1.toString(),
+                       "tjcwallfkarlrvfxchdqqtiutvfpoovjxzgxmtextvintpmvypnplyletrwhftreszdhshenfocadoxegkvrigxbzv"));
+
+        //        int[] num1 = {3, 30, 34, 5, 9};
+        //        PRINT("9534330 => " + largestNumber(num1));
+        //
+        //        int[] num2 = {7, 30, 34, 8, 9};
+        //        PRINT("9873430 => " + largestNumber(num2));
+        //
+        //        int[] num3 = {7, 30, 34, 8, 209};
+        //        PRINT("873430209 => " + largestNumber(num3));
+        //
+        //        int[] num4 = {0, 0, 00, 000, 0, 0, 00000000000000, 0};
+        //        PRINT("0 => " + largestNumber(num4));
 
         //        char[][] rect1 = {{'0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0'},
         //                          {'0', '1', '1', '1', '0', '0', '0', '1', '1', '1', '0', '0', '0', '0'},
