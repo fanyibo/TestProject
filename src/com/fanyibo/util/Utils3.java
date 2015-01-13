@@ -492,7 +492,7 @@ public class Utils3 {
             } else {
                 tempMap.put(_end, 1);
             }
-            if (tempMap.get(_end) == map.get(_end)) {
+            if (tempMap.get(_end).equals(map.get(_end))) {
                 done++;
                 if (done == map.size()) {
                     if (result == null) {
@@ -521,18 +521,196 @@ public class Utils3 {
                 }
             }
         }
-        if (done == map.size()) {
-            int iStart = indexes.get(start);
-            int iEnd = indexes.get(end);
-            if (result == null) {
-                result = S.substring(iStart, iEnd + 1);
-            } else {
-                result = iEnd - iStart + 1 < result.length() ? S.substring(iStart, iEnd + 1) : result;
-            }
-        }
         return result == null ? "" : result;
     }
 
+    /**
+     * Valid Number
+     * Validate if a given string is numeric.
+     * Some examples:
+     * "0" => true
+     * " 0.1 " => true
+     * "abc" => false
+     * "1 a" => false
+     * "2e10" => true
+     * Note: It is intended for the problem statement to be ambiguous. You should gather all requirements up front
+     * before implementing one.
+     */
+    public static enum InputType {
+        INVALID(0),         // 0 Include: Alphas, '(', '&' ans so on
+        SPACE(1),           // 1
+        SIGN(2),            // 2 '+','-'
+        DIGIT(3),           // 3 numbers
+        DOT(4),             // 4 '.'
+        EXPONENT(5);        // 5 'e' 'E'
+
+        public int val;
+
+        private InputType(int val) {
+            this.val = val;
+        }
+    }
+
+    public static boolean isNumber(String s) {
+
+        int[][] transTable = {
+                //0INVA,1SPA,2SIG,3DI,4DO,5E
+                {-1, 0, 3, 1, 2, -1},// nothing input, or only space
+                {-1, 8, -1, 1, 4, 5},// after digits
+                {-1, -1, -1, 4, -1, -1},// only symbol before
+                {-1, -1, -1, 1, 2, -1},// after symbol
+                {-1, 8, -1, 4, -1, 5},// digit and symbol in front
+                {-1, -1, 6, 7, -1, -1},// after exponent
+                {-1, -1, -1, 7, -1, -1},// after exponent and symbol
+                {-1, 8, -1, 7, -1, -1},// after exponent and digit
+                {-1, 8, -1, -1, -1, -1} // space after digit
+        };
+        int state = 0;
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+            InputType input = InputType.INVALID;
+            if (c == ' ') {
+                input = InputType.SPACE;
+            } else if (c == '+' || c == '-') {
+                input = InputType.SIGN;
+            } else if (c >= '0' && c <= '9') {
+                input = InputType.DIGIT;
+            } else if (c == '.') {
+                input = InputType.DOT;
+            } else if (c == 'e' || c == 'E') {
+                input = InputType.EXPONENT;
+            }
+            state = transTable[state][input.val];
+            if (state == -1) {
+                return false;
+            }
+        }
+        return state == 1 || state == 4 || state == 7 || state == 8;
+
+        /*
+        int size = s.length();
+        if (size == 0) {
+            return false;
+        }
+
+        boolean hasDot = false;
+        boolean hasSig = false;
+        boolean started = false;
+        boolean hasNum = false;
+        boolean hasExp = false;
+        for (int i = 0; i < size; i++) {
+            char c = s.charAt(i);
+            if (c == ' ') {
+                if (started) {
+                    while (i < size && s.charAt(i) == ' ') {
+                        i++;
+                    }
+                    if (i != size) {
+                        return false;
+                    }
+                }
+            } else if (c == '+' || c == '-') {
+                if (hasSig || hasNum || (!hasExp && hasDot)) {
+                    return false;
+                }
+                hasSig = true;
+                started = true;
+            } else if (c == 'e' || c == 'E') {
+                if (hasExp || !started || !hasNum || i == size - 1 ||
+                        (s.charAt(i+1) != '+' &&  s.charAt(i+1) != '-' && s.charAt(i+1) != '.'
+                        && !(s.charAt(i+1) >= '0' && s.charAt(i+1) <= '9'))) {
+                    return false;
+                }
+                hasDot = true;
+                hasExp = true;
+                hasNum = false;
+                hasSig = false;
+            } else if (c == '.') {
+                if (hasDot || hasExp) {
+                    return false;
+                }
+                hasDot = true;
+                started = true;
+            } else if (c >= '0' && c <= '9') {
+                hasNum = true;
+                started = true;
+            } else {
+               return false;
+            }
+        }
+        return hasNum;
+        */
+    }
+
+    /**
+     * A message containing letters from A-Z is being encoded to numbers using the following mapping:
+     * 'A' -> 1
+     * 'B' -> 2
+     * ...
+     * 'Z' -> 26
+     * Given an encoded message containing digits, determine the total number of ways to decode it.
+     * For example,
+     * Given encoded message "12", it could be decoded as "AB" (1 2) or "L" (12).
+     * The number of ways decoding "12" is 2.
+     */
+    public static int numDecodings(String s) {
+
+        int size = s.length();
+        if (size == 0) {
+            return 0;
+        }
+        int[] d = new int[size];
+        for (int i = 0; i < size; i++) {
+            char c = s.charAt(i);
+            if (i == 0) {
+                if (c == '0') {
+                    return 0;
+                } else {
+                    d[0] = 1;
+                }
+            } else {
+                int current = Integer.parseInt(s.substring(i, i + 1));
+                int previous = Integer.parseInt(s.substring(i - 1, i + 1));
+                if (current == 0) {
+                    if (s.charAt(i - 1) == '0' || s.charAt(i - 1) > '2') {
+                        return 0;
+                    } else {
+                        d[i] = (i == 1) ? 1 : d[i - 2];
+                    }
+                } else if (previous > 0 && previous < 10) {
+                    d[i] = (i == 1) ? 1 : d[i - 2];
+                } else if (previous > 26) {
+                    d[i] = d[i - 1];
+                } else if (previous > 10 && previous < 27) {
+                    d[i] = (i == 1) ? 2 : d[i - 2] + d[i - 1];
+                }
+            }
+        }
+        return d[size - 1];
+    }
+
+    /**
+     * Design and implement a data structure for Least Recently Used (LRU) cache. It should support the following
+     * operations: get and set.
+     * get(key) - Get the value (will always be positive) of the key if the key exists in the cache, otherwise return
+     * -1.
+     * set(key, value) - Set or insert the value if the key is not already present. When the cache reached its
+     * capacity, it should invalidate the least recently used item before inserting a new item.
+     */
+    public static class LRUCache {
+
+        public LRUCache(int capacity) {
+
+        }
+
+        public int get(int key) {
+            return 0;
+        }
+
+        public void set(int key, int value) {
+
+        }
+    }
 
     /**
      * Regular Expression Matching
@@ -556,21 +734,6 @@ public class Utils3 {
         return false;
     }
 
-    /**
-     * Valid Number
-     * Validate if a given string is numeric.
-     * Some examples:
-     * "0" => true
-     * " 0.1 " => true
-     * "abc" => false
-     * "1 a" => false
-     * "2e10" => true
-     * Note: It is intended for the problem statement to be ambiguous. You should gather all requirements up front
-     * before implementing one.
-     */
-    public static boolean isNumber(String s) {
-        return false;
-    }
 
     /**
      * Implement int sqrt(int x).
@@ -620,91 +783,9 @@ public class Utils3 {
 
     public static void main(String[] args) {
 
-        PRINT(minWindow("acbbaca", "aba"));
-        PRINT(minWindow("ADOBECODEBANC", "ABC"));
-        PRINT(minWindow("aa", "aa"));
-
-        StringBuilder builder1 = new StringBuilder();
-        builder1.append(
-                "kgfidhktkjhlkbgjkylgdracfzjduycghkomrbfbkoowqwgaurizliesjnveoxmvjdjaepdqftmvsuyoogobrutahogxnvux");
-        builder1.append(
-                "yezevfuaaiyufwjtezuxtpycfgasburzytdvazwakuxpsiiyhewctwgycgsgdkhdfnzfmvhwrellmvjvzfzsdgqgolorxvxciwjxtqvmx");
-        builder1.append(
-                "hxlcijeqiytqrzfcpyzlvbvrksmcoybxxpbgyfwgepzvrezgcytabptnjgpxgtweiykgfiolxniqthzwfswihpvtxlseepkopwu");
-        builder1.append(
-                "ueiidyquratphnnqxflqcyiiezssoomlsxtyxlsolngtctjzywrbvajbzeuqsiblhwlehfvtubmwuxyvvpwsrhutlojgwktegekp");
-        builder1.append(
-                "jfidgwzdvxyrpwjgfdzttizquswcwgshockuzlzulznavzgdegwyovqlpmnluhsikeflpghagvcbujeapcyfxosmcizzpthbzomp");
-        builder1.append(
-                "vurbrwenflnwnmdncwbfebevwnzwclnzhgcycglhtbfjnjwrfxwlacixqhvuvivcoxdrfqazrgigrgywdwjgztfrbanwiiayhdrmu");
-        builder1.append(
-                "unlcxstdsrjoapntugwutuedvemyyzusogumanpueyigpybjeyfasjfpqsqotkgjqaxspnmvnxbfvcobcudxflmvfcjanrjfthaiw");
-        builder1.append(
-                "ofllgqglhkndpmiazgfdrfsjracyanwqsjcbakmjubmmowmpeuuwznfspjsryohtyjuawglsjxezvroallymafhpozgpqpiqzcsxkdp");
-        builder1.append(
-                "tcutxnjzawxmwctltvtiljsbkuthgwwbyswxfgzfewubbpowkigvtywdupmankbndyligkqkiknjzchkmnfflekfvyhlijynjlwrxod");
-        builder1.append(
-                "gyrrxvzjhoroavahsapdiacwjpucnifviyohtprceksefunzucdfchbnwxplhxgpvxwrmpvqzowgimgdolirslgqkycrvkgshejuuh");
-        builder1.append(
-                "mvvlcdxkinvqgpdnhnljeiwmadtmzntokqzmtyycltuukahsnuducziedbscqlsbbtpxrobfhxzuximncrjgrrkwvdalqtoumergsu");
-        builder1.append(
-                "lbrmvrwjeydpguiqqdvsrmlfgylzedtrhkfebbohbrwhnhxfmvxdhjlpjwopchgjtnnvodepwdylkxqwsqczznqklezplhafuqcitizsl");
-        builder1.append(
-                "zdvwwupmwqnlhxwlwozdogxekhasisehxbdtvuhrlucurbhppgsdoriyykricxpbyvxupencbqwsreiimclbuvbufudjrslsnkofobhptgkmmu");
-        builder1.append(
-                "uywizqddllxowpijhytvdkymzsulegfzfcjguojhzhxyyghhgbcllazmuuyzafahjjqgxznzinxgvgnbhrmuuljohjpkqpraahgajvzriyy");
-        builder1.append(
-                "dengofskzgtppefzvwrvxadxjaydjydocqvsxpdyxyondvmyrfvqiaptanwllbaquxirmlqkmgzpbnputmldmcwoqvadwavqxeilraxdiwulml");
-        builder1.append(
-                "ffxsilvgcnbcsyeoqdsaolcorkmlxyzfdyznkuwmjxqcxusoxmqlxtzofocdmbiqzhflebzpbprajjqivhuvcvlhjnkwquosevf");
-        builder1.append(
-                "kzfzcwtcietqcamxcikltawrsshkydsiexkgvdidjbuldgkfqvrkxpdpjlakqsuurecmjkstomgrutzlqsxnjacuneedyzzrfbg");
-        builder1.append(
-                "poykcmsvglwtdoqqztvugzakazlrhnxwdxifjccsozlrpckpxfldglpgnbauqzstxcaiecaudmotqyknfvsliiuvlurbvjwulwdsadmera");
-        builder1.append(
-                "zjyjydgrrobnmmjdpeplzcjcujhhpbhqmizlnhcgwftkrcnghctifcmbnvifwsvjcxwpeyycdrmwucedexnlbznquxvtpretoaluajxfajdwnhbu");
-        builder1.append(
-                "ofjpuzmuxflolfenqynzxubjxawgbqmsyvhuwvotaajnfpaxqnwnjzwgzvmdnaxlxeiucwpcyzqfoqcegaspcqybnmgbndomkwgmvyqvxgblzfshim");
-        builder1.append(builder1.toString());
-        builder1.append(builder1.toString());
-        builder1.append(builder1.toString());
-        builder1.append(builder1.toString());
-        builder1.append(builder1.toString());
-        builder1.append(builder1.toString());
-        builder1.append(builder1.toString());
-        builder1.append(builder1.toString());
-        builder1.append(builder1.toString());
-
-
-        PRINT(minWindow
-                      (builder1.toString(),
-                       "tjcwallfkarlrvfxchdqqtiutvfpoovjxzgxmtextvintpmvypnplyletrwhftreszdhshenfocadoxegkvrigxbzv"));
-
-        //        int[] num1 = {3, 30, 34, 5, 9};
-        //        PRINT("9534330 => " + largestNumber(num1));
-        //
-        //        int[] num2 = {7, 30, 34, 8, 9};
-        //        PRINT("9873430 => " + largestNumber(num2));
-        //
-        //        int[] num3 = {7, 30, 34, 8, 209};
-        //        PRINT("873430209 => " + largestNumber(num3));
-        //
-        //        int[] num4 = {0, 0, 00, 000, 0, 0, 00000000000000, 0};
-        //        PRINT("0 => " + largestNumber(num4));
-
-        //        char[][] rect1 = {{'0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0'},
-        //                          {'0', '1', '1', '1', '0', '0', '0', '1', '1', '1', '0', '0', '0', '0'},
-        //                          {'0', '1', '1', '1', '1', '0', '0', '1', '1', '1', '0', '0', '0', '0'},
-        //                          {'0', '0', '0', '1', '1', '1', '0', '1', '1', '1', '1', '1', '0', '0'},
-        //                          {'0', '0', '0', '1', '1', '1', '0', '0', '0', '0', '1', '1', '0', '0'},
-        //                          {'0', '0', '0', '0', '0', '0', '0', '0', '0', '1', '1', '1', '0', '0'},
-        //                          {'0', '1', '1', '0', '0', '1', '1', '1', '1', '0', '0', '0', '0', '0'},
-        //                          {'0', '1', '1', '0', '0', '1', '1', '1', '0', '0', '0', '0', '0', '0'},
-        //                          {'0', '1', '1', '0', '0', '1', '1', '1', '0', '0', '0', '0', '0', '0'},
-        //                          {'0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0'}};
-        //        PRINT("9 =>" + maximalRectangle(rect1));
-        //        char[][] rect2 = {{'1'}};
-        //        PRINT("1 =>" + maximalRectangle(rect2));
+        PRINT("3 =>" + numDecodings("123"));
+        PRINT("2 =>" + numDecodings("12"));
+        PRINT("1 =>" + numDecodings("101010101010101010101"));
 
 
         //        Point p1 = new Point(84, 250);
