@@ -6,10 +6,7 @@
  */
 package com.fanyibo.util;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Stack;
+import java.util.*;
 
 public class Utils3 {
 
@@ -697,19 +694,123 @@ public class Utils3 {
      * set(key, value) - Set or insert the value if the key is not already present. When the cache reached its
      * capacity, it should invalidate the least recently used item before inserting a new item.
      */
+
     public static class LRUCache {
 
-        public LRUCache(int capacity) {
+        public static class Node {
+            int key;
+            int val;
+            Node prev = null;
+            Node next = null;
 
+            public Node(int key, int val) {
+                this.key = key;
+                this.val = val;
+            }
+        }
+
+        private HashMap<Integer, Node> map  = new HashMap<Integer, Node>();
+        private Node                   root = null;
+        private Node                   last = null;
+        private int                    cap  = -1;
+
+        public LRUCache(int capacity) {
+            this.cap = capacity;
         }
 
         public int get(int key) {
-            return 0;
+            if (map.containsKey(key)) {
+                Node node = map.get(key);
+                if (node.prev != null) {
+                    node.prev.next = node.next;
+                    if (node.next != null) {
+                        node.next.prev = node.prev;
+                    } else {
+                        last = node.prev;
+                    }
+                    node.next = root;
+                    root.prev = node;
+                    node.prev = null;
+                    root = node;
+                }
+                return node.val;
+            }
+            return -1;
         }
 
         public void set(int key, int value) {
-
+            if (map.containsKey(key)) {
+                Node node = map.get(key);
+                node.val = value;
+                if (node.prev != null) {
+                    node.prev.next = node.next;
+                    if (node.next != null) {
+                        node.next.prev = node.prev;
+                    } else {
+                        last = node.prev;
+                    }
+                    if (last == null) {
+                        last = root;
+                    }
+                    node.next = root;
+                    root.prev = node;
+                    node.prev = null;
+                    root = node;
+                }
+            } else if (map.size() == cap) {
+                int k = last.key;
+                if (last.prev == null) {
+                    last = null;
+                    root = null;
+                } else {
+                    last = last.prev;
+                    last.next.prev = null;
+                    last.next = null;
+                }
+                map.remove(k);
+                Node node = new Node(key, value);
+                node.next = root;
+                if (root == null) {
+                    last = node;
+                } else {
+                    root.prev = node;
+                }
+                root = node;
+                map.put(key, root);
+            } else {
+                Node node = new Node(key, value);
+                node.next = root;
+                if (root != null) {
+                    root.prev = node;
+                } else {
+                    last = node;
+                }
+                root = node;
+                map.put(key, root);
+            }
         }
+    }
+
+    /**
+     * Say you have an array for which the ith element is the price of a given stock on day i.
+     * Design an algorithm to find the maximum profit. You may complete as many transactions as you like (ie, buy one
+     * and sell one share of the stock multiple times). However, you may not engage in multiple transactions at the
+     * same time (ie, you must sell the stock before you buy again).
+     */
+    public static int maxProfit2(int[] prices) {
+
+        return 0;
+    }
+
+    /**
+     * Say you have an array for which the ith element is the price of a given stock on day i.
+     * Design an algorithm to find the maximum profit. You may complete at most two transactions.
+     * Note:
+     * You may not engage in multiple transactions at the same time (ie, you must sell the stock before you buy again).
+     */
+    public static int maxProfit3(int[] prices) {
+        
+        return 0;
     }
 
     /**
@@ -783,10 +884,14 @@ public class Utils3 {
 
     public static void main(String[] args) {
 
-        PRINT("3 =>" + numDecodings("123"));
-        PRINT("2 =>" + numDecodings("12"));
-        PRINT("1 =>" + numDecodings("101010101010101010101"));
-
+        LRUCache cache = new LRUCache(3);
+        PRINT(cache.get(5));
+        cache.set(5, 5);
+        cache.set(6, 6);
+        PRINT(cache.get(5));
+        cache.set(7, 7);
+        cache.set(8, 8);
+        PRINT(cache.get(7));
 
         //        Point p1 = new Point(84, 250);
         //        Point p2 = new Point(0, 0);
