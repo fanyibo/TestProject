@@ -6,7 +6,10 @@
  */
 package com.fanyibo.util;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Stack;
 
 public class Utils3 {
 
@@ -799,7 +802,41 @@ public class Utils3 {
      */
     public static int maxProfit2(int[] prices) {
 
-        return 0;
+        int size = prices.length;
+        if (size < 2) {
+            return 0;
+        }
+        int max = 0;
+        Stack<Integer> stack = new Stack<Integer>();
+        for (int i = 0; i <= size; i++) {
+            int price = 0;
+            if (i != size) {
+                price = prices[i];
+            }
+            if (stack.isEmpty()) {
+                stack.push(i);
+                continue;
+            }
+            if (price < prices[stack.peek()]) {
+                if (stack.size() % 2 != 0) {
+                    stack.pop();
+                    stack.push(i);
+                } else {
+                    int top = stack.pop();
+                    int bot = stack.pop();
+                    max += (prices[top] - prices[bot]);
+                    stack.push(i);
+                }
+            } else if (price > prices[stack.peek()]) {
+                if (stack.size() % 2 != 0) {
+                    stack.push(i);
+                } else {
+                    stack.pop();
+                    stack.push(i);
+                }
+            }
+        }
+        return max;
     }
 
     /**
@@ -809,8 +846,71 @@ public class Utils3 {
      * You may not engage in multiple transactions at the same time (ie, you must sell the stock before you buy again).
      */
     public static int maxProfit3(int[] prices) {
-        
-        return 0;
+
+        int size = prices.length;
+        if (size < 2) {
+            return 0;
+        }
+        List<Integer> list = new ArrayList<Integer>();
+        for (int i = 0; i < size; i++) {
+            int price = prices[i];
+            if (list.isEmpty()) {
+                list.add(i);
+            } else if (price < prices[list.get(list.size() - 1)]) {
+                if (list.size() % 2 != 0) {
+                    list.remove(list.size() - 1);
+                }
+                if (i != size - 1) {
+                    list.add(i);
+                }
+            } else if (price > prices[list.get(list.size() - 1)]) {
+                if (list.size() % 2 == 0) {
+                    list.remove(list.size() - 1);
+                }
+                list.add(i);
+            }
+        }
+        if (list.size() == 0) {
+            return 0;
+        } else if (list.size() == 2) {
+            int top = list.get(1);
+            int bot = list.get(0);
+            return prices[top] - prices[bot];
+        }
+        int maxTotal = 0;
+        for (int i = 1; i < list.size() - 2; i += 2) {
+            int maxLeftProfit = 0;
+            int minLeft = prices[list.get(0)];
+            int[] minsLeft = new int[i + 1];
+            minsLeft[0] = minLeft;
+            for (int j = 1; j <= i; j++) {
+                int current = prices[list.get(j)];
+                minsLeft[j] = Math.min(minsLeft[j - 1], current);
+                if (j % 2 != 0) {
+                    maxLeftProfit = Math.max(maxLeftProfit, current < minsLeft[j] ? 0 : current - minsLeft[j]);
+                } else {
+                    minLeft = Math.min(minLeft, current);
+                }
+            }
+
+            int maxRightProfit = 0;
+            int maxRight = prices[list.get(i + 1)];
+            int[] minsRight = new int[list.size() - i - 1];
+            minsRight[0] = maxRight;
+            for (int j = i + 2; j < list.size(); j++) {
+                int current = prices[list.get(j)];
+                minsRight[j - i - 1] = Math.min(minsRight[j - i - 2], current);
+                if (j % 2 != 0) {
+                    maxRightProfit = Math
+                            .max(maxRightProfit, current < minsRight[j - i - 1] ? 0 : current - minsRight[j - i - 1]);
+                    maxRight = Math.max(maxRight, current);
+                }
+            }
+
+            maxTotal = Math.max(maxTotal, maxLeftProfit + maxRightProfit);
+            maxTotal = Math.max(maxTotal, maxRight - minLeft);
+        }
+        return maxTotal;
     }
 
     /**
@@ -831,8 +931,27 @@ public class Utils3 {
      * isMatch("aab", "c*a*b") → true
      */
 
-    public static boolean isMatch2(String s, String p) {
-        return false;
+    public static boolean isMatch(String s, String p) {
+
+        if (p.length() == 0) {
+            return s.length() == 0;
+        }
+        if (p.length() == 1 || p.charAt(1) != '*') {
+            if (s.length() < 1 || (p.charAt(0) != '.' && s.charAt(0) != p.charAt(0))) {
+                return false;
+            }
+            return isMatch(s.substring(1), p.substring(1));
+        } else {
+            int len = s.length();
+            int i = -1;
+            while (i < len && (i < 0 || p.charAt(0) == '.' || p.charAt(0) == s.charAt(i))) {
+                if (isMatch(s.substring(i + 1), p.substring(2))) {
+                    return true;
+                }
+                i++;
+            }
+            return false;
+        }
     }
 
 
@@ -884,14 +1003,29 @@ public class Utils3 {
 
     public static void main(String[] args) {
 
-        LRUCache cache = new LRUCache(3);
-        PRINT(cache.get(5));
-        cache.set(5, 5);
-        cache.set(6, 6);
-        PRINT(cache.get(5));
-        cache.set(7, 7);
-        cache.set(8, 8);
-        PRINT(cache.get(7));
+        PRINT(isMatch("abcdefg", ".*") + " → true");
+        PRINT(isMatch("", ".*.*") + " → true");
+        PRINT(isMatch("abc", ".*.") + " → true");
+        PRINT(isMatch("ab", ".*..") + " → true");
+        PRINT(isMatch("a", "ab*") + " → true");
+        PRINT(isMatch("aa", "a*") + " → true");
+        PRINT(isMatch("aa", ".*") + " → true");
+        PRINT(isMatch("ab", ".*") + " → true");
+        PRINT(isMatch("aab", "c*a*b") + " → true");
+        PRINT(isMatch("abcdefg", "a*b*cd.*g") + " → true");
+        PRINT(isMatch("aa", "a") + " → false");
+        PRINT(isMatch("aa", "aa") + " → true");
+        PRINT(isMatch("aaa", "aa") + " → false");
+
+
+        //        LRUCache cache = new LRUCache(3);
+        //        PRINT(cache.get(5));
+        //        cache.set(5, 5);
+        //        cache.set(6, 6);
+        //        PRINT(cache.get(5));
+        //        cache.set(7, 7);
+        //        cache.set(8, 8);
+        //        PRINT(cache.get(7));
 
         //        Point p1 = new Point(84, 250);
         //        Point p2 = new Point(0, 0);
