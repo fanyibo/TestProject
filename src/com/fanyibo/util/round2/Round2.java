@@ -310,65 +310,83 @@ public class Round2 {
     public static void main(String[] args) {
 
         /**
+         * 6. ZigZag Conversion
+         */
+        {
+            PRINT("\n");
+            PRINT("ZigZag Conversion");
+            PRINT("=================");
+            PRINT("PAHNAPLSIIGYIR => " + convert("PAYPALISHIRING", 3));
+        }
+
+        /**
          * 5. Longest Palindromic Substring
          */
-        PRINT(longestPalindrome("bb"));
-
+        {
+            PRINT("\n");
+            PRINT("Longest Palindromic Substring");
+            PRINT("=============================");
+            PRINT(longestPalindrome("bb"));
+        }
 
         /**
          * 4. Median of Two Sorted Arrays
          */
-        PRINT("\n");
-        PRINT("Median of Two Sorted Arrays");
-        PRINT("===========================");
-        PRINT("1 => " + findMedianSortedArrays(new int[]{1}, new int[]{1}));
-        PRINT("4 => " + findMedianSortedArrays(new int[]{1, 2, 3, 4, 5, 6}, new int[]{3, 5, 6}));
-        PRINT("3.5 => " + findMedianSortedArrays(new int[]{1, 2, 3, 4, 5, 6}, new int[]{1, 2, 3, 4, 5, 6}));
+        {
+            PRINT("\n");
+            PRINT("Median of Two Sorted Arrays");
+            PRINT("===========================");
+            PRINT("1 => " + findMedianSortedArrays(new int[]{1}, new int[]{1}));
+            PRINT("4 => " + findMedianSortedArrays(new int[]{1, 2, 3, 4, 5, 6}, new int[]{3, 5, 6}));
+            PRINT("3.5 => " + findMedianSortedArrays(new int[]{1, 2, 3, 4, 5, 6}, new int[]{1, 2, 3, 4, 5, 6}));
+        }
 
         /**
          * 3. Longest Substring Without Repeating Characters
          */
-        PRINT("\n");
-        PRINT("Longest Substring Without Repeating Characters");
-        PRINT("==============================================");
-        PRINT(lengthOfLongestSubstring("abcabcbb"));
-        PRINT(lengthOfLongestSubstring("abcdefgh"));
-        PRINT(lengthOfLongestSubstring
-                      ("wlrbbmqbhcdarzowkkyhiddqscdxrjmowfrxsjybldbefsarcbynecdyggxxpklorellnmpapqfwkhopkmco"));
-
+        {
+            PRINT("\n");
+            PRINT("Longest Substring Without Repeating Characters");
+            PRINT("==============================================");
+            PRINT(lengthOfLongestSubstring("abcabcbb"));
+            PRINT(lengthOfLongestSubstring("abcdefgh"));
+        }
         /**
          * 2. Add Two Numbers
          */
-        PRINT("\n");
-        PRINT("Add Two Numbers");
-        PRINT("===============");
+        {
+            PRINT("\n");
+            PRINT("Add Two Numbers");
+            PRINT("===============");
 
-        int[] num11 = {5, 2, 4};
-        int[] num12 = {4, 7, 6};
-        PRINT(addTwoNumbers(createListNode(num11), createListNode(num12)));
+            int[] num11 = {5, 2, 4};
+            int[] num12 = {4, 7, 6};
+            PRINT(addTwoNumbers(createListNode(num11), createListNode(num12)));
 
-        int[] num21 = {5, 2, 4};
-        int[] num22 = {5, 7, 6, 9, 9};
-        PRINT(addTwoNumbers(createListNode(num21), createListNode(num22)));
+            int[] num21 = {5, 2, 4};
+            int[] num22 = {5, 7, 6, 9, 9};
+            PRINT(addTwoNumbers(createListNode(num21), createListNode(num22)));
+        }
 
         /**
          * 1. Two Sum
          */
-        PRINT("\n");
-        PRINT("Testing TwoSum");
-        PRINT("==============");
-        int[] num1 = {3, 2, 4};
-        int target1 = 6;
-        PRINT("[2, 3] => " + Arrays.toString(twoSum(num1, target1)));
+        {
+            PRINT("\n");
+            PRINT("Two Sum");
+            PRINT("=======");
+            int[] num1 = {3, 2, 4};
+            int target1 = 6;
+            PRINT("[2, 3] => " + Arrays.toString(twoSum(num1, target1)));
 
-        int[] num2 = {2, 7, 9, 11};
-        int target2 = 9;
-        PRINT("[1, 2] => " + Arrays.toString(twoSum(num2, target2)));
+            int[] num2 = {2, 7, 9, 11};
+            int target2 = 9;
+            PRINT("[1, 2] => " + Arrays.toString(twoSum(num2, target2)));
 
-        int[] num3 = {0, 7, 9, 0};
-        int target3 = 0;
-        PRINT("[1, 4] => " + Arrays.toString(twoSum(num3, target3)));
-
+            int[] num3 = {0, 7, 9, 0};
+            int target3 = 0;
+            PRINT("[1, 4] => " + Arrays.toString(twoSum(num3, target3)));
+        }
     }
 
     public static ListNode createListNode(int[] num) {
