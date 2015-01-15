@@ -6,7 +6,7 @@
  */
 package com.fanyibo.array.computable;
 
-import com.fanyibo.util.Utils;
+import com.fanyibo.util.round1.Utils;
 
 import java.util.Arrays;
 
