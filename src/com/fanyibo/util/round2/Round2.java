@@ -2,10 +2,7 @@ package com.fanyibo.util.round2;
 
 import com.fanyibo.util.ListNode;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class Round2 {
 
@@ -507,7 +504,46 @@ public class Round2 {
      * Input is guaranteed to be within the range from 1 to 3999.
      */
     public static String intToRoman(int num) {
-        return null;
+
+        HashMap<Integer, String> map = new HashMap<Integer, String>();
+        map.put(1, "I");
+        map.put(5, "V");
+        map.put(10, "X");
+        map.put(50, "L");
+        map.put(100, "C");
+        map.put(500, "D");
+        map.put(1000, "M");
+
+        int div = 1;
+        int temp = num;
+        while (temp != 0) {
+            div *= 10;
+            temp /= 10;
+        }
+        div /= 10;
+
+        StringBuilder builder = new StringBuilder();
+        while (div > 0) {
+            int number = num - num % div;
+            int count = number / div;
+            if (count == 9) {
+                builder.append(map.get(div)).append(map.get(div * 10));
+                count = 0;
+            } else if (count == 4) {
+                builder.append(map.get(div)).append(map.get(div * 5));
+                count = 0;
+            } else if (count >= 5) {
+                builder.append(map.get(div * 5));
+                count -= 5;
+            }
+            String str = map.get(div);
+            for (int i = 0; i < count; i++) {
+                builder.append(str);
+            }
+            div /= 10;
+            num -= number;
+        }
+        return builder.toString();
     }
 
     /**
@@ -516,7 +552,32 @@ public class Round2 {
      * Input is guaranteed to be within the range from 1 to 3999.
      */
     public static int romanToInt(String s) {
-        return 0;
+
+        HashMap<Character, Integer> map = new HashMap<Character, Integer>();
+        map.put('I', 1);
+        map.put('V', 5);
+        map.put('X', 10);
+        map.put('L', 50);
+        map.put('C', 100);
+        map.put('D', 500);
+        map.put('M', 1000);
+
+        int i = 0;
+        int result = 0;
+        for (; i < s.length() - 1; i++) {
+            int i1 = map.get(s.charAt(i));
+            int i2 = map.get(s.charAt(i + 1));
+            if (i1 < i2) {
+                result += (i2 - i1);
+                i++;
+            } else {
+                result += i1;
+            }
+        }
+        if (i == s.length() - 1) {
+            result += map.get(s.charAt(i));
+        }
+        return result;
     }
 
     /**
@@ -524,7 +585,26 @@ public class Round2 {
      * Write a function to find the longest common prefix string amongst an array of strings.
      */
     public static String longestCommonPrefix(String[] strs) {
-        return null;
+
+        if (strs.length == 0) {
+            return "";
+        } else if (strs.length == 1) {
+            return strs[0];
+        }
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i <= Integer.MAX_VALUE; i++) {
+            if (i >= strs[0].length()) {
+                break;
+            }
+            char c = strs[0].charAt(i);
+            for (int j = 1; j < strs.length; j++) {
+                if (i >= strs[j].length() || strs[j].charAt(i) != c) {
+                    return builder.toString();
+                }
+            }
+            builder.append(c);
+        }
+        return builder.toString();
     }
 
     /**
@@ -540,7 +620,35 @@ public class Round2 {
      * (-1, -1, 2)
      */
     public static List<List<Integer>> threeSum(int[] num) {
-        return null;
+
+        Arrays.sort(num);
+        Set<List<Integer>> set = new HashSet<List<Integer>>();
+        for (int i = 0; i < num.length; i++) {
+            int head = num[i];
+            int target = -head;
+            int index1 = i + 1;
+            int index2 = num.length - 1;
+            while (index1 < index2) {
+                int second = num[index1];
+                int third = num[index2];
+                if (second + third == target) {
+                    List<Integer> list = new ArrayList<Integer>();
+                    list.add(head);
+                    list.add(second);
+                    list.add(third);
+                    set.add(list);
+                    index1++;
+                    index2--;
+                } else if (second + third < target) {
+                    index1++;
+                } else {
+                    index2--;
+                }
+            }
+        }
+        List<List<Integer>> result = new ArrayList<List<Integer>>();
+        result.addAll(set);
+        return result;
     }
 
     /**
@@ -551,7 +659,35 @@ public class Round2 {
      * The sum that is closest to the target is 2. (-1 + 2 + 1 = 2).
      */
     public static int threeSumClosest(int[] num, int target) {
-        return 0;
+
+        if (num == null || num.length < 3) {
+            return 0;
+        }
+        Arrays.sort(num);
+        int closestSum = num[0] + num[1] + num[2];
+        for (int i = 0; i < num.length; i++) {
+            int head = num[i];
+            int sum = target - head;
+            int index1 = i + 1;
+            int index2 = num.length - 1;
+            while (index1 < index2) {
+                int second = num[index1];
+                int third = num[index2];
+
+                int lastTwo = second + third;
+                if (Math.abs(head + lastTwo - target) < Math.abs(closestSum - target)) {
+                    closestSum = head + lastTwo;
+                }
+                if (lastTwo == sum) {
+                    return target;
+                } else if (lastTwo < sum) {
+                    index1++;
+                } else {
+                    index2--;
+                }
+            }
+        }
+        return closestSum;
     }
 
     /**
@@ -562,7 +698,41 @@ public class Round2 {
      * Output: ["ad", "ae", "af", "bd", "be", "bf", "cd", "ce", "cf"].
      */
     public static List<String> letterCombinations(String digits) {
-        return null;
+
+        HashMap<Integer, String> map = new HashMap<Integer, String>();
+        map.put(2, "abc");
+        map.put(3, "def");
+        map.put(4, "ghi");
+        map.put(5, "jkl");
+        map.put(6, "mno");
+        map.put(7, "pqrs");
+        map.put(8, "tuv");
+        map.put(9, "wxyz");
+
+        List<String> result = new ArrayList<String>();
+        for (int i = 0; i < digits.length(); i++) {
+            String str = map.get(digits.charAt(i) - 48);
+            if (str == null) {
+                result.clear();
+                break;
+            } else if (result.isEmpty()) {
+                for (int j = 0; j < str.length(); j++) {
+                    result.add(Character.toString(str.charAt(j)));
+                }
+            } else {
+                List<String> temp = new ArrayList<String>();
+                for (int j = 0; j < str.length(); j++) {
+                    for (String s : result) {
+                        temp.add(s + Character.toString(str.charAt(j)));
+                    }
+                }
+                result = temp;
+            }
+        }
+        if (result.isEmpty()) {
+            result.add("");
+        }
+        return result;
     }
 
     /**
@@ -579,7 +749,42 @@ public class Round2 {
      * (-2,  0, 0, 2)
      */
     public static List<List<Integer>> fourSum(int[] num, int target) {
-        return null;
+        if (num == null || num.length < 4) {
+            return new ArrayList<List<Integer>>();
+        }
+        Arrays.sort(num);
+        Set<List<Integer>> set = new HashSet<List<Integer>>();
+        for (int i = 0; i < num.length; i++) {
+            int first = num[i];
+            for (int j = i + 1; j < num.length; j++) {
+                int second = num[j];
+                int sum = target - first - second;
+                int index1 = j + 1;
+                int index2 = num.length - 1;
+                while (index1 < index2) {
+                    int third = num[index1];
+                    int forth = num[index2];
+                    int lastTwo = third + forth;
+                    if (lastTwo == sum) {
+                        List<Integer> list = new ArrayList<Integer>();
+                        list.add(first);
+                        list.add(second);
+                        list.add(third);
+                        list.add(forth);
+                        set.add(list);
+                        index1++;
+                        index2--;
+                    } else if (lastTwo < sum) {
+                        index1++;
+                    } else {
+                        index2--;
+                    }
+                }
+            }
+        }
+        List<List<Integer>> result = new ArrayList<List<Integer>>();
+        result.addAll(set);
+        return result;
     }
 
     /**
@@ -593,18 +798,55 @@ public class Round2 {
      * Try to do this in one pass.
      */
     public static ListNode removeNthFromEnd(ListNode head, int n) {
-        return null;
+
+        ListNode temp = head;
+        ListNode nFather = null;
+        int count = 0;
+        while (temp != null) {
+            temp = temp.next;
+            if (nFather != null) {
+                nFather = nFather.next;
+            }
+            if (count == n) {
+                nFather = head;
+            }
+            count++;
+        }
+        if (nFather != null) {
+            nFather.next = nFather.next.next;
+        } else if (count == n) {
+            return head.next;
+        }
+        return head;
     }
 
     /**
      * 20. Valid Parentheses
-     * Total Accepted: 31856 Total Submissions: 114703
      * Given a string containing just the characters '(', ')', '{', '}', '[' and ']', determine if the input string
      * is valid.
      * The brackets must close in the correct order, "()" and "()[]{}" are all valid but "(]" and "([)]" are not.
      */
     public static boolean isValid(String s) {
-        return false;
+
+        HashMap<Character, Character> map = new HashMap<Character, Character>();
+        map.put(')', '(');
+        map.put(']', '[');
+        map.put('}', '{');
+
+        Stack<Character> stack = new Stack<Character>();
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+            if (stack.isEmpty()) {
+                stack.push(c);
+            } else {
+                if (stack.peek() == map.get(c)) {
+                    stack.pop();
+                } else {
+                    stack.push(c);
+                }
+            }
+        }
+        return stack.isEmpty();
     }
 
     /**
@@ -613,7 +855,40 @@ public class Round2 {
      * the nodes of the first two lists.
      */
     public static ListNode mergeTwoLists(ListNode l1, ListNode l2) {
-        return null;
+
+        if (l1 == null) {
+            return l2;
+        }
+        if (l2 == null) {
+            return l1;
+        }
+        ListNode head = null;
+        ListNode temp = null;
+        ListNode temp1 = l1;
+        ListNode temp2 = l2;
+        while (temp1 != null && temp2 != null) {
+            ListNode small = null;
+            if (temp1.val <= temp2.val) {
+                small = temp1;
+                temp1 = temp1.next;
+            } else {
+                small = temp2;
+                temp2 = temp2.next;
+            }
+            if (head == null) {
+                head = small;
+                temp = head;
+            } else {
+                temp.next = small;
+                temp = temp.next;
+            }
+        }
+        if (temp1 != null && temp2 == null) {
+            temp.next = temp1;
+        } else if (temp1 == null && temp2 != null) {
+            temp.next = temp2;
+        }
+        return head;
     }
 
     /**
@@ -623,7 +898,22 @@ public class Round2 {
      * "((()))", "(()())", "(())()", "()(())", "()()()"
      */
     public static List<String> generateParenthesis(int n) {
-        return null;
+
+        Set<String> set = new HashSet<String>();
+        for (int i = 1; i <= n; i++) {
+            if (i == 1) {
+                set.add("()");
+            } else {
+                Set<String> temp = new HashSet<String>();
+                for (String str : set) {
+                    for (int j = 0; j < str.length(); j++) {
+                        temp.add(str.substring(0, j) + "()" + str.substring(j));
+                    }
+                }
+                set = temp;
+            }
+        }
+        return new ArrayList<String>(set);
     }
 
     /**
@@ -632,7 +922,30 @@ public class Round2 {
      * Merge k sorted linked lists and return it as one sorted list. Analyze and describe its complexity.
      */
     public static ListNode mergeKLists(List<ListNode> lists) {
-        return null;
+
+        int size = lists.size();
+        if (size == 0) {
+            return null;
+        } else if (size == 1) {
+            return lists.get(0);
+        } else {
+            return _mergeKLists(lists, 0, size - 1);
+        }
+    }
+
+    public static ListNode _mergeKLists(List<ListNode> lists, int start, int end) {
+
+        int size = end - start + 1;
+        if (size == 0) {
+            return null;
+        } else if (size == 1) {
+            return lists.get(start);
+        } else if (size == 2) {
+            return mergeTwoLists(lists.get(start), lists.get(end));
+        } else {
+            int mid = (start + end) / 2;
+            return mergeTwoLists(_mergeKLists(lists, start, mid), _mergeKLists(lists, mid + 1, end));
+        }
     }
 
     /**
@@ -691,7 +1004,8 @@ public class Round2 {
      * Returns the index of the first occurrence of needle in haystack, or -1 if needle is not part of haystack.
      * Update (2014-11-02):
      * The signature of the function had been updated to return the index instead of the pointer. If you still see
-     * your function signature returns a char * or String, please click the reload button to reset your code definition.
+     * your function signature returns a char * or String, please click the reload button to reset your code
+     * definition.
      */
     public static int strStr(String haystack, String needle) {
         return 0;
@@ -725,6 +1039,33 @@ public class Round2 {
 
     public static void main(String[] args) {
 
+        {
+            TITLE("Generate Parentheses");
+            //PRINT(generateParenthesis(1));
+            PRINT(generateParenthesis(2));
+            PRINT(generateParenthesis(3));
+        }
+        {
+            TITLE("Letter Combinations of a Phone Number");
+            PRINT("[\"ad\", \"ae\", \"af\", \"bd\", \"be\", \"bf\", \"cd\", \"ce\", \"cf\"] => " + letterCombinations
+                    ("23"));
+        }
+        {
+            TITLE("3Sum");
+            PRINT("(-1, 0, 1)(-1, -1, 2) => " + threeSum(new int[]{-1, 0, 1, 2, -1, -4}));
+        }
+        {
+            TITLE("Longest Common Prefix");
+            PRINT("ab  => " + longestCommonPrefix(new String[]{"abcd", "abdjfr", "abdoerfer", "abdhjfd", "abokrfp"}));
+            PRINT("''  => " + longestCommonPrefix(new String[]{"abcd", "", "abdoerfer", "", "abokrfp"}));
+            PRINT("a  => " + longestCommonPrefix(new String[]{"abcd", "abdjfr", "aadoerfer", "aofkkpef", "abokrfp"}));
+        }
+        {
+            TITLE("Integer to Roman & Roman to Integer");
+            PRINT("XII(12) => " + intToRoman(12) + " | " + romanToInt("XII"));
+            PRINT("MCCXXXIV(1234) => " + intToRoman(1234) + " | " + romanToInt("MCCXXXIV"));
+            PRINT("CMLIX(959) => " + intToRoman(959) + " | " + romanToInt("CMLIX"));
+        }
         {
             TITLE("Container With Most Water");
             PRINT("36  => " + maxArea(new int[]{3, 6, 2, 6, 7, 8, 4, 9}));
