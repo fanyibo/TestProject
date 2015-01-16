@@ -997,8 +997,64 @@ public class Round2 {
      * For k = 3, you should return: 3->2->1->4->5
      */
     public static ListNode reverseKGroup(ListNode head, int k) {
-        return null;
+
+        if (head == null || k <= 1) {
+            return head;
+        }
+        ListNode newHead = null;
+        ListNode parent = null;
+        ListNode temp = head;
+        int count = 0;
+        while (temp != null) {
+            if (count != 0 && count % k == 0) {
+                if (parent == null) {
+                    newHead = _reverseKGroup(head, k);
+                    head.next = temp;
+                    parent = head;
+                } else {
+                    ListNode tail = parent.next;
+                    parent.next = _reverseKGroup(parent.next, k);
+                    parent = tail;
+                    parent.next = temp;
+                }
+            }
+            count++;
+            temp = temp.next;
+        }
+        if (count % k == 0) {
+            if (parent == null) {
+                newHead = _reverseKGroup(head, k);
+                head.next = null;
+            } else {
+                ListNode tail = parent.next;
+                parent.next = _reverseKGroup(parent.next, k);
+                tail.next = null;
+            }
+        } else if (count < k) {
+            return head;
+        }
+        return newHead;
     }
+
+    public static ListNode _reverseKGroup(ListNode head, int k) {
+        ListNode left = head;
+        ListNode right = left.next;
+        ListNode rightChild = right.next;
+        int count = 0;
+        while (count <= k - 2) {
+            right.next = left;
+            left = right;
+            right = rightChild;
+            if (right != null) {
+                rightChild = right.next;
+            } else {
+                break;
+            }
+            count++;
+        }
+        return left;
+    }
+
 
     /**
      * 26. Remove Duplicates from Sorted Array
@@ -1010,7 +1066,27 @@ public class Round2 {
      * Your function should return length = 2, and A is now [1,2].
      */
     public static int removeDuplicates(int[] A) {
-        return 0;
+
+        if (A.length < 2) {
+            return A.length;
+        }
+        int index1 = 0;
+        int index2 = 1;
+        int size = A.length;
+        while (index1 < size && index2 < A.length) {
+            while (index2 < A.length && A[index1] == A[index2]) {
+                size--;
+                index2++;
+            }
+            if (index2 - index1 > 1 && index2 < A.length) {
+                int temp = A[index1 + 1];
+                A[index1 + 1] = A[index2];
+                A[index2] = temp;
+            }
+            index1++;
+            index2++;
+        }
+        return size;
     }
 
     /**
@@ -1019,12 +1095,32 @@ public class Round2 {
      * The order of elements can be changed. It doesn't matter what you leave beyond the new length.
      */
     public static int removeElement(int[] A, int elem) {
-        return 0;
+
+        if (A.length < 2) {
+            return A.length == 0 ? 0 : (A[0] == elem ? 0 : 1);
+        }
+        int index1 = 0;
+        int index2 = A.length - 1;
+        while (index1 < index2) {
+            if (A[index2] == elem) {
+                index2--;
+                continue;
+            }
+            if (A[index1] == elem) {
+                A[index1] = A[index2];
+                A[index2] = elem;
+                index2--;
+            }
+            index1++;
+        }
+        if (index1 < A.length && A[index1] != elem) {
+            index1++;
+        }
+        return index1;
     }
 
     /**
      * 28. Implement strStr()
-     * Total Accepted: 33498 Total Submissions: 153942
      * Implement strStr().
      * Returns the index of the first occurrence of needle in haystack, or -1 if needle is not part of haystack.
      * Update (2014-11-02):
@@ -1033,22 +1129,86 @@ public class Round2 {
      * definition.
      */
     public static int strStr(String haystack, String needle) {
-        return 0;
+
+        int sizeA = haystack.length();
+        int sizeB = needle.length();
+        if (sizeA < sizeB) {
+            return -1;
+        } else if (sizeA == sizeB) {
+            return haystack.equals(needle) ? 0 : -1;
+        } else if (sizeB == 0) {
+            return 0;
+        }
+        int index = 0;
+        for (int i = 0; i <= sizeA - sizeB; i++) {
+            if (haystack.charAt(i) == needle.charAt(index)) {
+                int start = i;
+                for (; index < sizeB; index++) {
+                    if (haystack.charAt(i++) != needle.charAt(index)) {
+                        index = sizeB + 1;
+                        break;
+                    }
+                }
+                if (index == sizeB) {
+                    return start;
+                } else {
+                    i = start;
+                    index = 0;
+                }
+            } else {
+                index = 0;
+            }
+        }
+        return -1;
     }
 
     /**
      * 29. Divide Two Integers
-     * Total Accepted: 26414 Total Submissions: 164311
      * Divide two integers without using multiplication, division and mod operator.
      * If it is overflow, return MAX_INT.
      */
     public static int divide(int dividend, int divisor) {
-        return 0;
+
+        if (dividend == 0) {
+            return 0;
+        }
+        long d1 = dividend;
+        long d2 = divisor;
+        boolean isNegative = false;
+        if (d1 < 0) {
+            d1 = -d1;
+            isNegative = true;
+        }
+        if (d2 < 0) {
+            d2 = -d2;
+            isNegative = !isNegative;
+        }
+        if (d1 < d2) {
+            return 0;
+        } else if (d1 == d2) {
+            return isNegative ? -1 : 1;
+        }
+        long result = 0;
+        while (d1 >= d2) {
+            long temp = d2;
+            int i = 1;
+            while (d1 >= temp) {
+                d1 -= temp;
+                result += i;
+                temp <<= 1;
+                i <<= 1;
+            }
+        }
+        result = isNegative ? -result : result;
+        if ((isNegative && result < Integer.MIN_VALUE) || (!isNegative && result > Integer.MAX_VALUE)) {
+            return Integer.MAX_VALUE;
+        }
+        return (int) result;
     }
+
 
     /**
      * 30. Substring with Concatenation of All Words
-     * Total Accepted: 20476 Total Submissions: 111015
      * You are given a string, S, and a list of words, L, that are all of the same length. Find all starting indices
      * of substring(s) in S that is a concatenation of each word in L exactly once and without any intervening
      * characters.
@@ -1059,11 +1219,454 @@ public class Round2 {
      * (order does not matter).
      */
     public static List<Integer> findSubstring(String S, String[] L) {
+
+        HashMap<String, Integer> map = new HashMap<String, Integer>();
+        for (String aL : L) {
+            if (map.containsKey(aL)) {
+                map.put(aL, map.get(aL) + 1);
+            } else {
+                map.put(aL, 1);
+            }
+        }
+        int len = L[0].length();
+        List<Integer> result = new ArrayList<Integer>();
+        HashMap<String, Integer> temp = new HashMap<String, Integer>();
+        int done = map.size();
+        int left = 0;
+        int right = len;
+        for (; left < S.length() && right <= S.length(); ) {
+            String str = S.substring(right - len, right);
+            if (map.containsKey(str)) {
+                if (temp.containsKey(str)) {
+                    temp.put(str, temp.get(str) + 1);
+                } else {
+                    temp.put(str, 1);
+                }
+                if (temp.get(str).equals(map.get(str))) {
+                    done--;
+                    if (done == 0) {
+                        result.add(left);
+                        left++;
+                        right = left + len;
+                        temp.clear();
+                        done = map.size();
+                    } else {
+                        right += len;
+                    }
+                } else if (temp.get(str) > map.get(str)) {
+                    left++;
+                    right = left + len;
+                    temp.clear();
+                    done = map.size();
+                } else {
+                    right += len;
+                }
+            } else {
+                left++;
+                right = left + len;
+                temp.clear();
+                done = map.size();
+            }
+        }
+        return result;
+    }
+
+    /**
+     * 31. Next Permutation
+     * Implement next permutation, which rearranges numbers into the lexicographically next greater permutation of
+     * numbers.
+     * If such arrangement is not possible, it must rearrange it as the lowest possible order (ie, sorted in
+     * ascending order).
+     * The replacement must be in-place, do not allocate extra memory.
+     * Here are some examples. Inputs are in the left-hand column and its corresponding outputs are in the right-hand
+     * column.
+     * 1,2,3 → 1,3,2
+     * 3,2,1 → 1,2,3
+     * 1,1,5 → 1,5,1
+     * 1,2,3,4 -> 1,2,4,3
+     * 1,2,1,2,4
+     * 4,2,2,1,1
+     */
+    public static void nextPermutation(int[] num) {
+
+        if (num.length < 2) {
+            return;
+        }
+        int first = 0;
+        int i = num.length - 1;
+        for (; i > 0; i--) {
+            if (num[i] > num[i - 1]) {
+                first = i - 1;
+                break;
+            }
+        }
+        if (i == 0 && num[1] <= num[0]) {
+            Arrays.sort(num);
+            return;
+        }
+        i = first + 1;
+        int last = i;
+        for (; i < num.length; i++) {
+            if (num[i] <= num[last] && num[i] > num[first]) {
+                last = i;
+            }
+        }
+        int temp = num[first];
+        num[first] = num[last];
+        num[last] = temp;
+        Arrays.sort(num, first + 1, num.length);
+    }
+
+    /**
+     * 32. Longest Valid Parentheses
+     * Given a string containing just the characters '(' and ')', find the length of the longest valid (well-formed)
+     * parentheses substring.
+     * For "(()", the longest valid parentheses substring is "()", which has length = 2.
+     * Another example is ")()())", where the longest valid parentheses substring is "()()", which has length = 4.
+     */
+    public static int longestValidParentheses(String s) {
+
+        int max = 0;
+        Stack<Integer> stack = new Stack<Integer>();
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+            if (stack.isEmpty() || s.charAt(stack.peek()) == ')' || c == '(') {
+                stack.push(i);
+            } else {
+                stack.pop();
+                if (stack.isEmpty()) {
+                    max = Math.max(max, i + 1);
+                } else {
+                    max = Math.max(max, i - stack.peek());
+                }
+            }
+        }
+        return max;
+    }
+
+    /**
+     * 33. Search in Rotated Sorted Array
+     * Suppose a sorted array is rotated at some pivot unknown to you beforehand.
+     * (i.e., 0 1 2 4 5 6 7 might become 4 5 6 7 0 1 2).
+     * You are given a target value to search. If found in the array return its index, otherwise return -1.
+     * You may assume no duplicate exists in the array.
+     */
+    public static int search(int[] A, int target) {
+
+        if (A.length == 0) {
+            return -1;
+        } else if (A.length == 1) {
+            return A[0] == target ? 0 : -1;
+        } else {
+            return searchInRotatedArray(A, 0, A.length - 1, target);
+        }
+    }
+
+    public static int searchInRotatedArray(int[] A, int start, int end, int target) {
+
+        int size = end - start + 1;
+        if (size == 0) {
+            return -1;
+        } else if (size <= 2) {
+            for (int i = start; i <= end; i++) {
+                if (A[i] == target) {
+                    return i;
+                }
+            }
+            return -1;
+        } else {
+            int mid = (start + end) / 2;
+            if (A[mid] == target) {
+                return mid;
+            }
+            if (A[start] < A[mid] && A[mid] > A[end]) {
+                if (target > A[mid] || target <= A[end]) {
+                    return searchInRotatedArray(A, mid + 1, end, target);
+                } else {
+                    return searchInRotatedArray(A, start, mid, target);
+                }
+            } else if (A[start] > A[mid] && A[mid] < A[end]) {
+                if (target < A[mid] || target >= A[start]) {
+                    return searchInRotatedArray(A, start, mid, target);
+                } else {
+                    return searchInRotatedArray(A, mid + 1, end, target);
+                }
+            } else {
+                if (target < A[mid]) {
+                    return searchInRotatedArray(A, start, mid, target);
+                } else {
+                    return searchInRotatedArray(A, mid + 1, end, target);
+                }
+            }
+        }
+    }
+
+    /**
+     * 34. Search for a Range
+     * Given a sorted array of integers, find the starting and ending position of a given target value.
+     * Your algorithm's runtime complexity must be in the order of O(log n).
+     * If the target is not found in the array, return [-1, -1].
+     * For example,
+     * Given [5, 7, 7, 8, 8, 10] and target value 8,
+     * return [3, 4].
+     */
+    public static int[] searchRange(int[] A, int target) {
+
+        if (A.length == 0) {
+            return new int[]{-1, -1};
+        } else if (A.length == 1) {
+            return (A[0] == target) ? new int[]{0, 0} : new int[]{-1, -1};
+        } else {
+            return _searchRange(A, 0, A.length - 1, target);
+        }
+    }
+
+    public static int[] _searchRange(int[] A, int start, int end, int target) {
+
+        int size = end - start + 1;
+        if (size == 0) {
+            return new int[]{-1, -1};
+        } else if (size == 1) {
+            return (A[start] == target) ? new int[]{start, start} : new int[]{-1, -1};
+        } else {
+            int mid = (start + end) / 2;
+            int midLeft = mid;
+            while (midLeft >= start && A[midLeft] == A[mid]) {
+                midLeft--;
+            }
+            int midRight = mid;
+            while (midRight <= end && A[midRight] == A[mid]) {
+                midRight++;
+            }
+            midLeft++;
+            midRight--;
+            int[] result = new int[2];
+            if (A[mid] == target) {
+                result[0] = midLeft;
+                result[1] = midRight;
+                return result;
+            } else if (target < A[midLeft]) {
+                return _searchRange(A, start, midLeft - 1, target);
+            } else {
+                return _searchRange(A, midRight + 1, end, target);
+            }
+        }
+    }
+
+    /**
+     * 35. Search Insert Position
+     * Given a sorted array and a target value, return the index if the target is found. If not, return the index
+     * where it would be if it were inserted in order.
+     * You may assume no duplicates in the array.
+     * Here are few examples.
+     * [1,3,5,6], 5 → 2
+     * [1,3,5,6], 2 → 1
+     * [1,3,5,6], 7 → 4
+     * [1,3,5,6], 0 → 0
+     */
+    public static int searchInsert(int[] A, int target) {
+        if (A.length == 0) {
+            return 0;
+        } else if (A.length == 1) {
+            return (A[0] == target) ? 0 : ((A[0] > target) ? 0 : 1);
+        } else {
+            return _searchInsert(A, 0, A.length - 1, target);
+        }
+    }
+
+    public static int _searchInsert(int[] A, int start, int end, int target) {
+
+        int size = end - start + 1;
+        if (size == 0) {
+            return start;
+        } else if (size <= 2) {
+            for (int i = start; i <= end; i++) {
+                if (A[i] >= target) {
+                    return i;
+                }
+            }
+            return end + 1;
+        } else {
+            int mid = (start + end) / 2;
+            if (A[mid] == target) {
+                return mid;
+            } else if (target < A[mid]) {
+                return _searchInsert(A, start, mid, target);
+            } else {
+                return _searchInsert(A, mid + 1, end, target);
+            }
+        }
+    }
+
+    /**
+     * 36. Valid Sudoku
+     * Determine if a Sudoku is valid, according to: Sudoku Puzzles - The Rules.
+     * The Sudoku board could be partially filled, where empty cells are filled with the character '.'.
+     */
+    public static boolean isValidSudoku(char[][] board) {
+        return false;
+    }
+
+    /**
+     * 37.
+     * Sudoku Solver
+     * Total Accepted: 19308 Total Submissions: 91427
+     * Write a program to solve a Sudoku puzzle by filling the empty cells.
+     * Empty cells are indicated by the character '.'.
+     * You may assume that there will be only one unique solution.
+     */
+    public static void solveSudoku(char[][] board) {
+
+    }
+
+    /**
+     * 38. Count and Say
+     * The count-and-say sequence is the sequence of integers beginning as follows:
+     * 1, 11, 21, 1211, 111221, ...
+     * 1 is read off as "one 1" or 11.
+     * 11 is read off as "two 1s" or 21.
+     * 21 is read off as "one 2, then one 1" or 1211.
+     * Given an integer n, generate the nth sequence.
+     * Note: The sequence of integers will be represented as a string.
+     */
+    public static String countAndSay(int n) {
         return null;
     }
 
+    /**
+     * 39. Combination Sum
+     * Given a set of candidate numbers (C) and a target number (T), find all unique combinations in C where the
+     * candidate numbers sums to T.
+     * The same repeated number may be chosen from C unlimited number of times.
+     * Note:
+     * All numbers (including target) will be positive integers.
+     * Elements in a combination (a1, a2, … , ak) must be in non-descending order. (ie, a1 ≤ a2 ≤ … ≤ ak).
+     * The solution set must not contain duplicate combinations.
+     * For example, given candidate set 2,3,6,7 and target 7,
+     * A solution set is:
+     * [7]
+     * [2, 2, 3]
+     */
+    public static List<List<Integer>> combinationSum(int[] candidates, int target) {
+        return null;
+    }
+
+    /**
+     * 40.
+     * Combination Sum II
+     * Total Accepted: 23877 Total Submissions: 96373
+     * Given a collection of candidate numbers (C) and a target number (T), find all unique combinations in C where
+     * the candidate numbers sums to T.
+     * Each number in C may only be used once in the combination.
+     * Note:
+     * All numbers (including target) will be positive integers.
+     * Elements in a combination (a1, a2, … , ak) must be in non-descending order. (ie, a1 ≤ a2 ≤ … ≤ ak).
+     * The solution set must not contain duplicate combinations.
+     * For example, given candidate set 10,1,2,7,6,1,5 and target 8,
+     * A solution set is:
+     * [1, 7]
+     * [1, 2, 5]
+     * [2, 6]
+     * [1, 1, 6]
+     */
+    public static List<List<Integer>> combinationSum2(int[] num, int target) {
+        return null;
+    }
+
+    /**
+     * 41.
+     * First Missing Positive
+     * Total Accepted: 26403 Total Submissions: 115537
+     * Given an unsorted integer array, find the first missing positive integer.
+     * For example,
+     * Given [1,2,0] return 3,
+     * and [3,4,-1,1] return 2.
+     * Your algorithm should run in O(n) time and uses constant space.
+     */
+    public static int firstMissingPositive(int[] A) {
+        return 0;
+    }
+
+    /**
+     * 42.
+     * Trapping Rain Water
+     * Total Accepted: 25727 Total Submissions: 87094
+     * Given n non-negative integers representing an elevation map where the width of each bar is 1, compute how much
+     * water it is able to trap after raining.
+     * For example,
+     * Given [0,1,0,2,1,0,1,3,2,1,2,1], return 6.
+     */
+    public static int trap(int[] A) {
+        return 0;
+    }
+
+    /**
+     * 43.
+     * Multiply Strings
+     * Total Accepted: 21174 Total Submissions: 102359
+     * Given two numbers represented as strings, return multiplication of the numbers as a string.
+     * Note: The numbers can be arbitrarily large and are non-negative.
+     */
+    public static String multiply(String num1, String num2) {
+        return null;
+    }
+
+
     public static void main(String[] args) {
 
+        //        {
+        //            TITLE("Search for a Range");
+        //            PRINT("[1,5]  => " + Arrays.toString(searchRange(new int[]{1, 3, 3, 3, 3, 3, 5}, 3)));
+        //            PRINT("[8,10] => " + Arrays.toString(searchRange(new int[]{1, 2, 2, 2, 3, 3, 3, 4, 5, 5, 5, 6},
+        // 5)));
+        //            PRINT("[-1,-1] => " + Arrays.toString(searchRange(new int[]{1, 2, 3, 5, 6, 7, 8}, 4)));
+        //            PRINT("[0,0] => " + Arrays.toString(searchRange(new int[]{1}, 1)));
+        //        }
+        //        {
+        //            TITLE("Longest Valid Parentheses");
+        //            PRINT("4  => " + longestValidParentheses("(())))())("));
+        //            PRINT("8  => " + longestValidParentheses(")(()()())"));
+        //            PRINT("4  => " + longestValidParentheses("(()()((()"));
+        //        }
+        //        {
+        //            TITLE("Next Permutation");
+        //            int[] A = {1, 2, 3, 4, 3, 1};
+        //            nextPermutation(A);
+        //            for (int i = 0; i < A.length; i++) {
+        //                System.out.print(A[i] + " ");
+        //            }
+        //            PRINT("\n");
+        //        }
+        //        {
+        //            TITLE("Implement strStr()");
+        //            PRINT(strStr("mississippi", "issip"));
+        //        }
+        //        {
+        //            TITLE("Remove Elements");
+        //
+        //            int[] A = {1, 2, 2, 2, 5, 5, 7, 8};
+        //            int size = removeElement(A, 8);
+        //            for (int i = 0; i < size; i++) {
+        //                System.out.print(A[i] + " ");
+        //            }
+        //            PRINT("\n");
+        //        }
+        //        {
+        //            TITLE("Remove Duplicates from Sorted Array");
+        //
+        //            int[] A = {1, 2, 2, 2, 5, 5, 7, 8};
+        //            int size = removeDuplicates(A);
+        //            for (int i = 0; i < size; i++) {
+        //                System.out.print(A[i] + " ");
+        //            }
+        //            PRINT("\n");
+        //        }
+        //        {
+        //            TITLE("Reverse Nodes in k-Group");
+        //            PRINT(reverseKGroup(createListNode(new int[]{1}), 2));
+        //            PRINT(reverseKGroup(createListNode(new int[]{1, 2, 3, 4, 5, 6, 7, 8}), 8));
+        //            PRINT(reverseKGroup(createListNode(new int[]{1, 2, 3, 4, 5, 6, 7, 8}), 9));
+        //        }
         //        {
         //            TITLE("Swap Nodes in Pairs");
         //            PRINT(swapPairs(createListNode(new int[]{1})));
