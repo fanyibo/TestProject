@@ -957,7 +957,32 @@ public class Round2 {
      * can be changed.
      */
     public static ListNode swapPairs(ListNode head) {
-        return null;
+
+        if (head == null || head.next == null) {
+            return head;
+        }
+        ListNode newHead = null;
+        ListNode parent = null;
+        ListNode left = head;
+        ListNode right = left.next;
+        while (right != null) {
+            if (newHead == null) {
+                newHead = right;
+            }
+            left.next = right.next;
+            right.next = left;
+            if (parent != null) {
+                parent.next = right;
+            }
+            parent = left;
+            left = parent.next;
+            if (left != null) {
+                right = left.next;
+            } else {
+                break;
+            }
+        }
+        return newHead;
     }
 
     /**
@@ -1039,117 +1064,128 @@ public class Round2 {
 
     public static void main(String[] args) {
 
-        {
-            TITLE("Generate Parentheses");
-            //PRINT(generateParenthesis(1));
-            PRINT(generateParenthesis(2));
-            PRINT(generateParenthesis(3));
-        }
-        {
-            TITLE("Letter Combinations of a Phone Number");
-            PRINT("[\"ad\", \"ae\", \"af\", \"bd\", \"be\", \"bf\", \"cd\", \"ce\", \"cf\"] => " + letterCombinations
-                    ("23"));
-        }
-        {
-            TITLE("3Sum");
-            PRINT("(-1, 0, 1)(-1, -1, 2) => " + threeSum(new int[]{-1, 0, 1, 2, -1, -4}));
-        }
-        {
-            TITLE("Longest Common Prefix");
-            PRINT("ab  => " + longestCommonPrefix(new String[]{"abcd", "abdjfr", "abdoerfer", "abdhjfd", "abokrfp"}));
-            PRINT("''  => " + longestCommonPrefix(new String[]{"abcd", "", "abdoerfer", "", "abokrfp"}));
-            PRINT("a  => " + longestCommonPrefix(new String[]{"abcd", "abdjfr", "aadoerfer", "aofkkpef", "abokrfp"}));
-        }
-        {
-            TITLE("Integer to Roman & Roman to Integer");
-            PRINT("XII(12) => " + intToRoman(12) + " | " + romanToInt("XII"));
-            PRINT("MCCXXXIV(1234) => " + intToRoman(1234) + " | " + romanToInt("MCCXXXIV"));
-            PRINT("CMLIX(959) => " + intToRoman(959) + " | " + romanToInt("CMLIX"));
-        }
-        {
-            TITLE("Container With Most Water");
-            PRINT("36  => " + maxArea(new int[]{3, 6, 2, 6, 7, 8, 4, 9}));
-            PRINT("12  => " + maxArea(new int[]{1, 5, 2, 6, 4, 2}));
-            PRINT("2 => " + maxArea(new int[]{1, 2, 3}));
-        }
-        {
-            TITLE("Regular Expression Matching");
-            PRINT("true  => " + isMatch("", ".*.*.*"));
-            PRINT("false  => " + isMatch("adbc", "a*bc"));
-            PRINT("true => " + isMatch("aa", "aa"));
-            PRINT("false => " + isMatch("aaa", "aa"));
-            PRINT("true => " + isMatch("aa", "a*"));
-            PRINT("true => " + isMatch("aa", ".*"));
-            PRINT("true => " + isMatch("ab", ".*"));
-            PRINT("true  => " + isMatch("aab", "c*a*b"));
-        }
-        {
-            TITLE("Palindrome Number");
-            PRINT("false => " + isPalindrome(-2147447412));
-            PRINT("false => " + isPalindrome(1000021));
-            PRINT("true => " + isPalindrome(989898989));
-            PRINT("false => " + isPalindrome(-12344321));
-            PRINT("false => " + isPalindrome(123456789));
-            PRINT("true  => " + isPalindrome(0));
-            PRINT("true  => " + isPalindrome(55));
-            PRINT("false  => " + isPalindrome(23));
-        }
-        {
-            TITLE("String to Integer");
-            PRINT("-1 => " + atoi("-1"));
-            PRINT("1000 => " + atoi("1000"));
-            PRINT(Integer.MAX_VALUE + " => " + atoi("2147483650"));
-            PRINT(Integer.MIN_VALUE + " => " + atoi("-2147483649"));
-        }
-        {
-            TITLE("Reverse Integer");
-            PRINT("1 => " + reverse(1000));
-            PRINT("321 => " + reverse(123));
-            PRINT("-321 => " + reverse(-123));
-        }
-        {
-            TITLE("ZigZag Conversion");
-            PRINT("PAHNAPLSIIGYIR => " + convert("PAYPALISHIRING", 3));
-        }
-        {
-            TITLE("Longest Palindromic Substring");
-            PRINT(longestPalindrome("bb"));
-        }
-        {
-            TITLE("Median of Two Sorted Arrays");
-            PRINT("1 => " + findMedianSortedArrays(new int[]{1}, new int[]{1}));
-            PRINT("4 => " + findMedianSortedArrays(new int[]{1, 2, 3, 4, 5, 6}, new int[]{3, 5, 6}));
-            PRINT("3.5 => " + findMedianSortedArrays(new int[]{1, 2, 3, 4, 5, 6}, new int[]{1, 2, 3, 4, 5, 6}));
-        }
-        {
-            TITLE("Longest Substring Without Repeating Characters");
-            PRINT(lengthOfLongestSubstring("abcabcbb"));
-            PRINT(lengthOfLongestSubstring("abcdefgh"));
-        }
-        {
-            TITLE("Add Two Numbers");
-            int[] num11 = {5, 2, 4};
-            int[] num12 = {4, 7, 6};
-            PRINT(addTwoNumbers(createListNode(num11), createListNode(num12)));
-
-            int[] num21 = {5, 2, 4};
-            int[] num22 = {5, 7, 6, 9, 9};
-            PRINT(addTwoNumbers(createListNode(num21), createListNode(num22)));
-        }
-        {
-            TITLE("Two Sum");
-            int[] num1 = {3, 2, 4};
-            int target1 = 6;
-            PRINT("[2, 3] => " + Arrays.toString(twoSum(num1, target1)));
-
-            int[] num2 = {2, 7, 9, 11};
-            int target2 = 9;
-            PRINT("[1, 2] => " + Arrays.toString(twoSum(num2, target2)));
-
-            int[] num3 = {0, 7, 9, 0};
-            int target3 = 0;
-            PRINT("[1, 4] => " + Arrays.toString(twoSum(num3, target3)));
-        }
+        //        {
+        //            TITLE("Swap Nodes in Pairs");
+        //            PRINT(swapPairs(createListNode(new int[]{1})));
+        //            PRINT(swapPairs(createListNode(new int[]{1, 2})));
+        //            PRINT(swapPairs(createListNode(new int[]{1, 2, 3, 4, 5, 6})));
+        //            PRINT(swapPairs(createListNode(new int[]{1, 2, 3, 4, 5, 6, 7})));
+        //        }
+        //        {
+        //            TITLE("Generate Parentheses");
+        //            PRINT(generateParenthesis(1));
+        //            PRINT(generateParenthesis(2));
+        //            PRINT(generateParenthesis(3));
+        //        }
+        //        {
+        //            TITLE("Letter Combinations of a Phone Number");
+        //            PRINT("[\"ad\", \"ae\", \"af\", \"bd\", \"be\", \"bf\", \"cd\", \"ce\", \"cf\"] => " +
+        // letterCombinations
+        //                    ("23"));
+        //        }
+        //        {
+        //            TITLE("3Sum");
+        //            PRINT("(-1, 0, 1)(-1, -1, 2) => " + threeSum(new int[]{-1, 0, 1, 2, -1, -4}));
+        //        }
+        //        {
+        //            TITLE("Longest Common Prefix");
+        //            PRINT("ab  => " + longestCommonPrefix(new String[]{"abcd", "abdjfr", "abdoerfer", "abdhjfd",
+        // "abokrfp"}));
+        //            PRINT("''  => " + longestCommonPrefix(new String[]{"abcd", "", "abdoerfer", "", "abokrfp"}));
+        //            PRINT("a  => " + longestCommonPrefix(new String[]{"abcd", "abdjfr", "aadoerfer", "aofkkpef",
+        // "abokrfp"}));
+        //        }
+        //        {
+        //            TITLE("Integer to Roman & Roman to Integer");
+        //            PRINT("XII(12) => " + intToRoman(12) + " | " + romanToInt("XII"));
+        //            PRINT("MCCXXXIV(1234) => " + intToRoman(1234) + " | " + romanToInt("MCCXXXIV"));
+        //            PRINT("CMLIX(959) => " + intToRoman(959) + " | " + romanToInt("CMLIX"));
+        //        }
+        //        {
+        //            TITLE("Container With Most Water");
+        //            PRINT("36  => " + maxArea(new int[]{3, 6, 2, 6, 7, 8, 4, 9}));
+        //            PRINT("12  => " + maxArea(new int[]{1, 5, 2, 6, 4, 2}));
+        //            PRINT("2 => " + maxArea(new int[]{1, 2, 3}));
+        //        }
+        //        {
+        //            TITLE("Regular Expression Matching");
+        //            PRINT("true  => " + isMatch("", ".*.*.*"));
+        //            PRINT("false  => " + isMatch("adbc", "a*bc"));
+        //            PRINT("true => " + isMatch("aa", "aa"));
+        //            PRINT("false => " + isMatch("aaa", "aa"));
+        //            PRINT("true => " + isMatch("aa", "a*"));
+        //            PRINT("true => " + isMatch("aa", ".*"));
+        //            PRINT("true => " + isMatch("ab", ".*"));
+        //            PRINT("true  => " + isMatch("aab", "c*a*b"));
+        //        }
+        //        {
+        //            TITLE("Palindrome Number");
+        //            PRINT("false => " + isPalindrome(-2147447412));
+        //            PRINT("false => " + isPalindrome(1000021));
+        //            PRINT("true => " + isPalindrome(989898989));
+        //            PRINT("false => " + isPalindrome(-12344321));
+        //            PRINT("false => " + isPalindrome(123456789));
+        //            PRINT("true  => " + isPalindrome(0));
+        //            PRINT("true  => " + isPalindrome(55));
+        //            PRINT("false  => " + isPalindrome(23));
+        //        }
+        //        {
+        //            TITLE("String to Integer");
+        //            PRINT("-1 => " + atoi("-1"));
+        //            PRINT("1000 => " + atoi("1000"));
+        //            PRINT(Integer.MAX_VALUE + " => " + atoi("2147483650"));
+        //            PRINT(Integer.MIN_VALUE + " => " + atoi("-2147483649"));
+        //        }
+        //        {
+        //            TITLE("Reverse Integer");
+        //            PRINT("1 => " + reverse(1000));
+        //            PRINT("321 => " + reverse(123));
+        //            PRINT("-321 => " + reverse(-123));
+        //        }
+        //        {
+        //            TITLE("ZigZag Conversion");
+        //            PRINT("PAHNAPLSIIGYIR => " + convert("PAYPALISHIRING", 3));
+        //        }
+        //        {
+        //            TITLE("Longest Palindromic Substring");
+        //            PRINT(longestPalindrome("bb"));
+        //        }
+        //        {
+        //            TITLE("Median of Two Sorted Arrays");
+        //            PRINT("1 => " + findMedianSortedArrays(new int[]{1}, new int[]{1}));
+        //            PRINT("4 => " + findMedianSortedArrays(new int[]{1, 2, 3, 4, 5, 6}, new int[]{3, 5, 6}));
+        //            PRINT("3.5 => " + findMedianSortedArrays(new int[]{1, 2, 3, 4, 5, 6}, new int[]{1, 2, 3, 4, 5,
+        // 6}));
+        //        }
+        //        {
+        //            TITLE("Longest Substring Without Repeating Characters");
+        //            PRINT(lengthOfLongestSubstring("abcabcbb"));
+        //            PRINT(lengthOfLongestSubstring("abcdefgh"));
+        //        }
+        //        {
+        //            TITLE("Add Two Numbers");
+        //            int[] num11 = {5, 2, 4};
+        //            int[] num12 = {4, 7, 6};
+        //            PRINT(addTwoNumbers(createListNode(num11), createListNode(num12)));
+        //
+        //            int[] num21 = {5, 2, 4};
+        //            int[] num22 = {5, 7, 6, 9, 9};
+        //            PRINT(addTwoNumbers(createListNode(num21), createListNode(num22)));
+        //        }
+        //        {
+        //            TITLE("Two Sum");
+        //            int[] num1 = {3, 2, 4};
+        //            int target1 = 6;
+        //            PRINT("[2, 3] => " + Arrays.toString(twoSum(num1, target1)));
+        //
+        //            int[] num2 = {2, 7, 9, 11};
+        //            int target2 = 9;
+        //            PRINT("[1, 2] => " + Arrays.toString(twoSum(num2, target2)));
+        //
+        //            int[] num3 = {0, 7, 9, 0};
+        //            int target3 = 0;
+        //            PRINT("[1, 4] => " + Arrays.toString(twoSum(num3, target3)));
+        //        }
     }
 
     public static ListNode createListNode(int[] num) {
