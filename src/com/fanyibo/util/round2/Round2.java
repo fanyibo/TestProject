@@ -1843,16 +1843,356 @@ public class Round2 {
      */
 
     public static String multiply(String num1, String num2) {
+
+        int size1 = num1.length();
+        int size2 = num2.length();
+
+        String result = "0";
+        for (int i = size2 - 1; i >= 0; i--) {
+            int zero = size2 - 1 - i;
+            int b = num2.charAt(i) - 48;
+            StringBuilder builder = new StringBuilder();
+            for (int j = 0; j < zero; j++) {
+                builder.append("0");
+            }
+            int carry = 0;
+            for (int j = size1 - 1; j >= 0; j--) {
+                int a = num1.charAt(j) - 48;
+                int c = a * b + carry;
+                carry = c / 10;
+                builder.append(c % 10);
+            }
+            if (carry > 0) {
+                builder.append(carry);
+            }
+            result = add(builder.reverse().toString(), result);
+        }
+        int index = 0;
+        for (; index < result.length(); index++) {
+            if (result.charAt(index) != '0') {
+                break;
+            }
+        }
+        return index == result.length() ? "0" : result.substring(index);
+    }
+
+    public static String add(String num1, String num2) {
+
+        int size1 = num1.length();
+        int size2 = num2.length();
+
+        int index1 = size1 - 1;
+        int index2 = size2 - 1;
+
+        boolean markOne = false;
+
+        StringBuilder builder = new StringBuilder();
+        while (index1 >= 0 && index2 >= 0) {
+            int a = num1.charAt(index1) - 48;
+            int b = num2.charAt(index2) - 48;
+            int c = a + b + (markOne ? 1 : 0);
+            if (c >= 10) {
+                markOne = true;
+                builder.append(c - 10);
+            } else {
+                markOne = false;
+                builder.append(c);
+            }
+            index1--;
+            index2--;
+        }
+        if (index1 < 0 && index2 >= 0) {
+            while (index2 >= 0) {
+                int b = num2.charAt(index2) - 48;
+                int c = b + (markOne ? 1 : 0);
+                if (c >= 10) {
+                    markOne = true;
+                    builder.append(c - 10);
+                } else {
+                    markOne = false;
+                    builder.append(c);
+                }
+                index2--;
+            }
+        } else if (index1 >= 0 && index2 < 0) {
+            while (index1 >= 0) {
+                int a = num1.charAt(index1) - 48;
+                int c = a + (markOne ? 1 : 0);
+                if (c >= 10) {
+                    markOne = true;
+                    builder.append(c - 10);
+                } else {
+                    markOne = false;
+                    builder.append(c);
+                }
+                index1--;
+            }
+        }
+        if (markOne) {
+            builder.append(1);
+        }
+        return builder.reverse().toString();
+    }
+
+
+    /**
+     * 44. Wildcard Matching
+     * Implement wildcard pattern matching with support for '?' and '*'.
+     * '?' Matches any single character.
+     * '*' Matches any sequence of characters (including the empty sequence).
+     * The matching should cover the entire input string (not partial).
+     * The function prototype should be:
+     * bool isMatch(const char *s, const char *p)
+     * Some examples:
+     * isMatch("aa","a") → false
+     * isMatch("aa","aa") → true
+     * isMatch("aaa","aa") → false
+     * isMatch("aa", "*") → true
+     * isMatch("aa", "a*") → true
+     * isMatch("ab", "?*") → true
+     * isMatch("aab", "c*a*b") → false
+     */
+    public static boolean isMatch2(String s, String p) {
+        return false;
+    }
+
+    /**
+     * 45. Jump Game II
+     * Given an array of non-negative integers, you are initially positioned at the first index of the array.
+     * Each element in the array represents your maximum jump length at that position.
+     * Your goal is to reach the last index in the minimum number of jumps.
+     * For example:
+     * Given array A = [2,3,1,1,4]
+     * The minimum number of jumps to reach the last index is 2. (Jump 1 step from index 0 to 1, then 3 steps to the
+     * last index.)
+     */
+    public static int jump(int[] A) {
+        return 0;
+    }
+
+    /**
+     * 46. Permutations
+     * Given a collection of numbers, return all possible permutations.
+     * For example,
+     * [1,2,3] have the following permutations:
+     * [1,2,3], [1,3,2], [2,1,3], [2,3,1], [3,1,2], and [3,2,1].
+     */
+    public static List<List<Integer>> permute(int[] num) {
+        return null;
+    }
+
+    /**
+     * 47. Permutations II
+     * Given a collection of numbers that might contain duplicates, return all possible unique permutations.
+     * For example,
+     * [1,1,2] have the following unique permutations:
+     * [1,1,2], [1,2,1], and [2,1,1].
+     */
+    public static List<List<Integer>> permuteUnique(int[] num) {
+        return null;
+    }
+
+    /**
+     * 48. Rotate Image
+     * You are given an n x n 2D matrix representing an image.
+     * Rotate the image by 90 degrees (clockwise).
+     * Follow up:
+     * Could you do this in-place?
+     */
+    public static void rotate(int[][] matrix) {
+
+    }
+
+    /**
+     * 49. Anagrams
+     * Given an array of strings, return all groups of strings that are anagrams.
+     * Note: All inputs will be in lower-case.
+     */
+    public static List<String> anagrams(String[] strs) {
+        return null;
+    }
+
+    /**
+     * 50. Pow(x, n)
+     * Implement pow(x, n).
+     */
+    public static double pow(double x, int n) {
+        return 0;
+    }
+
+    /**
+     * 51. N-Queens
+     * The n-queens puzzle is the problem of placing n queens on an n×n chessboard such that no two queens attack each
+     * other.
+     * Given an integer n, return all distinct solutions to the n-queens puzzle.
+     * Each solution contains a distinct board configuration of the n-queens' placement, where 'Q' and '.' both
+     * indicate
+     * a queen and an empty space respectively.
+     * For example,
+     * There exist two distinct solutions to the 4-queens puzzle:
+     * [
+     * [".Q..",  // Solution 1
+     * "...Q",
+     * "Q...",
+     * "..Q."],
+     * ["..Q.",  // Solution 2
+     * "Q...",
+     * "...Q",
+     * ".Q.."]
+     * ]
+     */
+    public static List<String[]> solveNQueens(int n) {
+        return null;
+    }
+
+    /**
+     * 52. N-Queens II Total Accepted: 19780 Total Submissions: 57141 My Submissions Question Solution
+     * Follow up for N-Queens problem.
+     * Now, instead outputting board configurations, return the total number of distinct solutions.
+     */
+    public static int totalNQueens(int n) {
+        return 0;
+    }
+
+    /**
+     * 53. Maximum Subarray
+     * Find the contiguous subarray within an array (containing at least one number) which has the largest sum.
+     * For example, given the array [−2,1,−3,4,−1,2,1,−5,4],
+     * the contiguous subarray [4,−1,2,1] has the largest sum = 6.
+     * click to show more practice.
+     * More practice:
+     * If you have figured out the O(n) solution, try coding another solution using the divide and conquer approach,
+     * which is more subtle.
+     */
+    public static int maxSubArray(int[] A) {
+        return 0;
+    }
+
+    /**
+     * 54. Spiral Matrix
+     * Given a matrix of m x n elements (m rows, n columns), return all elements of the matrix in spiral order.
+     * For example,
+     * Given the following matrix:
+     * [
+     * [ 1, 2, 3 ],
+     * [ 4, 5, 6 ],
+     * [ 7, 8, 9 ]
+     * ]
+     * You should return [1,2,3,6,9,8,7,4,5].
+     */
+    public static List<Integer> spiralOrder(int[][] matrix) {
+        return null;
+    }
+
+    /**
+     * 55. Jump Game
+     * Given an array of non-negative integers, you are initially positioned at the first index of the array.
+     * Each element in the array represents your maximum jump length at that position.
+     * Determine if you are able to reach the last index.
+     * For example:
+     * A = [2,3,1,1,4], return true.
+     * A = [3,2,1,0,4], return false.
+     */
+    public static boolean canJump(int[] A) {
+        return false;
+    }
+
+    /**
+     * 56. Merge Intervals
+     * Given a collection of intervals, merge all overlapping intervals.
+     * For example,
+     * Given [1,3],[2,6],[8,10],[15,18],
+     * return [1,6],[8,10],[15,18].
+     */
+    public static class Interval {
+        int start;
+        int end;
+
+        Interval() {
+            start = 0;
+            end = 0;
+        }
+
+        Interval(int s, int e) {
+            start = s;
+            end = e;
+        }
+    }
+
+    public static List<Interval> merge(List<Interval> intervals) {
+        return null;
+    }
+
+    /**
+     * 57. Insert Interval
+     * Given a set of non-overlapping intervals, insert a new interval into the intervals (merge if necessary).
+     * You may assume that the intervals were initially sorted according to their start times.
+     * Example 1:
+     * Given intervals [1,3],[6,9], insert and merge [2,5] in as [1,5],[6,9].
+     * Example 2:
+     * Given [1,2],[3,5],[6,7],[8,10],[12,16], insert and merge [4,9] in as [1,2],[3,10],[12,16].
+     * This is because the new interval [4,9] overlaps with [3,5],[6,7],[8,10].
+     */
+    public static List<Interval> insert(List<Interval> intervals, Interval newInterval) {
+        return null;
+    }
+
+    /**
+     * 58. Length of Last Word Total Accepted: 31058 Total Submissions: 107694 My Submissions Question Solution
+     * Given a string s consists of upper/lower-case alphabets and empty space characters ' ', return the length of
+     * last
+     * word in the string.
+     * If the last word does not exist, return 0.
+     * Note: A word is defined as a character sequence consists of non-space characters only.
+     * For example,
+     * Given s = "Hello World",
+     * return 5.
+     */
+    public static int lengthOfLastWord(String s) {
+        return 0;
+    }
+
+    /**
+     * 59. Spiral Matrix II
+     * Given an integer n, generate a square matrix filled with elements from 1 to n2 in spiral order.
+     * For example,
+     * Given n = 3,
+     * You should return the following matrix:
+     * [
+     * [ 1, 2, 3 ],
+     * [ 8, 9, 4 ],
+     * [ 7, 6, 5 ]
+     * ]
+     */
+    public static int[][] generateMatrix(int n) {
+        return null;
+    }
+
+
+    /**
+     * 60. Permutation Sequence
+     * The set [1,2,3,…,n] contains a total of n! unique permutations.
+     * By listing and labeling all of the permutations in order,
+     * We get the following sequence (ie, for n = 3):
+     * "123"
+     * "132"
+     * "213"
+     * "231"
+     * "312"
+     * "321"
+     * Given n and k, return the kth permutation sequence.
+     * Note: Given n will be between 1 and 9 inclusive.
+     */
+    public static String getPermutation(int n, int k) {
         return null;
     }
 
 
     public static void main(String[] args) {
         {
-            TITLE("First Missing Positive");
-            PRINT("3 => " + firstMissingPositive(new int[]{1, 2, 0}));
-            PRINT("2 => " + firstMissingPositive(new int[]{-1, 0, 1, 3, 5}));
-            PRINT("2 => " + firstMissingPositive(new int[]{3, 4, -1, 1}));
+            TITLE("Multiply Strings");
+            PRINT("5535 => " + multiply("123", "0"));
+            PRINT("58962951 => " + multiply("236799", "249"));
         }
         //        {
         //            TITLE("Count and Say");
