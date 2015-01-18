@@ -1504,19 +1504,110 @@ public class Round2 {
      * The Sudoku board could be partially filled, where empty cells are filled with the character '.'.
      */
     public static boolean isValidSudoku(char[][] board) {
-        return false;
+        int size = board.length;
+        if (size != 9) {
+            return false;
+        }
+        if (board[0].length != 9) {
+            return false;
+        }
+        Set<Character> setRow = new HashSet<Character>();
+        Set<Character> setCol = new HashSet<Character>();
+        Set<Character> setCub1 = new HashSet<Character>();
+        Set<Character> setCub2 = new HashSet<Character>();
+        Set<Character> setCub3 = new HashSet<Character>();
+        for (int i = 0; i < size; i++) {
+            if (i > 0 && i / 3 != (i - 1) / 3) {
+                setCub1.clear();
+                setCub2.clear();
+                setCub3.clear();
+            }
+            for (int j = 0; j < size; j++) {
+                if (board[i][j] != '.') {
+                    int block = j / 3;
+                    Set<Character> cube;
+                    if (block == 0) {
+                        cube = setCub1;
+                    } else if (block == 1) {
+                        cube = setCub2;
+                    } else if (block == 2) {
+                        cube = setCub3;
+                    } else {
+                        return false;
+                    }
+                    if (setRow.contains(board[i][j]) || cube.contains(board[i][j])) {
+                        return false;
+                    }
+                    setRow.add(board[i][j]);
+                    cube.add(board[i][j]);
+                }
+                if (board[j][i] != '.') {
+                    if (setCol.contains(board[j][i])) {
+                        return false;
+                    }
+                    setCol.add(board[j][i]);
+                }
+            }
+            setRow.clear();
+            setCol.clear();
+        }
+        return true;
     }
 
     /**
-     * 37.
-     * Sudoku Solver
-     * Total Accepted: 19308 Total Submissions: 91427
+     * 37. Sudoku Solver
      * Write a program to solve a Sudoku puzzle by filling the empty cells.
      * Empty cells are indicated by the character '.'.
      * You may assume that there will be only one unique solution.
      */
     public static void solveSudoku(char[][] board) {
+        int size = board.length;
+        if (size < 9 || size > 9 || board[0].length != 9) {
+            return;
+        }
+        _solveSudoku(board, 0, 0);
+    }
 
+    public static boolean _solveSudoku(char[][] board, int row, int col) {
+        if (row == 9) {
+            return true;
+        }
+        int nextRow = col == 8 ? row + 1 : row;
+        int nextCol = col == 8 ? 0 : col + 1;
+        if (board[row][col] != '.') {
+            if (!_isValidSudokuElem(board, row, col)) {
+                return false;
+            }
+            return _solveSudoku(board, nextRow, nextCol);
+        } else {
+            for (int i = 1; i <= 9; i++) {
+                board[row][col] = Character.forDigit(i, 10);
+                if (_isValidSudokuElem(board, row, col) && _solveSudoku(board, nextRow, nextCol)) {
+                    return true;
+                }
+                board[row][col] = '.';
+            }
+            return false;
+        }
+    }
+
+    public static boolean _isValidSudokuElem(char[][] board, int row, int col) {
+
+        for (int i = 0; i < 9; i++) {
+            if ((board[row][i] == board[row][col] && i != col) || (board[i][col] == board[row][col] && i != row)) {
+                return false;
+            }
+        }
+        int ROW = row / 3;
+        int COL = col / 3;
+        for (int i = 3 * ROW; i < 3 * ROW + 3; i++) {
+            for (int j = 3 * COL; j < 3 * COL + 3; j++) {
+                if (board[i][j] == board[row][col] && i != row && j != col) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     /**
@@ -1530,7 +1621,29 @@ public class Round2 {
      * Note: The sequence of integers will be represented as a string.
      */
     public static String countAndSay(int n) {
-        return null;
+
+        StringBuilder builder = new StringBuilder();
+        for (int i = 1; i <= n; i++) {
+            if (i == 1) {
+                builder.append("1");
+            } else {
+                StringBuilder temp = new StringBuilder();
+                int count = 1;
+                char last = builder.charAt(0);
+                for (int k = 1; k < builder.length(); k++) {
+                    if (builder.charAt(k) == last) {
+                        count++;
+                    } else {
+                        temp.append(count).append(last);
+                        last = builder.charAt(k);
+                        count = 1;
+                    }
+                }
+                temp.append(count).append(last);
+                builder = temp;
+            }
+        }
+        return builder.toString();
     }
 
     /**
@@ -1548,13 +1661,60 @@ public class Round2 {
      * [2, 2, 3]
      */
     public static List<List<Integer>> combinationSum(int[] candidates, int target) {
-        return null;
+        if (candidates.length == 0) {
+            return new ArrayList<List<Integer>>();
+        }
+        Arrays.sort(candidates);
+        return new ArrayList<List<Integer>>(_combinationSum(candidates, 0, candidates.length - 1, target));
+    }
+
+    public static Set<List<Integer>> _combinationSum(int[] candidates, int start, int end, int target) {
+
+        HashSet<List<Integer>> result = new HashSet<List<Integer>>();
+        if (start > end) {
+            return result;
+        } else if (start == end) {
+            if (candidates[start] > target) {
+                return result;
+            } else {
+                if (target % candidates[start] == 0) {
+                    List<Integer> list = new ArrayList<Integer>();
+                    int times = target / candidates[start];
+                    for (int i = 0; i < times; i++) {
+                        list.add(candidates[start]);
+                    }
+                    result.add(list);
+                }
+                return result;
+            }
+        }
+        for (int i = start; i <= end && candidates[i] <= target; i++) {
+            int totalTimes = target / candidates[i];
+            for (int j = 1; j <= totalTimes; j++) {
+                int newTarget = target - candidates[i] * j;
+                List<Integer> element = new ArrayList<Integer>();
+                for (int k = 0; k < j; k++) {
+                    element.add(candidates[i]);
+                }
+                if (newTarget == 0) {
+                    result.add(element);
+                } else {
+                    Set<List<Integer>> list = _combinationSum(candidates, i + 1, end, newTarget);
+                    if (!list.isEmpty()) {
+                        for (List<Integer> _list : list) {
+                            List<Integer> _element = new ArrayList<Integer>(element);
+                            _element.addAll(_list);
+                            result.add(_element);
+                        }
+                    }
+                }
+            }
+        }
+        return result;
     }
 
     /**
-     * 40.
-     * Combination Sum II
-     * Total Accepted: 23877 Total Submissions: 96373
+     * 40. Combination Sum II
      * Given a collection of candidate numbers (C) and a target number (T), find all unique combinations in C where
      * the candidate numbers sums to T.
      * Each number in C may only be used once in the combination.
@@ -1570,13 +1730,52 @@ public class Round2 {
      * [1, 1, 6]
      */
     public static List<List<Integer>> combinationSum2(int[] num, int target) {
-        return null;
+        if (num.length == 0) {
+            return new ArrayList<List<Integer>>();
+        }
+        Arrays.sort(num);
+        return new ArrayList<List<Integer>>(_combinationSum2(num, 0, num.length - 1, target));
+    }
+
+    public static Set<List<Integer>> _combinationSum2(int[] candidates, int start, int end, int target) {
+
+        HashSet<List<Integer>> result = new HashSet<List<Integer>>();
+        if (start > end) {
+            return result;
+        } else if (start == end) {
+            if (candidates[start] > target) {
+                return result;
+            } else {
+                if (target == candidates[start]) {
+                    List<Integer> list = new ArrayList<Integer>();
+                    list.add(candidates[start]);
+                    result.add(list);
+                }
+                return result;
+            }
+        }
+        for (int i = start; i <= end && candidates[i] <= target; i++) {
+            int newTarget = target - candidates[i];
+            List<Integer> element = new ArrayList<Integer>();
+            element.add(candidates[i]);
+            if (newTarget == 0) {
+                result.add(element);
+            } else {
+                Set<List<Integer>> list = _combinationSum2(candidates, i + 1, end, newTarget);
+                if (!list.isEmpty()) {
+                    for (List<Integer> _list : list) {
+                        List<Integer> _element = new ArrayList<Integer>(element);
+                        _element.addAll(_list);
+                        result.add(_element);
+                    }
+                }
+            }
+        }
+        return result;
     }
 
     /**
-     * 41.
-     * First Missing Positive
-     * Total Accepted: 26403 Total Submissions: 115537
+     * 41. First Missing Positive
      * Given an unsorted integer array, find the first missing positive integer.
      * For example,
      * Given [1,2,0] return 3,
@@ -1584,36 +1783,86 @@ public class Round2 {
      * Your algorithm should run in O(n) time and uses constant space.
      */
     public static int firstMissingPositive(int[] A) {
-        return 0;
+        for (int i = 0; i < A.length; i++) {
+            while (A[i] != i + 1) {
+                if (A[i] > 0 && A[i] <= A.length && A[i] != A[A[i] - 1]) {
+                    int temp = A[A[i] - 1];
+                    A[A[i] - 1] = A[i];
+                    A[i] = temp;
+                } else {
+                    break;
+                }
+            }
+        }
+        for (int i = 0; i < A.length; i++) {
+            if (A[i] != i + 1) {
+                return i + 1;
+            }
+        }
+        return A.length + 1;
     }
 
     /**
-     * 42.
-     * Trapping Rain Water
-     * Total Accepted: 25727 Total Submissions: 87094
+     * 42. Trapping Rain Water
      * Given n non-negative integers representing an elevation map where the width of each bar is 1, compute how much
      * water it is able to trap after raining.
      * For example,
      * Given [0,1,0,2,1,0,1,3,2,1,2,1], return 6.
      */
     public static int trap(int[] A) {
-        return 0;
+
+        int total = 0;
+        if (A.length < 3) {
+            return total;
+        }
+        int[] maxLeft = new int[A.length];
+        int temp = A[0];
+        for (int i = 0; i < A.length; i++) {
+            maxLeft[i] = temp;
+            if (temp < A[i]) {
+                temp = A[i];
+            }
+        }
+        temp = A[A.length - 1];
+        for (int i = A.length - 1; i >= 0; i--) {
+            int minMax = Math.min(maxLeft[i], temp);
+            if (minMax > A[i]) {
+                total += (minMax - A[i]);
+            }
+            if (temp < A[i]) {
+                temp = A[i];
+            }
+        }
+        return total;
     }
 
     /**
-     * 43.
-     * Multiply Strings
-     * Total Accepted: 21174 Total Submissions: 102359
+     * 43. Multiply Strings
      * Given two numbers represented as strings, return multiplication of the numbers as a string.
      * Note: The numbers can be arbitrarily large and are non-negative.
      */
+
     public static String multiply(String num1, String num2) {
         return null;
     }
 
 
     public static void main(String[] args) {
-
+        {
+            TITLE("First Missing Positive");
+            PRINT("3 => " + firstMissingPositive(new int[]{1, 2, 0}));
+            PRINT("2 => " + firstMissingPositive(new int[]{-1, 0, 1, 3, 5}));
+            PRINT("2 => " + firstMissingPositive(new int[]{3, 4, -1, 1}));
+        }
+        //        {
+        //            TITLE("Count and Say");
+        //            PRINT("1 => " + countAndSay(1));
+        //            PRINT("11 => " + countAndSay(2));
+        //            PRINT("21 => " + countAndSay(3));
+        //            PRINT("1211 => " + countAndSay(4));
+        //            PRINT("111221 => " + countAndSay(5));
+        //            PRINT("312211 => " + countAndSay(6));
+        //        }
         //        {
         //            TITLE("Search for a Range");
         //            PRINT("[1,5]  => " + Arrays.toString(searchRange(new int[]{1, 3, 3, 3, 3, 3, 5}, 3)));
