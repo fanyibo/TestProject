@@ -1953,7 +1953,85 @@ public class Round2 {
      * isMatch("aab", "c*a*b") → false
      */
     public static boolean isMatch2(String s, String p) {
-        return false;
+
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < p.length(); i++) {
+            if (p.charAt(i) == '*') {
+                if (builder.length() == 0 || builder.charAt(builder.length() - 1) != '*') {
+                    builder.append(p.charAt(i));
+                }
+            } else {
+                builder.append(p.charAt(i));
+            }
+        }
+
+        p = builder.toString();
+
+        return _isMatch2(s, p);
+    }
+
+    public static boolean _isMatch2(String s, String p) {
+
+        int sizeA = s.length();
+        int sizeB = p.length();
+
+        if (sizeA == 0) {
+            return sizeB == 0 || (sizeB == 1 && p.charAt(0) == '*');
+        }
+        if (sizeB == 0) {
+            return false;
+        }
+
+        int index1 = 0;
+        int index2 = 0;
+
+        int lastS = 0;
+        int lastP = 0;
+
+        boolean meetStar = false;
+
+        for (; index1 < sizeA; ) {
+            char c1 = s.charAt(index1);
+            char c2 = index2 >= sizeB ? '\0' : p.charAt(index2);
+            if (c2 == '?') {
+                index1++;
+                index2++;
+            } else if (c2 == '*') {
+                if (index2 == sizeB - 1) {
+                    return true;
+                }
+                lastS = index1;
+                lastP = ++index2;
+                meetStar = true;
+            } else {
+                if (c1 != c2) {
+                    if (!meetStar) {
+                        return false;
+                    }
+                    lastS++;
+                    index1 = lastS;
+                    index2 = lastP;
+                } else {
+                    index1++;
+                    index2++;
+                }
+            }
+        }
+        return index2 >= sizeB || (index2 == sizeB - 1 && p.charAt(index2) == '*');
+
+        //        if (p.charAt(0) == '*') {
+        //            for (int i = 0; i <= sizeA; i++) {
+        //                if (_isMatch2(s.substring(i), p.substring(1))) {
+        //                    return true;
+        //                }
+        //            }
+        //            return false;
+        //        } else {
+        //            if (p.charAt(0) != s.charAt(0) && p.charAt(0) != '?') {
+        //                return false;
+        //            }
+        //            return _isMatch2(s.substring(1), p.substring(1));
+        //        }
     }
 
     /**
@@ -1967,7 +2045,33 @@ public class Round2 {
      * last index.)
      */
     public static int jump(int[] A) {
-        return 0;
+
+        int length = A.length;
+        if (length <= 1) {
+            return 0;
+        }
+        int start = 0;
+        int end = 0;
+        int count = 0;
+        while (end < length) {
+            count++;
+            int max = 0;
+            for (int i = start; i <= end; i++) {
+                int edge = A[i] + i;
+                if (edge >= length - 1) {
+                    return count;
+                }
+                if (edge > max) {
+                    max = edge;
+                }
+            }
+            start = end + 1;
+            end = max;
+            if (start > end) {
+                break;
+            }
+        }
+        return -1;
     }
 
     /**
@@ -1978,7 +2082,31 @@ public class Round2 {
      * [1,2,3], [1,3,2], [2,1,3], [2,3,1], [3,1,2], and [3,2,1].
      */
     public static List<List<Integer>> permute(int[] num) {
-        return null;
+
+        Set<List<Integer>> set = new HashSet<List<Integer>>();
+        for (int i = 0; i < num.length; i++) {
+            int insert = num[i];
+            if (set.isEmpty()) {
+                List<Integer> list = new ArrayList<Integer>();
+                list.add(insert);
+                set.add(list);
+            } else {
+                Set<List<Integer>> temp = new HashSet<List<Integer>>();
+                for (List<Integer> list : set) {
+                    for (int j = 0; j <= list.size(); j++) {
+                        List<Integer> tempList = new ArrayList<Integer>(list);
+                        if (j == list.size()) {
+                            tempList.add(insert);
+                        } else {
+                            tempList.add(j, insert);
+                        }
+                        temp.add(tempList);
+                    }
+                }
+                set = temp;
+            }
+        }
+        return new ArrayList<List<Integer>>(set);
     }
 
     /**
@@ -1989,7 +2117,31 @@ public class Round2 {
      * [1,1,2], [1,2,1], and [2,1,1].
      */
     public static List<List<Integer>> permuteUnique(int[] num) {
-        return null;
+
+        Set<List<Integer>> set = new HashSet<List<Integer>>();
+        for (int i = 0; i < num.length; i++) {
+            int insert = num[i];
+            if (set.isEmpty()) {
+                List<Integer> list = new ArrayList<Integer>();
+                list.add(insert);
+                set.add(list);
+            } else {
+                Set<List<Integer>> temp = new HashSet<List<Integer>>();
+                for (List<Integer> list : set) {
+                    for (int j = 0; j <= list.size(); j++) {
+                        List<Integer> tempList = new ArrayList<Integer>(list);
+                        if (j == list.size()) {
+                            tempList.add(insert);
+                        } else {
+                            tempList.add(j, insert);
+                        }
+                        temp.add(tempList);
+                    }
+                }
+                set = temp;
+            }
+        }
+        return new ArrayList<List<Integer>>(set);
     }
 
     /**
@@ -2001,6 +2153,22 @@ public class Round2 {
      */
     public static void rotate(int[][] matrix) {
 
+        int size = matrix.length;
+        if (size <= 1) {
+            return;
+        }
+        for (int i = 0; i < size / 2; i++) {
+            for (int j = 0; j < (size + 1) / 2; j++) {
+                int temp1 = matrix[j][size - 1 - i]; //b
+                int temp2 = matrix[size - 1 - i][size - 1 - j];//c
+                int temp3 = matrix[size - 1 - j][i];//d
+
+                matrix[j][size - 1 - i] = matrix[i][j];
+                matrix[size - 1 - i][size - 1 - j] = temp1;
+                matrix[size - 1 - j][i] = temp2;
+                matrix[i][j] = temp3;
+            }
+        }
     }
 
     /**
@@ -2009,7 +2177,32 @@ public class Round2 {
      * Note: All inputs will be in lower-case.
      */
     public static List<String> anagrams(String[] strs) {
-        return null;
+
+        if (strs != null && strs.length > 0) {
+            HashMap<String, List<String>> map = new HashMap<String, List<String>>();
+            for (String str : strs) {
+                char[] c = str.toCharArray();
+                Arrays.sort(c);
+                String key = new StringBuilder().append(c).toString();
+                if (!map.containsKey(key)) {
+                    List<String> list = new ArrayList<String>();
+                    list.add(str);
+                    map.put(key, list);
+                } else {
+                    List<String> list = map.get(key);
+                    list.add(str);
+                }
+            }
+            List<String> result = new ArrayList<String>();
+            for (String key : map.keySet()) {
+                List<String> list = map.get(key);
+                if (list.size() > 1) {
+                    result.addAll(list);
+                }
+            }
+            return result;
+        }
+        return new ArrayList<String>();
     }
 
     /**
@@ -2017,7 +2210,27 @@ public class Round2 {
      * Implement pow(x, n).
      */
     public static double pow(double x, int n) {
-        return 0;
+
+        if (n == 0) {
+            return 1;
+        }
+        if (n < 0) {
+            return 1 / power(x, -n);
+        }
+        return power(x, n);
+    }
+
+    public static double power(double x, int n) {
+
+        if (n == 0) {
+            return 1;
+        }
+        double result = power(x, n / 2);
+        if (n % 2 == 0) {
+            return result * result;
+        } else {
+            return result * result * x;
+        }
     }
 
     /**
@@ -2042,7 +2255,92 @@ public class Round2 {
      * ]
      */
     public static List<String[]> solveNQueens(int n) {
-        return null;
+
+        char[][] board = new char[n][n];
+        List<String[]> result = new ArrayList<String[]>();
+        _solveNQueens(0, n, board, result);
+        return result;
+
+    }
+
+    public static void _solveNQueens(int startRow, int n, char[][] board, List<String[]> result) {
+
+        int i = startRow;
+        for (int j = 0; j < n; j++) {
+            for (int k = 0; k < n; k++) {
+                board[i][k] = '.';
+            }
+            if (isValidNQueue(board, n, i, j)) {
+                board[i][j] = 'Q';
+                if (i == n - 1) {
+                    String[] element = new String[n];
+                    for (int k = 0; k < n; k++) {
+                        if (k == n - 1) {
+                            StringBuilder builder = new StringBuilder();
+                            for (int l = 0; l < n; l++) {
+                                if (l == j) {
+                                    builder.append("Q");
+                                } else {
+                                    builder.append(".");
+                                }
+                            }
+                            element[k] = builder.toString();
+                        } else {
+                            element[k] = joinCharArray(board[k]);
+                        }
+                    }
+                    result.add(element);
+                } else {
+                    _solveNQueens(i + 1, n, board, result);
+                }
+            }
+            board[i][j] = '.';
+        }
+    }
+
+    public static String joinCharArray(char[] array) {
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < array.length; i++) {
+            builder.append(array[i]);
+        }
+        return builder.toString();
+    }
+
+    public static boolean isValidNQueue(char[][] board, int size, int i, int j) {
+        for (int k = 0; k < size; k++) {
+            if ((board[i][k] == 'Q' && k != j) || (board[k][j] == 'Q' && k != i)) {
+                return false;
+            }
+        }
+        int upLeftI = i - 1;
+        int upLeftJ = j - 1;
+        while (upLeftI >= 0 && upLeftJ >= 0) {
+            if (board[upLeftI--][upLeftJ--] == 'Q') {
+                return false;
+            }
+        }
+        int upRightI = i - 1;
+        int upRightJ = j + 1;
+        while (upRightI >= 0 && upRightJ < size) {
+            if (board[upRightI--][upRightJ++] == 'Q') {
+                return false;
+            }
+        }
+        int downLeftI = i + 1;
+        int downLeftJ = j - 1;
+        while (downLeftI < size && downLeftJ >= 0) {
+            if (board[downLeftI++][downLeftJ--] == 'Q') {
+                return false;
+            }
+        }
+        int downRightI = i + 1;
+        int downRightJ = j + 1;
+        while (downRightI < size && downRightJ < size) {
+            if (board[downRightI++][downRightJ++] == 'Q') {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
@@ -2051,8 +2349,12 @@ public class Round2 {
      * Now, instead outputting board configurations, return the total number of distinct solutions.
      */
     public static int totalNQueens(int n) {
-        return 0;
+        char[][] board = new char[n][n];
+        List<String[]> result = new ArrayList<String[]>();
+        _solveNQueens(0, n, board, result);
+        return result.size();
     }
+
 
     /**
      * 53. Maximum Subarray
@@ -2065,7 +2367,59 @@ public class Round2 {
      * which is more subtle.
      */
     public static int maxSubArray(int[] A) {
-        return 0;
+
+        //        if (A.length == 0) {
+        //            return 0;
+        //        }
+        //        int[] d = new int[A.length];
+        //        d[0] = A[0];
+        //        int max = d[0];
+        //        for (int i = 1; i < A.length; i++) {
+        //            d[i] = Math.max(d[i-1] + A[i], A[i]);
+        //            max = Math.max(max, d[i]);
+        //        }
+        //        return max;
+
+        if (A.length == 0) {
+            return 0;
+        } else if (A.length == 1) {
+            return A[0];
+        } else {
+            return _maxSubArray(A, 0, A.length - 1);
+        }
+    }
+
+    public static int _maxSubArray(int[] A, int start, int end) {
+
+        int size = end - start + 1;
+        if (size == 0) {
+            return 0;
+        } else if (size == 1) {
+            return A[start];
+        } else if (size == 2) {
+            return Math.max(Math.max(A[start], A[end]), A[start] + A[end]);
+        }
+        int mid = (start + end) / 2;
+        int maxLeft = _maxSubArray(A, start, mid);
+        int maxRight = _maxSubArray(A, mid + 1, end);
+
+        int maxL = A[mid];
+        int maxR = A[mid];
+        int sum = A[mid];
+        for (int i = mid - 1; i >= start; i--) {
+            sum += A[i];
+            if (sum > maxL) {
+                maxL = sum;
+            }
+        }
+        sum = A[mid];
+        for (int i = mid + 1; i <= end; i++) {
+            sum += A[i];
+            if (sum > maxR) {
+                maxR = sum;
+            }
+        }
+        return Math.max(Math.max(maxLeft, maxRight), maxL + maxR - A[mid]);
     }
 
     /**
@@ -2081,7 +2435,51 @@ public class Round2 {
      * You should return [1,2,3,6,9,8,7,4,5].
      */
     public static List<Integer> spiralOrder(int[][] matrix) {
-        return null;
+
+        List<Integer> result = new ArrayList<Integer>();
+
+        int m = matrix.length;
+        if (m == 0) {
+            return result;
+        }
+        int n = matrix[0].length;
+        if (n == 0) {
+            return result;
+        }
+
+        boolean[][] used = new boolean[m][n];
+        int i = 0;
+        int j = 0;
+        while (!used[i][j]) {
+            result.add(matrix[i][j]);
+            used[i][j] = true;
+
+            boolean up = i != 0 && !used[i - 1][j];
+            boolean down = i != m - 1 && !used[i + 1][j];
+            boolean left = j != 0 && !used[i][j - 1];
+            boolean right = j != n - 1 && !used[i][j + 1];
+
+            if (!up && down && !left && right) {
+                j++;
+            } else if (!up && down && left && !right) {
+                i++;
+            } else if (up && !down && left && !right) {
+                j--;
+            } else if (up && !down && !left && right) {
+                i--;
+            } else if (!up && !down && !left && right) {
+                j++;
+            } else if (!up && down && !left && !right) {
+                i++;
+            } else if (!up && !down && left && !right) {
+                j--;
+            } else if (up && !down && !left && !right) {
+                i--;
+            } else {
+                break;
+            }
+        }
+        return result;
     }
 
     /**
@@ -2094,7 +2492,29 @@ public class Round2 {
      * A = [3,2,1,0,4], return false.
      */
     public static boolean canJump(int[] A) {
-        return false;
+
+        int length = A.length;
+        if (length <= 1) {
+            return true;
+        }
+        int start = 0;
+        int end = 0;
+        while (end < length) {
+            int furthest = end;
+            for (int i = start; i <= end; i++) {
+                if (i + A[i] > furthest) {
+                    furthest = i + A[i];
+                }
+            }
+            if (furthest == end) {
+                return false;
+            } else if (furthest >= length - 1) {
+                return true;
+            }
+            start = end + 1;
+            end = furthest;
+        }
+        return true;
     }
 
     /**
@@ -2117,10 +2537,50 @@ public class Round2 {
             start = s;
             end = e;
         }
+
+        @Override
+        public String toString() {
+            return "[" + start + ", " + end + "]";
+        }
     }
 
     public static List<Interval> merge(List<Interval> intervals) {
-        return null;
+
+        List<Interval> collect = new ArrayList<Interval>();
+        for (Interval interval : intervals) {
+            if (collect.isEmpty()) {
+                collect.add(interval);
+            } else {
+                insertInterval(collect, interval);
+            }
+        }
+        return collect;
+    }
+
+    public static void insertInterval(List<Interval> intervals,
+                                      Interval newInterval) {
+        int i = 0;
+        while (i < intervals.size()) {
+
+            int start = intervals.get(i).start;
+            int end = intervals.get(i).end;
+
+            if (start == newInterval.start && end == newInterval.end) {
+                return;
+            }
+
+            if (newInterval.end < start) {
+                intervals.add(i, newInterval);
+                return;
+            } else if (newInterval.start > end) {
+                i++;
+            } else {
+                newInterval.start = Math.min(newInterval.start, start);
+                newInterval.end = Math.max(newInterval.end, end);
+                intervals.remove(i);
+            }
+        }
+        intervals.add(newInterval);
     }
 
     /**
@@ -2134,11 +2594,31 @@ public class Round2 {
      * This is because the new interval [4,9] overlaps with [3,5],[6,7],[8,10].
      */
     public static List<Interval> insert(List<Interval> intervals, Interval newInterval) {
-        return null;
+
+        int i = 0;
+        while (i < intervals.size()) {
+            int newStart = newInterval.start;
+            int newEnd = newInterval.end;
+
+            int start = intervals.get(i).start;
+            int end = intervals.get(i).end;
+            if (newEnd < start) {
+                intervals.add(i, newInterval);
+                return intervals;
+            } else if (newStart > end) {
+                i++;
+            } else {
+                intervals.remove(i);
+                newInterval.start = Math.min(start, newStart);
+                newInterval.end = Math.max(end, newEnd);
+            }
+        }
+        intervals.add(newInterval);
+        return intervals;
     }
 
     /**
-     * 58. Length of Last Word Total Accepted: 31058 Total Submissions: 107694 My Submissions Question Solution
+     * 58. Length of Last Word
      * Given a string s consists of upper/lower-case alphabets and empty space characters ' ', return the length of
      * last
      * word in the string.
@@ -2149,7 +2629,20 @@ public class Round2 {
      * return 5.
      */
     public static int lengthOfLastWord(String s) {
-        return 0;
+
+        int length = 0;
+        boolean meetChar = false;
+        for (int i = s.length() - 1; i >= 0; i--) {
+            if (s.charAt(i) == ' ') {
+                if (meetChar) {
+                    return length;
+                }
+            } else {
+                meetChar = true;
+                length++;
+            }
+        }
+        return length;
     }
 
     /**
@@ -2165,7 +2658,43 @@ public class Round2 {
      * ]
      */
     public static int[][] generateMatrix(int n) {
-        return null;
+
+        int[][] result = new int[n][n];
+        if (n == 0) {
+            return result;
+        }
+        boolean[][] used = new boolean[n][n];
+        int i = 0;
+        int j = 0;
+        int val = 1;
+        while (!used[i][j]) {
+            result[i][j] = val++;
+            used[i][j] = true;
+            boolean up = i != 0 && !used[i - 1][j];
+            boolean down = i != n - 1 && !used[i + 1][j];
+            boolean left = j != 0 && !used[i][j - 1];
+            boolean right = j != n - 1 && !used[i][j + 1];
+            if (!up && down && !left && right) {
+                j++;
+            } else if (!up && down && left && !right) {
+                i++;
+            } else if (up && !down && left && !right) {
+                j--;
+            } else if (up && !down && !left && right) {
+                i--;
+            } else if (!up && !down && !left && right) {
+                j++;
+            } else if (!up && down && !left && !right) {
+                i++;
+            } else if (!up && !down && left && !right) {
+                j--;
+            } else if (up && !down && !left && !right) {
+                i--;
+            } else {
+                break;
+            }
+        }
+        return result;
     }
 
 
@@ -2184,16 +2713,52 @@ public class Round2 {
      * Note: Given n will be between 1 and 9 inclusive.
      */
     public static String getPermutation(int n, int k) {
-        return null;
+
+        if (n == 1) {
+            return "1";
+        }
+        boolean[] used = new boolean[n];
+        return _getPermutation(used, n, k);
+    }
+
+    public static String _getPermutation(boolean[] used, int size, int k) {
+
+        if (size == 1) {
+            for (int i = 0; i < used.length; i++) {
+                if (!used[i]) {
+                    return Integer.toString(i + 1);
+                }
+            }
+        }
+
+        int total = 1;
+        for (int i = 1; i <= size - 1; i++) {
+            total *= i;
+        }
+        int index = ((k - 1) / total) % size;
+        int count = 0;
+        int t = 0;
+        for (; t < used.length; t++) {
+            if (!used[t]) {
+                if (count++ == index) {
+                    break;
+                }
+            }
+        }
+        used[t] = true;
+        return new StringBuilder().append(t + 1).append(_getPermutation(used, size - 1, k)).toString();
     }
 
 
     public static void main(String[] args) {
-        {
-            TITLE("Multiply Strings");
-            PRINT("5535 => " + multiply("123", "0"));
-            PRINT("58962951 => " + multiply("236799", "249"));
-        }
+
+        // PRINT("123 => " + getPermutation(3, 1));
+        //PRINT("132 => " + getPermutation(3, 2));
+        PRINT("213 => " + getPermutation(3, 3));
+        PRINT("231 => " + getPermutation(3, 4));
+        PRINT("312 => " + getPermutation(3, 5));
+        PRINT("321 => " + getPermutation(3, 6));
+        PRINT("1432 => " + getPermutation(4, 6));
         //        {
         //            TITLE("Count and Say");
         //            PRINT("1 => " + countAndSay(1));
