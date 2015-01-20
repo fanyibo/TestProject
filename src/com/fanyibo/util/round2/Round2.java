@@ -2749,16 +2749,538 @@ public class Round2 {
         return new StringBuilder().append(t + 1).append(_getPermutation(used, size - 1, k)).toString();
     }
 
+    /**
+     * 61. Rotate List
+     * Given a list, rotate the list to the right by k places, where k is non-negative.
+     * For example:
+     * Given 1->2->3->4->5->NULL and k = 2,
+     * return 4->5->1->2->3->NULL.
+     */
+    public static ListNode rotateRight(ListNode head, int n) {
+
+        if (n <= 0) {
+            return head;
+        }
+        int size = 0;
+        ListNode temp = head;
+        while (temp != null) {
+            size++;
+            temp = temp.next;
+        }
+        if (size == 0) {
+            return head;
+        }
+        n = n % size == 0 ? size : n % size;
+        int count = 0;
+        temp = head;
+        ListNode tail = null;
+        while (temp != null) {
+            if (tail != null) {
+                tail = tail.next;
+            }
+            if (count == n) {
+                tail = head;
+            }
+            count++;
+            if (temp.next == null && tail != null) {
+                ListNode newHead = tail.next;
+                tail.next = null;
+                temp.next = head;
+                return newHead;
+            }
+            temp = temp.next;
+        }
+        return head;
+    }
+
+    /**
+     * 62. Unique Paths
+     * A robot is located at the top-left corner of a m x n grid (marked 'Start' in the diagram below).
+     * The robot can only move either down or right at any point in time. The robot is trying to reach the bottom-right
+     * corner of the grid (marked 'Finish' in the diagram below).
+     * How many possible unique paths are there?
+     */
+    public static int uniquePaths(int m, int n) {
+
+        if (m <= 0 || n <= 0) {
+            return 0;
+        }
+        if (m == 1 || n == 1) {
+            return 1;
+        }
+        int[][] path = new int[m][n];
+        path[0][0] = 1;
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                if (i == 0 || j == 0) {
+                    path[i][j] = 1;
+                } else {
+                    path[i][j] = path[i - 1][j] + path[i][j - 1];
+                }
+            }
+        }
+        return path[m - 1][n - 1];
+    }
+
+    /**
+     * 63. Unique Paths II
+     * Follow up for "Unique Paths":
+     * Now consider if some obstacles are added to the grids. How many unique paths would there be?
+     * An obstacle and empty space is marked as 1 and 0 respectively in the grid.
+     * For example,
+     * There is one obstacle in the middle of a 3x3 grid as illustrated below.
+     * [
+     * [0,0,0],
+     * [0,1,0],
+     * [0,0,0]
+     * ]
+     * The total number of unique paths is 2.
+     * Note: m and n will be at most 100.
+     */
+    public static int uniquePathsWithObstacles(int[][] obstacleGrid) {
+        int m = obstacleGrid.length;
+        if (m <= 0) {
+            return 0;
+        }
+        int n = obstacleGrid[0].length;
+        if (n <= 0) {
+            return 0;
+        }
+        int[][] path = new int[m][n];
+        path[0][0] = obstacleGrid[0][0] == 1 ? 0 : 1;
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                if (i == 0 && j == 0) {
+                    continue;
+                }
+                if (obstacleGrid[i][j] == 1) {
+                    path[i][j] = 0;
+                } else {
+                    if (i == 0) {
+                        path[i][j] = path[i][j - 1];
+                    } else if (j == 0) {
+                        path[i][j] = path[i - 1][j];
+                    } else {
+                        path[i][j] = path[i - 1][j] + path[i][j - 1];
+                    }
+                }
+            }
+        }
+        return path[m - 1][n - 1];
+    }
+
+    /**
+     * 64. Minimum Path Sum
+     * Given a m x n grid filled with non-negative numbers, find a path from top left to bottom right which minimizes
+     * the sum of all numbers along its path.
+     * Note: You can only move either down or right at any point in time.
+     */
+    public static int minPathSum(int[][] grid) {
+
+        int m = grid.length;
+        if (m <= 0) {
+            return 0;
+        }
+        int n = grid[0].length;
+        if (n <= 0) {
+            return 0;
+        }
+        int[][] sum = new int[m][n];
+        sum[0][0] = grid[0][0];
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                if (i == 0 && j == 0) {
+                    continue;
+                }
+                if (i == 0) {
+                    sum[i][j] = sum[i][j - 1] + grid[i][j];
+                } else if (j == 0) {
+                    sum[i][j] = sum[i - 1][j] + grid[i][j];
+                } else {
+                    sum[i][j] = Math.min(sum[i - 1][j], sum[i][j - 1]) + grid[i][j];
+                }
+            }
+        }
+        return sum[m - 1][n - 1];
+    }
+
+    /**
+     * 65. Valid Number
+     * Validate if a given string is numeric.
+     * Some examples:
+     * "0" => true
+     * " 0.1 " => true
+     * "abc" => false
+     * "1 a" => false
+     * "2e10" => true
+     * Note: It is intended for the problem statement to be ambiguous. You should gather all requirements up front
+     * before implementing one.
+     */
+    public static boolean isNumber(String s) {
+
+        int len = s.length();
+        if (len == 0) {
+            return false;
+        }
+        boolean started = false;
+        boolean hasSig = false;
+        boolean hasDot = false;
+        boolean hasExp = false;
+        boolean hasNum = false;
+        for (int i = 0; i < len; i++) {
+            char c = s.charAt(i);
+            if (c == ' ') {
+                while (i < len && s.charAt(i) == ' ') {
+                    i++;
+                }
+                if ((i == len && !started) || (i < len && started)) {
+                    return false;
+                }
+                i--;
+            } else if (c == '.') {
+                if (hasDot || hasExp) {
+                    return false;
+                }
+                hasDot = true;
+                started = true;
+            } else if (c == 'E' || c == 'e') {
+                if (!started || hasExp || !hasNum || s.charAt(i - 1) == '+' || s.charAt(i - 1) == '-') {
+                    return false;
+                }
+                hasExp = true;
+                hasSig = false;
+                hasNum = false;
+            } else if (c == '+' || c == '-') {
+                if (hasSig || hasNum || s.charAt(i - 1) == '.') {
+                    return false;
+                }
+                hasSig = true;
+                started = true;
+            } else if (c >= '0' && c <= '9') {
+                hasNum = true;
+                started = true;
+            } else {
+                return false;
+            }
+        }
+        if (!started || !hasNum) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * 66. Plus One
+     * Given a non-negative number represented as an array of digits, plus one to the number.
+     * The digits are stored such that the most significant digit is at the head of the list.
+     */
+    public static int[] plusOne(int[] digits) {
+
+        int size = digits.length;
+        int[] result = new int[size == 0 ? 1 : size];
+        if (size == 0) {
+            result[0] = 1;
+        } else {
+            boolean markOne = false;
+            for (int i = size - 1; i >= 0; i--) {
+                int c = digits[i] + (markOne ? 1 : 0) + (i == size - 1 ? 1 : 0);
+                if (c >= 10) {
+                    markOne = true;
+                    c -= 10;
+                } else {
+                    markOne = false;
+                }
+                result[i] = c;
+            }
+            if (markOne) {
+                int[] temp = new int[size + 1];
+                temp[0] = 1;
+                for (int i = 0; i < size; i++) {
+                    temp[i + 1] = result[i];
+                }
+                return temp;
+            }
+        }
+        return result;
+    }
+
+
+    /**
+     * 67. Add Binary
+     * Given two binary strings, return their sum (also a binary string).
+     * For example,
+     * a = "11"
+     * b = "1"
+     * Return "100".
+     */
+    public static String addBinary(String a, String b) {
+
+        int size1 = a.length();
+        int size2 = b.length();
+        if (size1 == 0) {
+            return b;
+        }
+        if (size2 == 0) {
+            return a;
+        }
+
+        StringBuilder builder = new StringBuilder();
+        boolean markOne = false;
+        int index1 = size1 - 1;
+        int index2 = size2 - 1;
+        while (index1 >= 0 && index2 >= 0) {
+            int c1 = a.charAt(index1) - 48;
+            int c2 = b.charAt(index2) - 48;
+            int c = c1 + c2 + (markOne ? 1 : 0);
+            if (c >= 2) {
+                markOne = true;
+                c = c % 2;
+            } else {
+                markOne = false;
+            }
+            builder.append(c);
+            index1--;
+            index2--;
+        }
+        if (index1 < 0 && index2 >= 0) {
+            while (index2 >= 0) {
+                int c2 = b.charAt(index2) - 48;
+                int c = c2 + (markOne ? 1 : 0);
+                if (c >= 2) {
+                    markOne = true;
+                    c = c % 2;
+                } else {
+                    markOne = false;
+                }
+                builder.append(c);
+                index2--;
+            }
+        } else if (index1 >= 0 && index2 < 0) {
+            while (index1 >= 0) {
+                int c1 = a.charAt(index1) - 48;
+                int c = c1 + (markOne ? 1 : 0);
+                if (c >= 2) {
+                    markOne = true;
+                    c = c % 2;
+                } else {
+                    markOne = false;
+                }
+                builder.append(c);
+                index1--;
+            }
+        }
+        if (markOne) {
+            builder.append(1);
+        }
+        return builder.reverse().toString();
+    }
+
+    /**
+     * 68. Text Justification
+     * Given an array of words and a length L, format the text such that each line has exactly L characters and is
+     * fully
+     * (left and right) justified.
+     * You should pack your words in a greedy approach; that is, pack as many words as you can in each line. Pad extra
+     * spaces ' ' when necessary so that each line has exactly L characters.
+     * Extra spaces between words should be distributed as evenly as possible. If the number of spaces on a line do not
+     * divide evenly between words, the empty slots on the left will be assigned more spaces than the slots on the
+     * right.
+     * For the last line of text, it should be left justified and no extra space is inserted between words.
+     * For example,
+     * words: ["This", "is", "an", "example", "of", "text", "justification."]
+     * L: 16.
+     * Return the formatted lines as:
+     * [
+     * "This    is    an",
+     * "example  of text",
+     * "justification.  "
+     * ]
+     * Note: Each word is guaranteed not to exceed L in length.
+     */
+    public static List<String> fullJustify(String[] words, int L) {
+
+        List<Integer> lineCount = new ArrayList<Integer>();
+        List<List<StringBuilder>> lines = new ArrayList<List<StringBuilder>>();
+        List<StringBuilder> currentLine = new ArrayList<StringBuilder>();
+        int currentLineCharCount = 0;
+        for (String word : words) {
+            int len = word.length();
+            if (currentLineCharCount + (currentLineCharCount == 0 ? 0 : 1) + len > L) {
+                lines.add(currentLine);
+                lineCount.add(currentLineCharCount);
+                currentLineCharCount = len;
+                currentLine = new ArrayList<StringBuilder>();
+                currentLine.add(new StringBuilder().append(word));
+            } else {
+                if (currentLineCharCount == 0) {
+                    currentLineCharCount = len;
+                } else {
+                    currentLineCharCount += (1 + len);
+                }
+                currentLine.add(new StringBuilder().append(word));
+            }
+        }
+        if (!currentLine.isEmpty()) {
+            lineCount.add(currentLineCharCount);
+            lines.add(currentLine);
+        }
+
+        List<String> result = new ArrayList<String>();
+        for (int i = 0; i < lines.size(); ++i) {
+            List<StringBuilder> line = lines.get(i);
+            int left = L - lineCount.get(i);
+            if (line.size() == 1) {
+                for (int k = 0; k < left; k++) {
+                    line.get(0).append(" ");
+                }
+            } else if (i != lines.size() - 1) {
+                for (int j = 0; j < line.size() - 1; j++) {
+                    line.get(j).append(" ");
+                }
+                int index = 0;
+                while (left > 0) {
+                    line.get(index).append(" ");
+                    if (index + 1 == line.size() - 1) {
+                        index = 0;
+                    } else {
+                        index++;
+                    }
+                    left--;
+                }
+            } else {
+                for (int j = 0; j < line.size(); j++) {
+                    if (j == line.size() - 1) {
+                        for (int k = 0; k < left; k++) {
+                            line.get(j).append(" ");
+                        }
+                    } else {
+                        line.get(j).append(" ");
+                    }
+                }
+            }
+            StringBuilder resultLine = new StringBuilder();
+            for (StringBuilder tempBuilder : line) {
+                resultLine.append(tempBuilder.toString());
+            }
+            result.add(resultLine.toString());
+        }
+        return result;
+    }
+
+    /**
+     * 69. Sqrt(x)
+     * Implement int sqrt(int x).
+     * Compute and return the square root of x.
+     */
+    public static int sqrt(int x) {
+        return 0;
+    }
+
+    /**
+     * 70. Climbing Stairs
+     * You are climbing a stair case. It takes n steps to reach to the top.
+     * Each time you can either climb 1 or 2 steps. In how many distinct ways can you climb to the top?
+     */
+    public static int climbStairs(int n) {
+        return 0;
+    }
+
+    /**
+     * 71. Simplify Path
+     * Given an absolute path for a file (Unix-style), simplify it.
+     * For example,
+     * path = "/home/", => "/home"
+     * path = "/a/./b/../../c/", => "/c"
+     */
+    public static String simplifyPath(String path) {
+        return null;
+    }
+
+    /**
+     * 72. Edit Distance
+     * Given two words word1 and word2, find the minimum number of steps required to convert word1 to word2. (each
+     * operation is counted as 1 step.)
+     * You have the following 3 operations permitted on a word:
+     * a) Insert a character
+     * b) Delete a character
+     * c) Replace a character
+     */
+    public static int minDistance(String word1, String word2) {
+        return 0;
+
+    }
+
+    /**
+     * 73. Set Matrix Zeroes Total Accepted: 26322 Total Submissions: 84471 My Submissions Question Solution
+     * Given a m x n matrix, if an element is 0, set its entire row and column to 0. Do it in place.
+     */
+    public static void setZeroes(int[][] matrix) {
+
+    }
+
+    /**
+     * 74. Search a 2D Matrix
+     * Write an efficient algorithm that searches for a value in an m x n matrix. This matrix has the following
+     * properties:
+     * Integers in each row are sorted from left to right.
+     * The first integer of each row is greater than the last integer of the previous row.
+     * For example,
+     * Consider the following matrix:
+     * [
+     * [1,   3,  5,  7],
+     * [10, 11, 16, 20],
+     * [23, 30, 34, 50]
+     * ]
+     * Given target = 3, return true.
+     */
+    public static boolean searchMatrix(int[][] matrix, int target) {
+        return false;
+    }
+
+    /**
+     * 75. Sort Colors
+     * Given an array with n objects colored red, white or blue, sort them so that objects of the same color are
+     * adjacent, with the colors in the order red, white and blue.
+     * Here, we will use the integers 0, 1, and 2 to represent the color red, white, and blue respectively.
+     * Note:
+     * You are not suppose to use the library's sort function for this problem.
+     * click to show follow up.
+     * Follow up:
+     * A rather straight forward solution is a two-pass algorithm using counting sort.
+     * First, iterate the array counting number of 0's, 1's, and 2's, then overwrite array with total number of 0's,
+     * then 1's and followed by 2's.
+     * Could you come up with an one-pass algorithm using only constant space?
+     */
+    public static void sortColors(int[] A) {
+
+    }
+
+    /**
+     * 76. Minimum Window Substring
+     * Given a string S and a string T, find the minimum window in S which will contain all the characters in T in
+     * complexity O(n).
+     * For example,
+     * S = "ADOBECODEBANC"
+     * T = "ABC"
+     * Minimum window is "BANC".
+     * Note:
+     * If there is no such window in S that covers all characters in T, return the emtpy string "".
+     * If there are multiple such windows, you are guaranteed that there will always be only one unique minimum window
+     * in S.
+     */
+    public static String minWindow(String S, String T) {
+        return null;
+    }
+
 
     public static void main(String[] args) {
 
-        // PRINT("123 => " + getPermutation(3, 1));
-        //PRINT("132 => " + getPermutation(3, 2));
-        PRINT("213 => " + getPermutation(3, 3));
-        PRINT("231 => " + getPermutation(3, 4));
-        PRINT("312 => " + getPermutation(3, 5));
-        PRINT("321 => " + getPermutation(3, 6));
-        PRINT("1432 => " + getPermutation(4, 6));
+        List<String> result = fullJustify(new String[]{"This", "is", "an", "example", "of", "text", "justification."},
+                                          14);
+        for (String str : result) {
+            PRINT("#" + str + "#");
+        }
+
         //        {
         //            TITLE("Count and Say");
         //            PRINT("1 => " + countAndSay(1));
