@@ -2557,8 +2557,7 @@ public class Round2 {
         return collect;
     }
 
-    public static void insertInterval(List<Interval> intervals,
-                                      Interval newInterval) {
+    public static void insertInterval(List<Interval> intervals, Interval newInterval) {
         int i = 0;
         while (i < intervals.size()) {
 
@@ -3173,7 +3172,23 @@ public class Round2 {
      * Compute and return the square root of x.
      */
     public static int sqrt(int x) {
-        return 0;
+
+        long target = x;
+        long start = 0;
+        long end = target / 2 + 1;
+
+        while (start <= end) {
+            long mid = (start + end) / 2;
+            long sqr = mid * mid;
+            if (sqr == target) {
+                return (int) mid;
+            } else if (sqr > target) {
+                end = mid - 1;
+            } else {
+                start = mid + 1;
+            }
+        }
+        return (int) (start + end) / 2;
     }
 
     /**
@@ -3182,7 +3197,15 @@ public class Round2 {
      * Each time you can either climb 1 or 2 steps. In how many distinct ways can you climb to the top?
      */
     public static int climbStairs(int n) {
-        return 0;
+        if (n <= 1) {
+            return n;
+        }
+        int[] d = new int[n];
+        d[0] = 1;
+        for (int i = 1; i < n; i++) {
+            d[i] = d[i - 1] + (i >= 2 ? d[i - 2] : 1);
+        }
+        return d[n - 1];
     }
 
     /**
@@ -3193,7 +3216,40 @@ public class Round2 {
      * path = "/a/./b/../../c/", => "/c"
      */
     public static String simplifyPath(String path) {
-        return null;
+
+        path += "/";
+        Deque<String> stack = new ArrayDeque<String>();
+        stack.addLast("/");
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < path.length(); i++) {
+            char c = path.charAt(i);
+            if (c == '/') {
+                if (builder.toString().equals(".")) {
+                    builder.delete(0, builder.length());
+                } else if (builder.toString().equals("..")) {
+                    builder.delete(0, builder.length());
+                    if (!stack.isEmpty() && !stack.getLast().equals("/")) {
+                        stack.removeLast();
+                    }
+                } else if (builder.length() > 0) {
+                    stack.addLast(builder.toString());
+                    builder.delete(0, builder.length());
+                }
+            } else {
+                builder.append(c);
+            }
+        }
+        StringBuilder result = new StringBuilder();
+        result.append("/");
+        stack.removeFirst();
+        while (!stack.isEmpty()) {
+            String str = stack.removeFirst();
+            result.append(str);
+            if (!stack.isEmpty()) {
+                result.append("/");
+            }
+        }
+        return result.toString();
     }
 
     /**
@@ -3204,18 +3260,55 @@ public class Round2 {
      * a) Insert a character
      * b) Delete a character
      * c) Replace a character
+     * fame rome
      */
     public static int minDistance(String word1, String word2) {
-        return 0;
+
+        int len1 = word1.length();
+        int len2 = word2.length();
+        int[][] d = new int[len1 + 1][len2 + 1];
+        for (int i = 0; i <= len2; i++) {
+            d[0][i] = i;
+        }
+        for (int i = 0; i <= len1; i++) {
+            d[i][0] = i;
+        }
+        for (int i = 1; i <= len1; i++) {
+            for (int j = 1; j <= len2; j++) {
+                if (word1.charAt(i - 1) == word2.charAt(j - 1)) {
+                    d[i][j] = d[i - 1][j - 1];
+                } else {
+                    d[i][j] = Math.min(Math.min(d[i - 1][j - 1], d[i][j - 1]), d[i - 1][j]) + 1;
+                }
+            }
+        }
+        return d[len1][len2];
 
     }
 
     /**
-     * 73. Set Matrix Zeroes Total Accepted: 26322 Total Submissions: 84471 My Submissions Question Solution
+     * 73. Set Matrix Zeroes
      * Given a m x n matrix, if an element is 0, set its entire row and column to 0. Do it in place.
      */
     public static void setZeroes(int[][] matrix) {
 
+        Set<Integer> rows = new HashSet<Integer>();
+        Set<Integer> cols = new HashSet<Integer>();
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix[i].length; j++) {
+                if (matrix[i][j] == 0) {
+                    rows.add(i);
+                    cols.add(j);
+                }
+            }
+        }
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix[i].length; j++) {
+                if (rows.contains(i) || cols.contains(j)) {
+                    matrix[i][j] = 0;
+                }
+            }
+        }
     }
 
     /**
@@ -3234,7 +3327,48 @@ public class Round2 {
      * Given target = 3, return true.
      */
     public static boolean searchMatrix(int[][] matrix, int target) {
-        return false;
+
+        int m = matrix.length;
+        if (m == 0) {
+            return false;
+        }
+        int n = matrix[0].length;
+        if (n == 0) {
+            return false;
+        }
+        return _searchMatrix(matrix, 0, m - 1, 0, n - 1, target);
+    }
+
+    public static boolean _searchMatrix(int[][] matrix, int iRow1, int iRow2, int iCol1, int iCol2, int target) {
+
+        if (iRow1 > iRow2 || iCol1 > iCol2) {
+            return false;
+        }
+        if (iRow1 == iRow2) {
+            if (iCol1 == iCol2) {
+                return matrix[iRow1][iCol1] == target;
+            } else {
+                int mid = (iCol1 + iCol2) / 2;
+                if (matrix[iRow1][mid] == target) {
+                    return true;
+                } else if (matrix[iRow1][mid] > target) {
+                    return _searchMatrix(matrix, iRow1, iRow1, iCol1, mid - 1, target);
+                } else {
+                    return _searchMatrix(matrix, iRow1, iRow1, mid + 1, iCol2, target);
+                }
+            }
+        } else {
+            int mid = (iRow1 + iRow2) / 2;
+            if (matrix[mid][iCol1] > target) {
+                return _searchMatrix(matrix, iRow1, mid - 1, iCol1, iCol2, target);
+            } else if (matrix[mid][iCol1] == target) {
+                return true;
+            } else if (matrix[mid][iCol1] < target && matrix[mid][iCol2] >= target) {
+                return _searchMatrix(matrix, mid, mid, iCol1, iCol2, target);
+            } else {
+                return _searchMatrix(matrix, mid + 1, iRow2, iCol1, iCol2, target);
+            }
+        }
     }
 
     /**
@@ -3252,7 +3386,30 @@ public class Round2 {
      * Could you come up with an one-pass algorithm using only constant space?
      */
     public static void sortColors(int[] A) {
-
+        if (A.length < 2) {
+            return;
+        }
+        int index1 = 0;
+        int index2 = A.length - 1;
+        for (int i = 0; index1 <= index2 && i <= index2; ) {
+            if (A[i] == 0) {
+                int temp = A[index1];
+                A[index1] = A[i];
+                A[i] = temp;
+                index1++;
+                i++;
+            } else if (A[i] == 1) {
+                i++;
+            } else if (A[i] == 2) {
+                int temp = A[index2];
+                A[index2] = A[i];
+                A[i] = temp;
+                index2--;
+            } else {
+                System.out.println("Invalid Number!");
+                return;
+            }
+        }
     }
 
     /**
@@ -3269,202 +3426,87 @@ public class Round2 {
      * in S.
      */
     public static String minWindow(String S, String T) {
-        return null;
+
+        int size1 = S.length();
+        int size2 = T.length();
+        if (size1 < size2 || size2 == 0) {
+            return "";
+        }
+
+        HashMap<Character, Integer> map = new HashMap<Character, Integer>();
+        for (int i = 0; i < size2; i++) {
+            char c = T.charAt(i);
+            if (map.containsKey(c)) {
+                map.put(c, map.get(c) + 1);
+            } else {
+                map.put(c, 1);
+            }
+        }
+        String result = "";
+        int index1 = -1;
+        int index2 = 0;
+        int cLeft = map.size();
+        Deque<Integer> queue = new ArrayDeque<Integer>();
+        HashMap<Character, Integer> temp = new HashMap<Character, Integer>();
+        for (; index1 < index2 && index2 < size1; ) {
+            char c = S.charAt(index2);
+            if (map.containsKey(c)) {
+                if (queue.isEmpty() || queue.getLast() != index2) {
+                    queue.addLast(index2);
+                }
+                if (index1 == -1) {
+                    index1 = index2;
+                    queue.removeFirst();
+                }
+                temp.put(c, (temp.containsKey(c) ? temp.get(c) : 0) + 1);
+                if (map.get(c).equals(temp.get(c))) {
+                    cLeft--;
+                    if (cLeft == 0) {
+                        String sub = S.substring(index1, index2 + 1);
+                        if (result.equals("")) {
+                            result = sub;
+                        } else {
+                            result = sub.length() < result.length() ? sub : result;
+                        }
+                        char first = S.charAt(index1);
+                        if (queue.isEmpty()) {
+                            return result;
+                        }
+                        index1 = queue.removeFirst();
+                        temp.put(first, temp.get(first) == 0 ? 0 : temp.get(first) - 1);
+                        if (temp.get(first) == 0) {
+                            temp.remove(first);
+                            cLeft++;
+                        } else if (temp.get(first) >= map.get(first)) {
+                            sub = S.substring(index1, index2 + 1);
+                            result = sub.length() < result.length() ? sub : result;
+                        } else {
+                            cLeft++;
+                        }
+                        if (temp.containsKey(c)) {
+                            temp.put(c, temp.get(c) == 0 ? 0 : temp.get(c) - 1);
+                            cLeft++;
+                        }
+                    } else {
+                        index2++;
+                    }
+                } else {
+                    index2++;
+                }
+            } else {
+                index2++;
+            }
+        }
+        return result;
     }
 
 
     public static void main(String[] args) {
-
-        List<String> result = fullJustify(new String[]{"This", "is", "an", "example", "of", "text", "justification."},
-                                          14);
-        for (String str : result) {
-            PRINT("#" + str + "#");
-        }
-
-        //        {
-        //            TITLE("Count and Say");
-        //            PRINT("1 => " + countAndSay(1));
-        //            PRINT("11 => " + countAndSay(2));
-        //            PRINT("21 => " + countAndSay(3));
-        //            PRINT("1211 => " + countAndSay(4));
-        //            PRINT("111221 => " + countAndSay(5));
-        //            PRINT("312211 => " + countAndSay(6));
-        //        }
-        //        {
-        //            TITLE("Search for a Range");
-        //            PRINT("[1,5]  => " + Arrays.toString(searchRange(new int[]{1, 3, 3, 3, 3, 3, 5}, 3)));
-        //            PRINT("[8,10] => " + Arrays.toString(searchRange(new int[]{1, 2, 2, 2, 3, 3, 3, 4, 5, 5, 5, 6},
-        // 5)));
-        //            PRINT("[-1,-1] => " + Arrays.toString(searchRange(new int[]{1, 2, 3, 5, 6, 7, 8}, 4)));
-        //            PRINT("[0,0] => " + Arrays.toString(searchRange(new int[]{1}, 1)));
-        //        }
-        //        {
-        //            TITLE("Longest Valid Parentheses");
-        //            PRINT("4  => " + longestValidParentheses("(())))())("));
-        //            PRINT("8  => " + longestValidParentheses(")(()()())"));
-        //            PRINT("4  => " + longestValidParentheses("(()()((()"));
-        //        }
-        //        {
-        //            TITLE("Next Permutation");
-        //            int[] A = {1, 2, 3, 4, 3, 1};
-        //            nextPermutation(A);
-        //            for (int i = 0; i < A.length; i++) {
-        //                System.out.print(A[i] + " ");
-        //            }
-        //            PRINT("\n");
-        //        }
-        //        {
-        //            TITLE("Implement strStr()");
-        //            PRINT(strStr("mississippi", "issip"));
-        //        }
-        //        {
-        //            TITLE("Remove Elements");
-        //
-        //            int[] A = {1, 2, 2, 2, 5, 5, 7, 8};
-        //            int size = removeElement(A, 8);
-        //            for (int i = 0; i < size; i++) {
-        //                System.out.print(A[i] + " ");
-        //            }
-        //            PRINT("\n");
-        //        }
-        //        {
-        //            TITLE("Remove Duplicates from Sorted Array");
-        //
-        //            int[] A = {1, 2, 2, 2, 5, 5, 7, 8};
-        //            int size = removeDuplicates(A);
-        //            for (int i = 0; i < size; i++) {
-        //                System.out.print(A[i] + " ");
-        //            }
-        //            PRINT("\n");
-        //        }
-        //        {
-        //            TITLE("Reverse Nodes in k-Group");
-        //            PRINT(reverseKGroup(createListNode(new int[]{1}), 2));
-        //            PRINT(reverseKGroup(createListNode(new int[]{1, 2, 3, 4, 5, 6, 7, 8}), 8));
-        //            PRINT(reverseKGroup(createListNode(new int[]{1, 2, 3, 4, 5, 6, 7, 8}), 9));
-        //        }
-        //        {
-        //            TITLE("Swap Nodes in Pairs");
-        //            PRINT(swapPairs(createListNode(new int[]{1})));
-        //            PRINT(swapPairs(createListNode(new int[]{1, 2})));
-        //            PRINT(swapPairs(createListNode(new int[]{1, 2, 3, 4, 5, 6})));
-        //            PRINT(swapPairs(createListNode(new int[]{1, 2, 3, 4, 5, 6, 7})));
-        //        }
-        //        {
-        //            TITLE("Generate Parentheses");
-        //            PRINT(generateParenthesis(1));
-        //            PRINT(generateParenthesis(2));
-        //            PRINT(generateParenthesis(3));
-        //        }
-        //        {
-        //            TITLE("Letter Combinations of a Phone Number");
-        //            PRINT("[\"ad\", \"ae\", \"af\", \"bd\", \"be\", \"bf\", \"cd\", \"ce\", \"cf\"] => " +
-        // letterCombinations
-        //                    ("23"));
-        //        }
-        //        {
-        //            TITLE("3Sum");
-        //            PRINT("(-1, 0, 1)(-1, -1, 2) => " + threeSum(new int[]{-1, 0, 1, 2, -1, -4}));
-        //        }
-        //        {
-        //            TITLE("Longest Common Prefix");
-        //            PRINT("ab  => " + longestCommonPrefix(new String[]{"abcd", "abdjfr", "abdoerfer", "abdhjfd",
-        // "abokrfp"}));
-        //            PRINT("''  => " + longestCommonPrefix(new String[]{"abcd", "", "abdoerfer", "", "abokrfp"}));
-        //            PRINT("a  => " + longestCommonPrefix(new String[]{"abcd", "abdjfr", "aadoerfer", "aofkkpef",
-        // "abokrfp"}));
-        //        }
-        //        {
-        //            TITLE("Integer to Roman & Roman to Integer");
-        //            PRINT("XII(12) => " + intToRoman(12) + " | " + romanToInt("XII"));
-        //            PRINT("MCCXXXIV(1234) => " + intToRoman(1234) + " | " + romanToInt("MCCXXXIV"));
-        //            PRINT("CMLIX(959) => " + intToRoman(959) + " | " + romanToInt("CMLIX"));
-        //        }
-        //        {
-        //            TITLE("Container With Most Water");
-        //            PRINT("36  => " + maxArea(new int[]{3, 6, 2, 6, 7, 8, 4, 9}));
-        //            PRINT("12  => " + maxArea(new int[]{1, 5, 2, 6, 4, 2}));
-        //            PRINT("2 => " + maxArea(new int[]{1, 2, 3}));
-        //        }
-        //        {
-        //            TITLE("Regular Expression Matching");
-        //            PRINT("true  => " + isMatch("", ".*.*.*"));
-        //            PRINT("false  => " + isMatch("adbc", "a*bc"));
-        //            PRINT("true => " + isMatch("aa", "aa"));
-        //            PRINT("false => " + isMatch("aaa", "aa"));
-        //            PRINT("true => " + isMatch("aa", "a*"));
-        //            PRINT("true => " + isMatch("aa", ".*"));
-        //            PRINT("true => " + isMatch("ab", ".*"));
-        //            PRINT("true  => " + isMatch("aab", "c*a*b"));
-        //        }
-        //        {
-        //            TITLE("Palindrome Number");
-        //            PRINT("false => " + isPalindrome(-2147447412));
-        //            PRINT("false => " + isPalindrome(1000021));
-        //            PRINT("true => " + isPalindrome(989898989));
-        //            PRINT("false => " + isPalindrome(-12344321));
-        //            PRINT("false => " + isPalindrome(123456789));
-        //            PRINT("true  => " + isPalindrome(0));
-        //            PRINT("true  => " + isPalindrome(55));
-        //            PRINT("false  => " + isPalindrome(23));
-        //        }
-        //        {
-        //            TITLE("String to Integer");
-        //            PRINT("-1 => " + atoi("-1"));
-        //            PRINT("1000 => " + atoi("1000"));
-        //            PRINT(Integer.MAX_VALUE + " => " + atoi("2147483650"));
-        //            PRINT(Integer.MIN_VALUE + " => " + atoi("-2147483649"));
-        //        }
-        //        {
-        //            TITLE("Reverse Integer");
-        //            PRINT("1 => " + reverse(1000));
-        //            PRINT("321 => " + reverse(123));
-        //            PRINT("-321 => " + reverse(-123));
-        //        }
-        //        {
-        //            TITLE("ZigZag Conversion");
-        //            PRINT("PAHNAPLSIIGYIR => " + convert("PAYPALISHIRING", 3));
-        //        }
-        //        {
-        //            TITLE("Longest Palindromic Substring");
-        //            PRINT(longestPalindrome("bb"));
-        //        }
-        //        {
-        //            TITLE("Median of Two Sorted Arrays");
-        //            PRINT("1 => " + findMedianSortedArrays(new int[]{1}, new int[]{1}));
-        //            PRINT("4 => " + findMedianSortedArrays(new int[]{1, 2, 3, 4, 5, 6}, new int[]{3, 5, 6}));
-        //            PRINT("3.5 => " + findMedianSortedArrays(new int[]{1, 2, 3, 4, 5, 6}, new int[]{1, 2, 3, 4, 5,
-        // 6}));
-        //        }
-        //        {
-        //            TITLE("Longest Substring Without Repeating Characters");
-        //            PRINT(lengthOfLongestSubstring("abcabcbb"));
-        //            PRINT(lengthOfLongestSubstring("abcdefgh"));
-        //        }
-        //        {
-        //            TITLE("Add Two Numbers");
-        //            int[] num11 = {5, 2, 4};
-        //            int[] num12 = {4, 7, 6};
-        //            PRINT(addTwoNumbers(createListNode(num11), createListNode(num12)));
-        //
-        //            int[] num21 = {5, 2, 4};
-        //            int[] num22 = {5, 7, 6, 9, 9};
-        //            PRINT(addTwoNumbers(createListNode(num21), createListNode(num22)));
-        //        }
-        //        {
-        //            TITLE("Two Sum");
-        //            int[] num1 = {3, 2, 4};
-        //            int target1 = 6;
-        //            PRINT("[2, 3] => " + Arrays.toString(twoSum(num1, target1)));
-        //
-        //            int[] num2 = {2, 7, 9, 11};
-        //            int target2 = 9;
-        //            PRINT("[1, 2] => " + Arrays.toString(twoSum(num2, target2)));
-        //
-        //            int[] num3 = {0, 7, 9, 0};
-        //            int target3 = 0;
-        //            PRINT("[1, 4] => " + Arrays.toString(twoSum(num3, target3)));
-        //        }
+        PRINT(minWindow("acbbaca", "aba"));
+        PRINT(minWindow("aab", "aab"));
+        PRINT(minWindow("adobecodebancbbcaa", "abc"));
+        PRINT(minWindow("ADOBECOACBANC", "ABC"));
+        PRINT(minWindow("a", "a"));
     }
 
     public static ListNode createListNode(int[] num) {
