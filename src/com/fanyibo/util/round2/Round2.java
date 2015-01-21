@@ -3615,6 +3615,69 @@ public class Round2 {
      * word = "ABCB", -> returns false.
      */
     public static boolean exist(char[][] board, String word) {
+
+        int m = board.length;
+        if (m <= 0) {
+            return false;
+        }
+        int n = board[0].length;
+        if (n <= 0) {
+            return false;
+        }
+        boolean[][] visited = new boolean[m][n];
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board[i].length; j++) {
+                if (board[i][j] == word.charAt(0) && !visited[i][j]) {
+                    visited[i][j] = true;
+                    if (_wordSearch(board, m, n, word, visited, i, j, 1)) {
+                        return true;
+                    }
+                    visited[i][j] = false;
+                }
+            }
+        }
+        return false;
+    }
+
+    public static boolean _wordSearch(char[][] board, int m, int n, String word, boolean[][] visited, int row, int col,
+                                      int index) {
+
+        if (index >= word.length()) {
+            return true;
+        }
+        char target = word.charAt(index);
+        boolean up = row > 0 && !visited[row - 1][col] && board[row - 1][col] == target;
+        boolean down = row < m - 1 && !visited[row + 1][col] && board[row + 1][col] == target;
+        boolean left = col > 0 && !visited[row][col - 1] && board[row][col - 1] == target;
+        boolean right = col < n - 1 && !visited[row][col + 1] && board[row][col + 1] == target;
+        if (up) {
+            visited[row - 1][col] = true;
+            if (_wordSearch(board, m, n, word, visited, row - 1, col, index + 1)) {
+                return true;
+            }
+            visited[row - 1][col] = false;
+        }
+        if (down) {
+            visited[row + 1][col] = true;
+            if (_wordSearch(board, m, n, word, visited, row + 1, col, index + 1)) {
+                return true;
+            }
+            visited[row + 1][col] = false;
+        }
+        if (left) {
+            visited[row][col - 1] = true;
+            if (_wordSearch(board, m, n, word, visited, row, col - 1, index + 1)) {
+                return true;
+            }
+            visited[row][col - 1] = false;
+        }
+        if (right) {
+            visited[row][col + 1] = true;
+            if (_wordSearch(board, m, n, word, visited, row, col + 1, index + 1)) {
+                return true;
+            }
+            visited[row][col + 1] = false;
+        }
         return false;
     }
 
@@ -3655,14 +3718,293 @@ public class Round2 {
         return size;
     }
 
+    /**
+     * 81. Search in Rotated Sorted Array II
+     * Follow up for "Search in Rotated Sorted Array":
+     * What if duplicates are allowed?
+     * Would this affect the run-time complexity? How and why?
+     * Write a function to determine if a given target is in the array.
+     * 1,1,2,2,3,3,4,5 => 2,2,2,4,5,1,1,1,1,1,1,1,1,1,1,1,1
+     * 3,3,4,5,6,1,2
+     */
+    public static boolean search2(int[] A, int target) {
+
+        int size = A.length;
+        if (size == 0) {
+            return false;
+        }
+        if (size == 1) {
+            return A[0] == target;
+        }
+        return _search2(A, 0, size - 1, target);
+    }
+
+    public static boolean _search2(int[] A, int start, int end, int target) {
+
+        if (start > end) {
+            return false;
+        }
+        int size = end - start + 1;
+        if (size == 1) {
+            return A[start] == target;
+        }
+        int mid = (start + end) / 2;
+        if (A[mid] == target) {
+            return true;
+        }
+        int left = mid;
+        int right = mid;
+        while (left >= start && A[left] == A[mid]) {
+            left--;
+        }
+        while (right <= end && A[right] == A[mid]) {
+            right++;
+        }
+        if (left <= start) {
+            return A[start] == target || _search2(A, right, end, target);
+        } else if (right >= end) {
+            return A[end] == target || _search2(A, start, left, target);
+        }
+
+        if (A[left] >= A[start]) {
+            if (A[left] == target) {
+                return true;
+            } else if (A[left] > target && A[start] <= target) {
+                return _search2(A, start, left - 1, target);
+            } else if (A[right] <= target || A[end] >= target) {
+                return _search2(A, right, end, target);
+            }
+        } else if (A[right] <= A[end]) {
+            if (A[left] == target) {
+                return true;
+            } else if (A[left] > target || A[end] < target) {
+                return _search2(A, start, left - 1, target);
+            } else if (A[right] == target) {
+                return true;
+            } else if (A[right] < target && A[end] >= target) {
+                return _search2(A, right + 1, end, target);
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 82. Remove Duplicates from Sorted List II
+     * Given a sorted linked list, delete all nodes that have duplicate numbers, leaving only distinct numbers from
+     * the original list.
+     * For example,
+     * Given 1->2->3->3->4->4->5, return 1->2->5.
+     * Given 1->1->1->2->3, return 2->3.
+     */
+    public static ListNode deleteDuplicates2(ListNode head) {
+
+        ListNode newHead = head;
+        ListNode father = null;
+        ListNode temp1 = head;
+        ListNode temp2 = null;
+        int count = 0;
+        while (temp1 != null) {
+            temp2 = temp1;
+            count = 0;
+            while (temp2 != null && temp2.val == temp1.val) {
+                temp2 = temp2.next;
+                count++;
+            }
+            if (count > 1) {
+                if (father == null) {
+                    newHead = temp2;
+                    temp1 = temp2;
+                } else {
+                    father.next = temp2;
+                    temp1 = temp2;
+                }
+                continue;
+            }
+            father = temp1;
+            temp1 = temp1.next;
+        }
+        return newHead;
+    }
+
+    /**
+     * 83. Remove Duplicates from Sorted List
+     * Given a sorted linked list, delete all duplicates such that each element appear only once.
+     * For example,
+     * Given 1->1->2, return 1->2.
+     * Given 1->1->2->3->3, return 1->2->3.
+     */
+    public static ListNode deleteDuplicates(ListNode head) {
+
+        ListNode temp1 = head;
+        ListNode temp2 = null;
+        int count = 0;
+        while (temp1 != null) {
+            temp2 = temp1;
+            count = 0;
+            while (temp2 != null && temp2.val == temp1.val) {
+                temp2 = temp2.next;
+                count++;
+            }
+            if (count > 1) {
+                temp1.next = temp2;
+            }
+            temp1 = temp1.next;
+        }
+        return head;
+    }
+
+    /**
+     * 84. Largest Rectangle in Histogram
+     * Given n non-negative integers representing the histogram's bar height where the width of each bar is 1, find
+     * the area of largest rectangle in the histogram.
+     * Above is a histogram where width of each bar is 1, given height = [2,1,5,6,2,3].
+     * The largest rectangle is shown in the shaded area, which has area = 10 unit.
+     * For example,
+     * Given height = [2,1,5,6,2,3],
+     * return 10.
+     */
+    public static int largestRectangleArea(int[] height) {
+
+        int size = height.length;
+        if (size == 0) {
+            return 0;
+        }
+        int max = 0;
+        Stack<Integer> stack = new Stack<Integer>();
+        for (int i = 0; i <= size; i++) {
+            int h = 0;
+            if (i < size) {
+                h = height[i];
+            }
+            if (stack.isEmpty() || height[stack.peek()] <= h) {
+                stack.push(i);
+            } else {
+                int index = stack.pop();
+                int area = 0;
+                if (!stack.isEmpty()) {
+                    area = height[index] * (i - stack.peek() - 1);
+                } else {
+                    area = i * height[index];
+                } max = Math.max(max, area);
+                i--;
+            }
+        } return max;
+    }
+
+    /**
+     * 85. Maximal Rectangle
+     * Given a 2D binary matrix filled with 0's and 1's, find the largest rectangle containing all ones and return
+     * its area.
+     */
+    public static int maximalRectangle(char[][] matrix) {
+        return 0;
+    }
+
+    /**
+     * 86. Partition List
+     * Given a linked list and a value x, partition it such that all nodes less than x come before nodes greater than
+     * or equal to x.
+     * You should preserve the original relative order of the nodes in each of the two partitions.
+     * For example,
+     * Given 1->4->3->2->5->2 and x = 3,
+     * return 1->2->2->4->3->5.
+     */
+    public static ListNode partition(ListNode head, int x) {
+        return null;
+    }
+
+    /**
+     * 87. Scramble String
+     * Given a string s1, we may represent it as a binary tree by partitioning it to two non-empty substrings
+     * recursively.
+     * Below is one possible representation of s1 = "great":
+     * great
+     * /    \
+     * gr    eat
+     * / \    /  \
+     * g   r  e   at
+     * / \
+     * a   t
+     * To scramble the string, we may choose any non-leaf node and swap its two children.
+     * For example, if we choose the node "gr" and swap its two children, it produces a scrambled string "rgeat".
+     * rgeat
+     * /    \
+     * rg    eat
+     * / \    /  \
+     * r   g  e   at
+     * / \
+     * a   t
+     * We say that "rgeat" is a scrambled string of "great".
+     * Similarly, if we continue to swap the children of nodes "eat" and "at", it produces a scrambled string "rgtae".
+     * rgtae
+     * /    \
+     * rg    tae
+     * / \    /  \
+     * r   g  ta  e
+     * / \
+     * t   a
+     * We say that "rgtae" is a scrambled string of "great".
+     * Given two strings s1 and s2 of the same length, determine if s2 is a scrambled string of s1.
+     */
+    public static boolean isScramble(String s1, String s2) {
+        return false;
+    }
+
+    /**
+     * 88. Merge Sorted Array
+     * Given two sorted integer arrays A and B, merge B into A as one sorted array.
+     * Note:
+     * You may assume that A has enough space (size that is greater or equal to m + n) to hold additional elements
+     * from B. The number of elements initialized in A and B are m and n respectively.
+     */
+    public static void merge(int A[], int m, int B[], int n) {
+
+    }
+
+    /**
+     * 89. Gray Code
+     * The gray code is a binary numeral system where two successive values differ in only one bit.
+     * Given a non-negative integer n representing the total number of bits in the code, print the sequence of gray
+     * code. A gray code sequence must begin with 0.
+     * For example, given n = 2, return [0,1,3,2]. Its gray code sequence is:
+     * 00 - 0
+     * 01 - 1
+     * 11 - 3
+     * 10 - 2
+     * Note:
+     * For a given n, a gray code sequence is not uniquely defined.
+     * For example, [0,2,3,1] is also a valid gray code sequence according to the above definition.
+     * For now, the judge is able to judge based on one instance of gray code sequence. Sorry about that.
+     */
+    public static List<Integer> grayCode(int n) {
+        return null;
+    }
+
+    /**
+     * 90. Subsets II
+     * Given a collection of integers that might contain duplicates, S, return all possible subsets.
+     * Note:
+     * Elements in a subset must be in non-descending order.
+     * The solution set must not contain duplicate subsets.
+     * For example,
+     * If S = [1,2,2], a solution is:
+     * [
+     * [2],
+     * [1],
+     * [1,2,2],
+     * [2,2],
+     * [1,2],
+     * []
+     * ]
+     */
+    public static List<List<Integer>> subsetsWithDup(int[] num) {
+        return null;
+    }
 
     public static void main(String[] args) {
 
-        int[] A = {1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 3};
-        int size = removeDuplicates2(A);
-        for (int i = 0; i < size; i++) {
-            PRINT(A[i] + ";");
-        }
+        PRINT(largestRectangleArea(new int[]{2, 1, 2}));
+        PRINT(largestRectangleArea(new int[]{2, 1, 5, 6, 2, 3}));
     }
 
     public static ListNode createListNode(int[] num) {
