@@ -3427,14 +3427,14 @@ public class Round2 {
      */
     public static String minWindow(String S, String T) {
 
-        int size1 = S.length();
-        int size2 = T.length();
-        if (size1 < size2 || size2 == 0) {
-            return "";
+        int sizeS = S.length();
+        int sizeT = T.length();
+        String result = "";
+        if (sizeS == 0 || sizeT == 0 || sizeS < sizeT) {
+            return result;
         }
-
         HashMap<Character, Integer> map = new HashMap<Character, Integer>();
-        for (int i = 0; i < size2; i++) {
+        for (int i = 0; i < sizeT; i++) {
             char c = T.charAt(i);
             if (map.containsKey(c)) {
                 map.put(c, map.get(c) + 1);
@@ -3442,71 +3442,227 @@ public class Round2 {
                 map.put(c, 1);
             }
         }
-        String result = "";
-        int index1 = -1;
-        int index2 = 0;
-        int cLeft = map.size();
-        Deque<Integer> queue = new ArrayDeque<Integer>();
-        HashMap<Character, Integer> temp = new HashMap<Character, Integer>();
-        for (; index1 < index2 && index2 < size1; ) {
-            char c = S.charAt(index2);
+        List<Integer> indexes = new ArrayList<Integer>();
+        for (int i = 0; i < sizeS; i++) {
+            char c = S.charAt(i);
             if (map.containsKey(c)) {
-                if (queue.isEmpty() || queue.getLast() != index2) {
-                    queue.addLast(index2);
-                }
-                if (index1 == -1) {
-                    index1 = index2;
-                    queue.removeFirst();
-                }
-                temp.put(c, (temp.containsKey(c) ? temp.get(c) : 0) + 1);
-                if (map.get(c).equals(temp.get(c))) {
-                    cLeft--;
-                    if (cLeft == 0) {
-                        String sub = S.substring(index1, index2 + 1);
-                        if (result.equals("")) {
-                            result = sub;
-                        } else {
-                            result = sub.length() < result.length() ? sub : result;
-                        }
-                        char first = S.charAt(index1);
-                        if (queue.isEmpty()) {
-                            return result;
-                        }
-                        index1 = queue.removeFirst();
-                        temp.put(first, temp.get(first) == 0 ? 0 : temp.get(first) - 1);
-                        if (temp.get(first) == 0) {
-                            temp.remove(first);
-                            cLeft++;
-                        } else if (temp.get(first) >= map.get(first)) {
-                            sub = S.substring(index1, index2 + 1);
-                            result = sub.length() < result.length() ? sub : result;
-                        } else {
-                            cLeft++;
-                        }
-                        if (temp.containsKey(c)) {
-                            temp.put(c, temp.get(c) == 0 ? 0 : temp.get(c) - 1);
-                            cLeft++;
-                        }
-                    } else {
-                        index2++;
-                    }
-                } else {
-                    index2++;
-                }
-            } else {
-                index2++;
+                indexes.add(i);
             }
         }
+
+        int size = indexes.size();
+        HashMap<Character, Integer> tempMap = new HashMap<Character, Integer>();
+        int done = 0;
+        result = null;
+        int start = 0;
+        int end = 0;
+        for (; end < size; end++) {
+            int iStart = indexes.get(start);
+            int iEnd = indexes.get(end);
+            char _start = S.charAt(iStart);
+            char _end = S.charAt(iEnd);
+
+            tempMap.put(_end, (tempMap.containsKey(_end) ? tempMap.get(_end) : 0) + 1);
+            if (tempMap.get(_end).equals(map.get(_end))) {
+                done++;
+                if (done == map.size()) {
+                    if (result == null) {
+                        result = S.substring(iStart, iEnd + 1);
+                    } else {
+                        result = iEnd - iStart + 1 < result.length() ? S.substring(iStart, iEnd + 1) : result;
+                    }
+                    if (end - start + 1 == T.length()) {
+                        tempMap.put(_start, tempMap.get(_start) - 1);
+                        if (tempMap.get(_start) < map.get(_start)) {
+                            done--;
+                        }
+                        start++;
+                    } else {
+                        tempMap.put(_start, tempMap.get(_start) - 1);
+                        if (tempMap.get(_start) < map.get(_start)) {
+                            done--;
+                        }
+                        tempMap.put(_end, tempMap.get(_end) - 1);
+                        if (tempMap.get(_end) < map.get(_end) && _start != _end) {
+                            done--;
+                        }
+                        start++;
+                        end--;
+                    }
+                }
+            }
+        }
+        return result == null ? "" : result;
+    }
+
+    /**
+     * 77. Combinations
+     * Given two integers n and k, return all possible combinations of k numbers out of 1 ... n.
+     * For example,
+     * If n = 4 and k = 2, a solution is:
+     * [
+     * [2,4],
+     * [3,4],
+     * [2,3],
+     * [1,2],
+     * [1,3],
+     * [1,4],
+     * ]
+     */
+    public static List<List<Integer>> combine(int n, int k) {
+
+        Set<List<Integer>> result = new HashSet<List<Integer>>();
+        if (k > n || n == 0) {
+            return new ArrayList<List<Integer>>(result);
+        }
+        for (int i = 1; i <= k; i++) {
+            if (i == 1) {
+                for (int j = 1; j <= n; j++) {
+                    List<Integer> list = new ArrayList<Integer>();
+                    list.add(j);
+                    result.add(list);
+                }
+                continue;
+            }
+            Set<List<Integer>> temp = new HashSet<List<Integer>>();
+            for (int j = 1; j <= n; j++) {
+                for (List<Integer> preList : result) {
+                    if (preList.contains(j)) {
+                        continue;
+                    }
+                    int l = 0;
+                    List<Integer> list = new ArrayList<Integer>();
+                    for (; l < preList.size(); l++) {
+                        if (j < preList.get(l)) {
+                            break;
+                        } else {
+                            list.add(preList.get(l));
+                        }
+                    }
+                    list.add(j);
+                    while (l < preList.size()) {
+                        list.add(preList.get(l++));
+                    }
+                    temp.add(list);
+                }
+            }
+            result = temp;
+        }
+        return new ArrayList<List<Integer>>(result);
+    }
+
+    /**
+     * 78. Subsets
+     * Given a set of distinct integers, S, return all possible subsets.
+     * Note:
+     * Elements in a subset must be in non-descending order.
+     * The solution set must not contain duplicate subsets.
+     * For example,
+     * If S = [1,2,3], a solution is:
+     * [
+     * [3],
+     * [1],
+     * [2],
+     * [1,2,3],
+     * [1,3],
+     * [2,3],
+     * [1,2],
+     * []
+     * ]
+     */
+    public static List<List<Integer>> subsets(int[] S) {
+
+        Arrays.sort(S);
+
+        List<List<Integer>> result = new ArrayList<List<Integer>>();
+        for (int i = 0; i < S.length; i++) {
+            int a = S[i];
+
+            if (result.isEmpty()) {
+                List<Integer> list = new ArrayList<Integer>();
+                list.add(a);
+                result.add(list);
+            } else {
+                int size = result.size();
+                for (int j = 0; j < size; j++) {
+                    List<Integer> list = new ArrayList<Integer>(result.get(j));
+                    list.add(a);
+                    result.add(list);
+                }
+                List<Integer> list = new ArrayList<Integer>();
+                list.add(a);
+                result.add(list);
+            }
+        }
+        result.add(new ArrayList<Integer>());
         return result;
+    }
+
+    /**
+     * 79. Word Search
+     * Given a 2D board and a word, find if the word exists in the grid.
+     * The word can be constructed from letters of sequentially adjacent cell, where "adjacent" cells are those
+     * horizontally or vertically neighboring. The same letter cell may not be used more than once.
+     * For example,
+     * Given board =
+     * [
+     * ["ABCE"],
+     * ["SFCS"],
+     * ["ADEE"]
+     * ]
+     * word = "ABCCED", -> returns true,
+     * word = "SEE", -> returns true,
+     * word = "ABCB", -> returns false.
+     */
+    public static boolean exist(char[][] board, String word) {
+        return false;
+    }
+
+    /**
+     * 80. Remove Duplicates from Sorted Array II
+     * Question
+     * Solution
+     * Follow up for "Remove Duplicates":
+     * What if duplicates are allowed at most twice?
+     * For example,
+     * Given sorted array A = [1,1,1,2,2,3],
+     * Your function should return length = 5, and A is now [1,1,2,2,3].
+     */
+    public static int removeDuplicates2(int[] A) {
+
+        if (A.length <= 2) {
+            return A.length;
+        }
+        int size = A.length;
+        int index1 = 0;
+        int index2 = 1;
+        while (index1 < size && index2 < A.length) {
+
+            while (index2 < A.length && A[index1] == A[index2]) {
+                if (index2 - index1 >= 2) {
+                    size--;
+                }
+                index2++;
+            }
+            if (index2 - index1 > 2 && index2 < A.length) {
+                int temp = A[index1 + 2];
+                A[index1 + 2] = A[index2];
+                A[index2] = temp;
+            }
+            index1++;
+            index2++;
+        }
+        return size;
     }
 
 
     public static void main(String[] args) {
-        PRINT(minWindow("acbbaca", "aba"));
-        PRINT(minWindow("aab", "aab"));
-        PRINT(minWindow("adobecodebancbbcaa", "abc"));
-        PRINT(minWindow("ADOBECOACBANC", "ABC"));
-        PRINT(minWindow("a", "a"));
+
+        int[] A = {1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 3};
+        int size = removeDuplicates2(A);
+        for (int i = 0; i < size; i++) {
+            PRINT(A[i] + ";");
+        }
     }
 
     public static ListNode createListNode(int[] num) {
