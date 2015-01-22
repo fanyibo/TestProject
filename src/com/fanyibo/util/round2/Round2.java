@@ -1,5 +1,6 @@
 package com.fanyibo.util.round2;
 
+import com.fanyibo.tree.TreeNode;
 import com.fanyibo.util.ListNode;
 
 import java.util.*;
@@ -3885,10 +3886,12 @@ public class Round2 {
                     area = height[index] * (i - stack.peek() - 1);
                 } else {
                     area = i * height[index];
-                } max = Math.max(max, area);
+                }
+                max = Math.max(max, area);
                 i--;
             }
-        } return max;
+        }
+        return max;
     }
 
     /**
@@ -3897,7 +3900,54 @@ public class Round2 {
      * its area.
      */
     public static int maximalRectangle(char[][] matrix) {
-        return 0;
+
+        int m = matrix.length;
+        if (m == 0) {
+            return 0;
+        }
+        int n = matrix[0].length;
+        if (n == 0) {
+            return 0;
+        }
+        int max = 0;
+        int[][] level = new int[m][n];
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                if (matrix[i][j] == '1') {
+                    level[i][j] = i == 0 ? 1 : level[i - 1][j] + 1;
+                } else {
+                    level[i][j] = 0;
+                }
+            }
+            max = Math.max(max, _maximalRectangle(level[i]));
+        }
+        return max;
+    }
+
+    public static int _maximalRectangle(int[] A) {
+        int max = 0;
+        int size = A.length;
+        Stack<Integer> stack = new Stack<Integer>();
+        for (int i = 0; i <= size; i++) {
+            int current = 0;
+            if (i < size) {
+                current = A[i];
+            }
+            if (stack.isEmpty() || A[stack.peek()] <= current) {
+                stack.push(i);
+            } else {
+                int index = stack.pop();
+                int area;
+                if (stack.isEmpty()) {
+                    area = i * A[index];
+                } else {
+                    area = (i - stack.peek() - 1) * A[index];
+                }
+                max = Math.max(max, area);
+                i--;
+            }
+        }
+        return max;
     }
 
     /**
@@ -3910,7 +3960,33 @@ public class Round2 {
      * return 1->2->2->4->3->5.
      */
     public static ListNode partition(ListNode head, int x) {
-        return null;
+
+        ListNode head1 = new ListNode(Integer.MAX_VALUE);
+        ListNode head2 = new ListNode(Integer.MAX_VALUE);
+        ListNode temp1 = head1;
+        ListNode temp2 = head2;
+        ListNode temp = head;
+        while (temp != null) {
+            if (temp.val < x) {
+                temp1.next = temp;
+                temp1 = temp1.next;
+                temp = temp.next;
+                temp1.next = null;
+            } else {
+                temp2.next = temp;
+                temp2 = temp2.next;
+                temp = temp.next;
+                temp2.next = null;
+            }
+        }
+        if (head1.next == null) {
+            return head2.next;
+        } else if (head2.next == null) {
+            return head1.next;
+        } else {
+            temp1.next = head2.next;
+            return head1.next;
+        }
     }
 
     /**
@@ -3947,6 +4023,36 @@ public class Round2 {
      * Given two strings s1 and s2 of the same length, determine if s2 is a scrambled string of s1.
      */
     public static boolean isScramble(String s1, String s2) {
+
+        int size1 = s1.length();
+        int size2 = s2.length();
+        if (size1 != size2) {
+            return false;
+        }
+        int[] chars = new int[256];
+        for (int i = 0; i < size1; i++) {
+            chars[s1.charAt(i)]++;
+        }
+        for (int i = 0; i < size1; i++) {
+            chars[s2.charAt(i)]--;
+        }
+        for (int i = 0; i < 256; i++) {
+            if (chars[i] != 0) {
+                return false;
+            }
+        }
+        if (size1 == 1) {
+            return true;
+        }
+        for (int i = 1; i < size1; i++) {
+            if (isScramble(s1.substring(0, i), s2.substring(0, i)) && isScramble(s1.substring(i), s2.substring(i))) {
+                return true;
+            }
+            if (isScramble(s1.substring(0, i), s2.substring(size1 - i))
+                    && isScramble(s1.substring(i), s2.substring(0, size1 - i))) {
+                return true;
+            }
+        }
         return false;
     }
 
@@ -3959,6 +4065,30 @@ public class Round2 {
      */
     public static void merge(int A[], int m, int B[], int n) {
 
+        int i = m + n - 1;
+        int a = m - 1;
+        int b = n - 1;
+
+        while (a >= 0 && b >= 0) {
+            int target;
+            if (A[a] > B[b]) {
+                target = A[a];
+                a--;
+            } else {
+                target = B[b];
+                b--;
+            }
+            A[i--] = target;
+        }
+        if (a < 0 && b >= 0) {
+            while (b >= 0) {
+                A[i--] = B[b--];
+            }
+        } else if (a >= 0 && b < 0) {
+            while (a >= 0) {
+                A[i--] = A[a--];
+            }
+        }
     }
 
     /**
@@ -3977,7 +4107,17 @@ public class Round2 {
      * For now, the judge is able to judge based on one instance of gray code sequence. Sorry about that.
      */
     public static List<Integer> grayCode(int n) {
-        return null;
+
+        List<Integer> result = new ArrayList<Integer>();
+        result.add(0);
+        for (int i = 1; i <= n; i++) {
+            int extra = (int) Math.pow(2, i - 1);
+            int size = result.size();
+            for (int j = size - 1; j >= 0; j--) {
+                result.add(result.get(j) + extra);
+            }
+        }
+        return result;
     }
 
     /**
@@ -3998,13 +4138,441 @@ public class Round2 {
      * ]
      */
     public static List<List<Integer>> subsetsWithDup(int[] num) {
+
+        Arrays.sort(num);
+
+        Set<List<Integer>> result = new HashSet<List<Integer>>();
+        List<List<Integer>> indexList = new ArrayList<List<Integer>>();
+        for (int k = 1; k <= num.length; k++) {
+            List<List<Integer>> tempIndexList = new ArrayList<List<Integer>>();
+            for (int i = 0; i < num.length; i++) {
+                if (k == 1) {
+                    List<Integer> index = new ArrayList<Integer>();
+                    index.add(i);
+                    tempIndexList.add(index);
+                } else {
+                    for (int j = 0; j < indexList.size(); j++) {
+                        if (!indexList.get(j).isEmpty() && indexList.get(j).get(0) > i) {
+                            List<Integer> tempIndexes = new ArrayList<Integer>();
+                            tempIndexes.add(i);
+                            tempIndexes.addAll(indexList.get(j));
+                            tempIndexList.add(tempIndexes);
+                        }
+                    }
+                }
+            }
+            indexList = tempIndexList;
+            for (List<Integer> indexes : indexList) {
+                List<Integer> values = new ArrayList<Integer>();
+                for (Integer index : indexes) {
+                    values.add(num[index]);
+                }
+                result.add(values);
+            }
+        }
+        result.add(new ArrayList<Integer>());
+        return new ArrayList<List<Integer>>(result);
+    }
+
+    /**
+     * 91. Decode Ways
+     * A message containing letters from A-Z is being encoded to numbers using the following mapping:
+     * 'A' -> 1
+     * 'B' -> 2
+     * ...
+     * 'Z' -> 26
+     * Given an encoded message containing digits, determine the total number of ways to decode it.
+     * For example,
+     * Given encoded message "12", it could be decoded as "AB" (1 2) or "L" (12).
+     * The number of ways decoding "12" is 2.
+     */
+    public static int numDecodings(String s) {
+
+        if (s.length() == 0) {
+            return 0;
+        }
+        if (s.charAt(0) == '0') {
+            return 0;
+        }
+        int[] d = new int[s.length()];
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+            if (i == 0) {
+                d[i] = 1;
+            } else if (c == '0') {
+                if (s.charAt(i - 1) == '0' || s.charAt(i - 1) > '2') {
+                    return 0;
+                }
+                d[i] = i < 2 ? 1 : d[i - 2];
+            } else if (c > '6') {
+                d[i] = d[i - 1] + ((s.charAt(i - 1) == '1') ? (i < 2 ? 1 : d[i - 2]) : 0);
+            } else if (c > '0' && c <= '6') {
+                d[i] = d[i - 1] + ((s.charAt(i - 1) == '1' || s.charAt(i - 1) == '2') ? (i < 2 ? 1 : d[i - 2]) : 0);
+            } else {
+                d[i] = 0;
+            }
+        }
+        return d[s.length() - 1];
+    }
+
+    /**
+     * 92. Reverse Linked List II
+     * Reverse a linked list from position m to n. Do it in-place and in one-pass.
+     * For example:
+     * Given 1->2->3->4->5->NULL, m = 2 and n = 4,
+     * return 1->4->3->2->5->NULL.
+     * Note:
+     * Given m, n satisfy the following condition:
+     * 1 ≤ m ≤ n ≤ length of list.
+     */
+    public static ListNode reverseBetween(ListNode head, int m, int n) {
         return null;
+    }
+
+    /**
+     * 93. Restore IP Addresses
+     * Given a string containing only digits, restore it by returning all possible valid IP address combinations.
+     * For example:
+     * Given "25525511135",
+     * return ["255.255.11.135", "255.255.111.35"]. (Order does not matter)
+     */
+    public static List<String> restoreIpAddresses(String s) {
+        return null;
+    }
+
+    /**
+     * 94. Binary Tree Inorder Traversal
+     * Given a binary tree, return the inorder traversal of its nodes' values.
+     * For example:
+     * Given binary tree {1,#,2,3},
+     * 1
+     * \
+     * 2
+     * /
+     * 3
+     * return [1,3,2].
+     * Note: Recursive solution is trivial, could you do it iteratively?
+     */
+    public static List<Integer> inorderTraversal(TreeNode root) {
+        return null;
+    }
+
+    /**
+     * 95. Unique Binary Search Trees II
+     * Given n, generate all structurally unique BST's (binary search trees) that store values 1...n.
+     * For example,
+     * Given n = 3, your program should return all 5 unique BST's shown below.
+     * 1         3     3      2      1
+     * \       /     /      / \      \
+     * 3     2     1      1   3      2
+     * /     /       \                 \
+     * 2     1         2                 3
+     */
+    public static List<TreeNode> generateTrees(int n) {
+        return null;
+    }
+
+    /**
+     * 96. Unique Binary Search Trees
+     * Given n, how many structurally unique BST's (binary search trees) that store values 1...n?
+     * For example,
+     * Given n = 3, there are a total of 5 unique BST's.
+     * 1         3     3      2      1
+     * \       /     /      / \      \
+     * 3     2     1      1   3      2
+     * /     /       \                 \
+     * 2     1         2                 3
+     */
+    public static int numTrees(int n) {
+        return 0;
+    }
+
+    /**
+     * 97. Interleaving String
+     * Given s1, s2, s3, find whether s3 is formed by the interleaving of s1 and s2.
+     * For example,
+     * Given:
+     * s1 = "aabcc",
+     * s2 = "dbbca",
+     * When s3 = "aadbbcbcac", return true.
+     * When s3 = "aadbbbaccc", return false.
+     */
+    public static boolean isInterleave(String s1, String s2, String s3) {
+        return false;
+    }
+
+    /**
+     * 98. Validate Binary Search Tree
+     * Given a binary tree, determine if it is a valid binary search tree (BST).
+     * Assume a BST is defined as follows:
+     * The left subtree of a node contains only nodes with keys less than the node's key.
+     * The right subtree of a node contains only nodes with keys greater than the node's key.
+     * Both the left and right subtrees must also be binary search trees.
+     */
+    public static boolean isValidBST(TreeNode root) {
+        return false;
+    }
+
+    /**
+     * 99. Recover Binary Search Tree
+     * Two elements of a binary search tree (BST) are swapped by mistake.
+     * Recover the tree without changing its structure.
+     * Note:
+     * A solution using O(n) space is pretty straight forward. Could you devise a constant space solution?
+     */
+    public static void recoverTree(TreeNode root) {
+
+    }
+
+    /**
+     * 100. Same Tree
+     * Given two binary trees, write a function to check if they are equal or not.
+     * Two binary trees are considered equal if they are structurally identical and the nodes have the same value.
+     */
+    public static boolean isSameTree(TreeNode p, TreeNode q) {
+        return false;
+    }
+
+    /**
+     * 101. Symmetric Tree
+     * Given a binary tree, check whether it is a mirror of itself (ie, symmetric around its center).
+     * For example, this binary tree is symmetric:
+     * 1
+     * / \
+     * 2   2
+     * / \ / \
+     * 3  4 4  3
+     * But the following is not:
+     * 1
+     * / \
+     * 2   2
+     * \   \
+     * 3    3
+     * Note:
+     * Bonus points if you could solve it both recursively and iteratively.
+     */
+    public static boolean isSymmetric(TreeNode root) {
+        return false;
+    }
+
+    /**
+     * 102. Binary Tree Level Order Traversal
+     * Given a binary tree, return the level order traversal of its nodes' values. (ie, from left to right, level by
+     * level).
+     * For example:
+     * Given binary tree {3,9,20,#,#,15,7},
+     * 3
+     * / \
+     * 9  20
+     * /  \
+     * 15   7
+     * return its level order traversal as:
+     * [
+     * [3],
+     * [9,20],
+     * [15,7]
+     * ]
+     */
+    public static List<List<Integer>> levelOrder(TreeNode root) {
+        return null;
+    }
+
+    /**
+     * 103. Binary Tree Zigzag Level Order Traversal
+     * Given a binary tree, return the zigzag level order traversal of its nodes' values. (ie, from left to right, then
+     * right to left for the next level and alternate between).
+     * For example:
+     * Given binary tree {3,9,20,#,#,15,7},
+     * 3
+     * / \
+     * 9  20
+     * /  \
+     * 15   7
+     * return its zigzag level order traversal as:
+     * [
+     * [3],
+     * [20,9],
+     * [15,7]
+     * ]
+     */
+    public static List<List<Integer>> zigzagLevelOrder(TreeNode root) {
+        return null;
+    }
+
+    /**
+     * 104. Maximum Depth of Binary Tree
+     * Given a binary tree, find its maximum depth.
+     * The maximum depth is the number of nodes along the longest path from the root node down to the farthest leaf
+     * node.
+     */
+    public static int maxDepth(TreeNode root) {
+        return 0;
+    }
+
+    /**
+     * 105. Construct Binary Tree from Preorder and Inorder Traversal
+     * Given preorder and inorder traversal of a tree, construct the binary tree.
+     * Note:
+     * You may assume that duplicates do not exist in the tree.
+     */
+    public static TreeNode buildTree1(int[] preorder, int[] inorder) {
+        return null;
+    }
+
+    /**
+     * 106. Construct Binary Tree from Inorder and Postorder
+     * Given inorder and postorder traversal of a tree, construct the binary tree.
+     * Note:
+     * You may assume that duplicates do not exist in the tree.
+     */
+    public static TreeNode buildTree2(int[] inorder, int[] postorder) {
+        return null;
+    }
+
+    /**
+     * 107. Binary Tree Level Order Traversal II
+     * Given a binary tree, return the bottom-up level order traversal of its nodes' values. (ie, from left to right,
+     * level by level from leaf to root).
+     * For example:
+     * Given binary tree {3,9,20,#,#,15,7},
+     * 3
+     * / \
+     * 9  20
+     * /  \
+     * 15   7
+     * return its bottom-up level order traversal as:
+     * [
+     * [15,7],
+     * [9,20],
+     * [3]
+     * ]
+     */
+    public static List<List<Integer>> levelOrderBottom(TreeNode root) {
+        return null;
+    }
+
+    /**
+     * 108. Convert Sorted Array to Binary Search Tree
+     * Given an array where elements are sorted in ascending order, convert it to a height balanced BST.
+     */
+    public static TreeNode sortedArrayToBST(int[] num) {
+        return null;
+    }
+
+    /**
+     * 109. Convert Sorted List to Binary Search Tree
+     * Given a singly linked list where elements are sorted in ascending order, convert it to a height balanced BST.
+     */
+    public static TreeNode sortedListToBST(ListNode head) {
+        return null;
+    }
+
+    /**
+     * 110. Balanced Binary Tree
+     * Given a binary tree, determine if it is height-balanced.
+     * For this problem, a height-balanced binary tree is defined as a binary tree in which the depth of the two
+     * subtrees of every node never differ by more than 1.
+     */
+    public static boolean isBalanced(TreeNode root) {
+        return false;
+    }
+
+    /**
+     * 111. Minimum Depth of Binary Tree
+     * Given a binary tree, find its minimum depth.
+     * The minimum depth is the number of nodes along the shortest path from the root node down to the nearest leaf
+     * node.
+     */
+    public static int minDepth(TreeNode root) {
+        return 0;
+    }
+
+    /**
+     * 112. Path Sum
+     * Given a binary tree and a sum, determine if the tree has a root-to-leaf path such that adding up all the values
+     * along the path equals the given sum.
+     * For example:
+     * Given the below binary tree and sum = 22,
+     * 5
+     * / \
+     * 4   8
+     * /   / \
+     * 11  13  4
+     * /  \      \
+     * 7    2      1
+     * return true, as there exist a root-to-leaf path 5->4->11->2 which sum is 22.
+     */
+    public static boolean hasPathSum(TreeNode root, int sum) {
+        return false;
+    }
+
+    /**
+     * 113. Path Sum II
+     * Given a binary tree and a sum, find all root-to-leaf paths where each path's sum equals the given sum.
+     * For example:
+     * Given the below binary tree and sum = 22,
+     * 5
+     * / \
+     * 4   8
+     * /   / \
+     * 11  13  4
+     * /  \    / \
+     * 7    2  5   1
+     * return
+     * [
+     * [5,4,11,2],
+     * [5,8,4,5]
+     * ]
+     */
+    public static List<List<Integer>> pathSum(TreeNode root, int sum) {
+        return null;
+    }
+
+    /**
+     * 114. Flatten Binary Tree to Linked List
+     * Given a binary tree, flatten it to a linked list in-place.
+     * For example,
+     * Given
+     * 1
+     * / \
+     * 2   5
+     * / \   \
+     * 3   4   6
+     * The flattened tree should look like:
+     * 1
+     * \
+     * 2
+     * \
+     * 3
+     * \
+     * 4
+     * \
+     * 5
+     * \
+     * 6
+     */
+    public static void flatten(TreeNode root) {
+
+    }
+
+    /**
+     * 115. Distinct Subsequences
+     * Given a string S and a string T, count the number of distinct subsequences of T in S.
+     * A subsequence of a string is a new string which is formed from the original string by deleting some (can be
+     * none)
+     * of the characters without disturbing the relative positions of the remaining characters. (ie, "ACE" is a
+     * subsequence of "ABCDE" while "AEC" is not).
+     * Here is an example:
+     * S = "rabbbit", T = "rabbit"
+     * Return 3.
+     */
+    public static int numDistinct(String S, String T) {
+        return 0;
     }
 
     public static void main(String[] args) {
 
-        PRINT(largestRectangleArea(new int[]{2, 1, 2}));
-        PRINT(largestRectangleArea(new int[]{2, 1, 5, 6, 2, 3}));
+        PRINT(numDecodings("0"));
     }
 
     public static ListNode createListNode(int[] num) {
