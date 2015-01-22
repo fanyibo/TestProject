@@ -4048,8 +4048,8 @@ public class Round2 {
             if (isScramble(s1.substring(0, i), s2.substring(0, i)) && isScramble(s1.substring(i), s2.substring(i))) {
                 return true;
             }
-            if (isScramble(s1.substring(0, i), s2.substring(size1 - i))
-                    && isScramble(s1.substring(i), s2.substring(0, size1 - i))) {
+            if (isScramble(s1.substring(0, i), s2.substring(size1 - i)) && isScramble(s1.substring(i),
+                                                                                      s2.substring(0, size1 - i))) {
                 return true;
             }
         }
@@ -4226,7 +4226,48 @@ public class Round2 {
      * 1 ≤ m ≤ n ≤ length of list.
      */
     public static ListNode reverseBetween(ListNode head, int m, int n) {
-        return null;
+
+        if (m >= n || head == null) {
+            return head;
+        }
+        ListNode startFather = null;
+        ListNode start = null;
+        ListNode end = null;
+        ListNode endChild = null;
+        int count = 1;
+        ListNode temp = head;
+        ListNode tempFather = null;
+        while (temp != null) {
+            if (count == m) {
+                start = temp;
+                startFather = tempFather;
+            } else if (count == n) {
+                end = temp;
+                endChild = end.next;
+                end.next = null;
+                break;
+            }
+            count++;
+            tempFather = temp;
+            temp = temp.next;
+        }
+        ListNode temp1 = start;
+        ListNode temp2 = temp1.next;
+        temp1.next = null;
+        while (temp2 != null) {
+            temp = temp2.next;
+            temp2.next = temp1;
+            temp1 = temp2;
+            temp2 = temp;
+        }
+        ListNode newHead = head;
+        if (startFather == null) {
+            newHead = end;
+        } else {
+            startFather.next = end;
+        }
+        start.next = endChild;
+        return newHead;
     }
 
     /**
@@ -4237,7 +4278,65 @@ public class Round2 {
      * return ["255.255.11.135", "255.255.111.35"]. (Order does not matter)
      */
     public static List<String> restoreIpAddresses(String s) {
-        return null;
+
+        List<String> result = new ArrayList<String>();
+        if (s.length() < 4 || s.length() > 12) {
+            return result;
+        }
+        List<List<String>> lists = _restoreIpAddresses(s, 4);
+        for (List<String> list : lists) {
+            StringBuilder builder = new StringBuilder();
+            for (int i = 0; i < list.size(); i++) {
+                builder.append(list.get(i));
+                if (i < list.size() - 1) {
+                    builder.append(".");
+                }
+            }
+            result.add(builder.toString());
+        }
+        return result;
+    }
+
+    public static List<List<String>> _restoreIpAddresses(String s, int section) {
+
+        List<List<String>> result = new ArrayList<List<String>>();
+        if (section == 0 || s.length() < section) {
+            return result;
+        }
+        if (section == 1) {
+            if (s.equals("0") || (s.charAt(0) != '0' && Integer.parseInt(s) <= 255)) {
+                List<String> list = new ArrayList<String>();
+                list.add(s);
+                result.add(list);
+            }
+            return result;
+        }
+
+        if (s.charAt(0) == '0') {
+            List<List<String>> rest = _restoreIpAddresses(s.substring(1), section - 1);
+            for (List<String> aRest : rest) {
+                if (aRest.size() != section - 1) {
+                    continue;
+                }
+                aRest.add(0, "0");
+                result.add(aRest);
+            }
+        } else {
+            for (int i = 0; i < Math.min(s.length(), 3); i++) {
+                String head = s.substring(0, i + 1);
+                if (head.equals("0") || (head.charAt(0) != '0' && Integer.parseInt(head) <= 255)) {
+                    List<List<String>> rest = _restoreIpAddresses(s.substring(i + 1), section - 1);
+                    for (List<String> aRest : rest) {
+                        if (aRest.size() != section - 1) {
+                            continue;
+                        }
+                        aRest.add(0, head);
+                        result.add(aRest);
+                    }
+                }
+            }
+        }
+        return result;
     }
 
     /**
@@ -4254,7 +4353,31 @@ public class Round2 {
      * Note: Recursive solution is trivial, could you do it iteratively?
      */
     public static List<Integer> inorderTraversal(TreeNode root) {
-        return null;
+
+        List<Integer> inorder = new ArrayList<Integer>();
+        Stack<TreeNode> stack = new Stack<TreeNode>();
+        TreeNode temp = root;
+        while (!stack.isEmpty() || temp != null) {
+            if (temp != null) {
+                stack.push(temp);
+                temp = temp.left;
+            } else {
+                temp = stack.pop();
+                inorder.add(temp.val);
+                temp = temp.right;
+            }
+        }
+        return inorder;
+    }
+
+    public static void inorderTraversalDFS(TreeNode node, List<Integer> inorder) {
+
+        if (node == null) {
+            return;
+        }
+        inorderTraversalDFS(node.left, inorder);
+        inorder.add(node.val);
+        inorderTraversalDFS(node.right, inorder);
     }
 
     /**
@@ -4268,9 +4391,64 @@ public class Round2 {
      * /     /       \                 \
      * 2     1         2                 3
      */
+
+
     public static List<TreeNode> generateTrees(int n) {
-        return null;
+
+        if (n < 1) {
+            List<TreeNode> result = new ArrayList<TreeNode>();
+            result.add(null);
+            return result;
+        }
+        return _generateTrees(1, n);
     }
+
+    public static List<TreeNode> _generateTrees(int start, int end) {
+
+        List<TreeNode> result = new ArrayList<TreeNode>();
+        if (start > end) {
+            return result;
+        } else if (start == end) {
+            result.add(new TreeNode(start));
+            return result;
+        } else if (start + 1 == end) {
+            TreeNode head1 = new TreeNode(start);
+            head1.right = new TreeNode(end);
+            TreeNode head2 = new TreeNode(end);
+            head2.left = new TreeNode(start);
+            result.add(head1);
+            result.add(head2);
+            return result;
+        }
+        for (int i = start; i <= end; i++) {
+            List<TreeNode> leftHeads = _generateTrees(start, i - 1);
+            List<TreeNode> rightHeads = _generateTrees(i + 1, end);
+            if (leftHeads.size() == 0) {
+                for (TreeNode right : rightHeads) {
+                    TreeNode head = new TreeNode(i);
+                    head.right = right;
+                    result.add(head);
+                }
+            } else if (rightHeads.size() == 0) {
+                for (TreeNode left : leftHeads) {
+                    TreeNode head = new TreeNode(i);
+                    head.left = left;
+                    result.add(head);
+                }
+            } else {
+                for (TreeNode left : leftHeads) {
+                    for (TreeNode right : rightHeads) {
+                        TreeNode head = new TreeNode(i);
+                        head.left = left;
+                        head.right = right;
+                        result.add(head);
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
 
     /**
      * 96. Unique Binary Search Trees
@@ -4284,7 +4462,15 @@ public class Round2 {
      * 2     1         2                 3
      */
     public static int numTrees(int n) {
-        return 0;
+
+        int[] d = new int[n + 1];
+        d[0] = 1;
+        for (int i = 1; i <= n; i++) {
+            for (int j = 1; j <= i; j++) {
+                d[i] += (d[j - 1] * d[i - j]);
+            }
+        }
+        return d[n];
     }
 
     /**
@@ -4298,7 +4484,26 @@ public class Round2 {
      * When s3 = "aadbbbaccc", return false.
      */
     public static boolean isInterleave(String s1, String s2, String s3) {
-        return false;
+
+        int size1 = s1.length();
+        int size2 = s2.length();
+        if (size1 + size2 != s3.length()) {
+            return false;
+        }
+        boolean[][] d = new boolean[size1 + 1][size2 + 1];
+        for (int i = 0; i <= size2; i++) {
+            d[0][i] = i == 0 || (d[0][i - 1] && s2.charAt(i - 1) == s3.charAt(i - 1));
+        }
+        for (int i = 0; i <= size1; i++) {
+            d[i][0] = i == 0 || (d[i - 1][0] && s1.charAt(i - 1) == s3.charAt(i - 1));
+        }
+        for (int i = 1; i <= size1; i++) {
+            for (int j = 1; j <= size2; j++) {
+                d[i][j] = (d[i - 1][j] && s1.charAt(i - 1) == s3.charAt(i + j - 1)) || (d[i][j - 1] && s2
+                        .charAt(j - 1) == s3.charAt(i + j - 1));
+            }
+        }
+        return d[size1][size2];
     }
 
     /**
@@ -4310,8 +4515,27 @@ public class Round2 {
      * Both the left and right subtrees must also be binary search trees.
      */
     public static boolean isValidBST(TreeNode root) {
-        return false;
+
+        List<Integer> inorder = new ArrayList<Integer>();
+        _isValidBST(root, inorder);
+        for (int i = 1; i < inorder.size(); i++) {
+            if (inorder.get(i) <= inorder.get(i - 1)) {
+                return false;
+            }
+        }
+        return true;
     }
+
+    public static void _isValidBST(TreeNode root, List<Integer> inorder) {
+
+        if (root == null) {
+            return;
+        }
+        _isValidBST(root.left, inorder);
+        inorder.add(root.val);
+        _isValidBST(root.right, inorder);
+    }
+
 
     /**
      * 99. Recover Binary Search Tree
@@ -4320,9 +4544,95 @@ public class Round2 {
      * Note:
      * A solution using O(n) space is pretty straight forward. Could you devise a constant space solution?
      */
+
+
     public static void recoverTree(TreeNode root) {
 
+        if (root == null) {
+            return;
+        }
+
+        TreeNode first = null;
+        TreeNode second = null;
+        TreeNode node = root;
+        TreeNode pre = null;
+        TreeNode parent = null;
+        while (node != null) {
+            if (node.left == null) {
+                if (parent != null && parent.val > node.val) {
+                    if (first == null) {
+                        first = parent;
+                    }
+                    second = node;
+                }
+                parent = node;
+                node = node.right;
+            } else {
+                pre = node.left;
+                while (pre.right != null && pre.right != node) {
+                    pre = pre.right;
+                }
+                if (pre.right == null) {
+                    pre.right = node;
+                    node = node.left;
+                } else {
+                    if (parent != null && parent.val > node.val) {
+                        if (first == null) {
+                            first = parent;
+                        }
+                        second = node;
+                    }
+                    parent = node;
+                    pre.right = null;
+                    node = node.right;
+                }
+            }
+        }
+        if (first != null && second != null) {
+            int temp = first.val;
+            first.val = second.val;
+            second.val = temp;
+        }
     }
+
+    public static List<Integer> ConstantMemoryInorderTraversal(TreeNode root) {
+
+        List<Integer> result = new ArrayList<Integer>();
+        TreeNode node = root;
+        TreeNode pre = null;
+        while (node != null) {
+            if (node.left == null) {
+                result.add(node.val);
+                node = node.right;
+            } else {
+                pre = node.left;
+                while (pre.right != null && pre.right != node) {
+                    pre = pre.right;
+                }
+                if (pre.right == null) {
+                    pre.right = node;
+                    node = node.left;
+                } else {
+                    pre.right = null;
+                    result.add(pre.val);
+                    node = node.right;
+                }
+            }
+        }
+        return result;
+    }
+
+    //    public static void _recoverTree(TreeNode root, List<Integer> inorder, HashMap<Integer, TreeNode> map) {
+    //
+    //        if (root == null) {
+    //            return;
+    //        }
+    //        _recoverTree(root.left, inorder, map);
+    //        inorder.add(root.val);
+    //        map.put(root.val, root);
+    //        _recoverTree(root.right, inorder, map);
+    //    }
+
 
     /**
      * 100. Same Tree
@@ -4330,8 +4640,15 @@ public class Round2 {
      * Two binary trees are considered equal if they are structurally identical and the nodes have the same value.
      */
     public static boolean isSameTree(TreeNode p, TreeNode q) {
-        return false;
+        if (p == null && q == null) {
+            return true;
+        }
+        if ((p == null) || (q == null) || p.val != q.val) {
+            return false;
+        }
+        return isSameTree(p.left, q.left) && isSameTree(p.right, q.right);
     }
+
 
     /**
      * 101. Symmetric Tree
@@ -4351,9 +4668,25 @@ public class Round2 {
      * Note:
      * Bonus points if you could solve it both recursively and iteratively.
      */
+
+
     public static boolean isSymmetric(TreeNode root) {
-        return false;
+        if (root == null) {
+            return true;
+        }
+        return _isSymmetric(root.left, root.right);
     }
+
+    public static boolean _isSymmetric(TreeNode node1, TreeNode node2) {
+        if (node1 == null && node2 == null) {
+            return true;
+        }
+        if ((node1 == null) || (node2 == null) || node1.val != node2.val) {
+            return false;
+        }
+        return _isSymmetric(node1.left, node2.right) && _isSymmetric(node1.right, node2.left);
+    }
+
 
     /**
      * 102. Binary Tree Level Order Traversal
@@ -4374,8 +4707,55 @@ public class Round2 {
      * ]
      */
     public static List<List<Integer>> levelOrder(TreeNode root) {
-        return null;
+
+        List<List<Integer>> result = new ArrayList<List<Integer>>();
+        if (root == null) {
+            return result;
+        }
+        List<Integer> tempList = new ArrayList<Integer>();
+        List<TreeNode> list = new ArrayList<TreeNode>();
+        list.add(root);
+        TreeNode newMark = root;
+        boolean markNew = false;
+        while (!list.isEmpty()) {
+            TreeNode current = list.remove(0);
+            if (current.left != null) {
+                list.add(current.left);
+            }
+            if (current.right != null) {
+                list.add(current.right);
+            }
+
+            if (current == newMark) {
+                if (current == root) {
+                    tempList.add(current.val);
+                } else {
+                    result.add(tempList);
+                    tempList = new ArrayList<Integer>();
+                }
+                markNew = true;
+            }
+
+            if (current != root) {
+                tempList.add(current.val);
+            }
+
+            if (markNew) {
+                if (current.left != null) {
+                    newMark = current.left;
+                    markNew = false;
+                } else if (current.right != null) {
+                    newMark = current.right;
+                    markNew = false;
+                }
+            }
+        }
+        if (!tempList.isEmpty()) {
+            result.add(tempList);
+        }
+        return result;
     }
+
 
     /**
      * 103. Binary Tree Zigzag Level Order Traversal
@@ -4396,7 +4776,58 @@ public class Round2 {
      * ]
      */
     public static List<List<Integer>> zigzagLevelOrder(TreeNode root) {
-        return null;
+        List<List<Integer>> result = new ArrayList<List<Integer>>();
+        if (root == null) {
+            return result;
+        }
+        List<Integer> tempList = new ArrayList<Integer>();
+        List<TreeNode> list = new ArrayList<TreeNode>();
+        list.add(root);
+        TreeNode newMark = root;
+        boolean markNew = false;
+        int row = 0;
+        while (!list.isEmpty()) {
+            TreeNode current = list.remove(0);
+            if (current.left != null) {
+                list.add(current.left);
+            }
+            if (current.right != null) {
+                list.add(current.right);
+            }
+
+            if (current == newMark) {
+                row++;
+                if (current == root) {
+                    tempList.add(current.val);
+                } else {
+                    result.add(tempList);
+                    tempList = new ArrayList<Integer>();
+                }
+                markNew = true;
+            }
+
+            if (current != root) {
+                if (row % 2 == 0) {
+                    tempList.add(0, current.val);
+                } else {
+                    tempList.add(current.val);
+                }
+            }
+
+            if (markNew) {
+                if (current.left != null) {
+                    newMark = current.left;
+                    markNew = false;
+                } else if (current.right != null) {
+                    newMark = current.right;
+                    markNew = false;
+                }
+            }
+        }
+        if (!tempList.isEmpty()) {
+            result.add(tempList);
+        }
+        return result;
     }
 
     /**
@@ -4406,7 +4837,16 @@ public class Round2 {
      * node.
      */
     public static int maxDepth(TreeNode root) {
-        return 0;
+
+        return _maxDepth(root, 0);
+    }
+
+    public static int _maxDepth(TreeNode root, Integer level) {
+
+        if (root == null) {
+            return level;
+        }
+        return Math.max(_maxDepth(root.left, level + 1), _maxDepth(root.right, level + 1));
     }
 
     /**
@@ -4572,7 +5012,33 @@ public class Round2 {
 
     public static void main(String[] args) {
 
-        PRINT(numDecodings("0"));
+        TreeNode n1 = new TreeNode(1);
+        TreeNode n2 = new TreeNode(2);
+        TreeNode n3 = new TreeNode(3);
+        TreeNode n4 = new TreeNode(4);
+        TreeNode n5 = new TreeNode(5);
+        TreeNode n6 = new TreeNode(6);
+        n1.left = n2;
+        n1.right = n3;
+
+        n2.left = n4;
+        n2.right = n5;
+
+        n3.right = n6;
+        n6.left = new TreeNode(7);
+
+
+        /**
+         *           1
+         *         2    3
+         *       4  5     6
+         *
+         *
+         *
+         */
+
+        PRINT(maxDepth(n1));
+
     }
 
     public static ListNode createListNode(int[] num) {
@@ -4604,6 +5070,28 @@ public class Round2 {
             System.out.println("NULL");
         } else {
             System.out.println(obj.toString());
+        }
+    }
+
+    public static void PRINT(TreeNode node) {
+        if (node == null) {
+            System.out.println("NULL");
+        } else {
+            List<String> list = new ArrayList<String>();
+            TreeNode temp = node;
+            List<TreeNode> queue = new ArrayList<TreeNode>();
+            queue.add(temp);
+            while (!queue.isEmpty()) {
+                temp = queue.remove(0);
+                if (temp != null) {
+                    list.add(Integer.toString(temp.val));
+                    queue.add(temp.left);
+                    queue.add(temp.right);
+                } else {
+                    list.add("#");
+                }
+            }
+            System.out.println(list.toString());
         }
     }
 
