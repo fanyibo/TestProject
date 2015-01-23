@@ -4856,7 +4856,35 @@ public class Round2 {
      * You may assume that duplicates do not exist in the tree.
      */
     public static TreeNode buildTree1(int[] preorder, int[] inorder) {
-        return null;
+
+        if (preorder.length != inorder.length || preorder.length == 0) {
+            return null;
+        }
+        return _buildTree1(preorder, 0, preorder.length - 1, inorder, 0, inorder.length - 1);
+    }
+
+    public static TreeNode _buildTree1(int[] preorder, int preStart, int preEnd, int[] inorder, int inStart,
+                                       int inEnd) {
+
+        if (preStart > preEnd) {
+            return null;
+        }
+        int size = preEnd - preStart + 1;
+        if (size == 1) {
+            return new TreeNode(preorder[preStart]);
+        }
+        TreeNode head = new TreeNode(preorder[preStart]);
+        int headIndex = inStart;
+        for (int i = inStart; i <= inEnd; i++) {
+            if (inorder[i] == preorder[preStart]) {
+                headIndex = i;
+                break;
+            }
+        }
+        head.left = _buildTree1(preorder, preStart + 1, preStart + headIndex - inStart, inorder, inStart,
+                                headIndex - 1);
+        head.right = _buildTree1(preorder, preStart + headIndex - inStart + 1, preEnd, inorder, headIndex + 1, inEnd);
+        return head;
     }
 
     /**
@@ -4866,7 +4894,34 @@ public class Round2 {
      * You may assume that duplicates do not exist in the tree.
      */
     public static TreeNode buildTree2(int[] inorder, int[] postorder) {
-        return null;
+        if (inorder.length != postorder.length || postorder.length == 0) {
+            return null;
+        }
+        return _buildTree2(inorder, 0, inorder.length - 1, postorder, 0, postorder.length - 1);
+    }
+
+    public static TreeNode _buildTree2(int[] inorder, int inStart, int inEnd, int[] postorder, int postStart,
+                                       int postEnd) {
+        if (postStart > postEnd) {
+            return null;
+        }
+        int size = postEnd - postStart + 1;
+        if (size == 1) {
+            return new TreeNode(postorder[postEnd]);
+        }
+        TreeNode head = new TreeNode(postorder[postEnd]);
+        int headIndex = inStart;
+        for (int i = inStart; i <= inEnd; i++) {
+            if (inorder[i] == postorder[postEnd]) {
+                headIndex = i;
+                break;
+            }
+        }
+        head.left = _buildTree2(inorder, inStart, headIndex - 1, postorder, postStart,
+                                postStart + headIndex - inStart - 1);
+        head.right = _buildTree2(inorder, headIndex + 1, inEnd, postorder, postStart + headIndex - inStart,
+                                 postEnd - 1);
+        return head;
     }
 
     /**
@@ -4888,7 +4943,52 @@ public class Round2 {
      * ]
      */
     public static List<List<Integer>> levelOrderBottom(TreeNode root) {
-        return null;
+        List<List<Integer>> result = new ArrayList<List<Integer>>();
+        if (root == null) {
+            return result;
+        }
+        List<Integer> tempList = new ArrayList<Integer>();
+        List<TreeNode> list = new ArrayList<TreeNode>();
+        list.add(root);
+        TreeNode newMark = root;
+        boolean markNew = false;
+        while (!list.isEmpty()) {
+            TreeNode current = list.remove(0);
+            if (current.left != null) {
+                list.add(current.left);
+            }
+            if (current.right != null) {
+                list.add(current.right);
+            }
+
+            if (current == newMark) {
+                if (current == root) {
+                    tempList.add(current.val);
+                } else {
+                    result.add(0, tempList);
+                    tempList = new ArrayList<Integer>();
+                }
+                markNew = true;
+            }
+
+            if (current != root) {
+                tempList.add(current.val);
+            }
+
+            if (markNew) {
+                if (current.left != null) {
+                    newMark = current.left;
+                    markNew = false;
+                } else if (current.right != null) {
+                    newMark = current.right;
+                    markNew = false;
+                }
+            }
+        }
+        if (!tempList.isEmpty()) {
+            result.add(0, tempList);
+        }
+        return result;
     }
 
     /**
@@ -5010,6 +5110,183 @@ public class Round2 {
         return 0;
     }
 
+    /**
+     * 116. Populating Next Right Pointers in Each Node
+     * Submissions Question Solution
+     * Given a binary tree
+     * struct TreeLinkNode {
+     * TreeLinkNode *left;
+     * TreeLinkNode *right;
+     * TreeLinkNode *next;
+     * }
+     * Populate each next pointer to point to its next right node. If there is no next right node, the next pointer
+     * should be set to NULL.
+     * Initially, all next pointers are set to NULL.
+     * Note:
+     * You may only use constant extra space.
+     * You may assume that it is a perfect binary tree (ie, all leaves are at the same level, and every parent has two
+     * children).
+     * For example,
+     * Given the following perfect binary tree,
+     * 1
+     * /  \
+     * 2    3
+     * / \  / \
+     * 4  5  6  7
+     * After calling your function, the tree should look like:
+     * 1 -> NULL
+     * /  \
+     * 2 -> 3 -> NULL
+     * / \  / \
+     * 4->5->6->7 -> NULL
+     */
+    public static class TreeLinkNode {
+        int          val;
+        TreeLinkNode left, right, next;
+
+        TreeLinkNode(int x) {
+            val = x;
+        }
+    }
+
+    public static void connect(TreeLinkNode root) {
+
+    }
+
+    /**
+     * 117. Populating Next Right Pointers in Each Node II
+     * Follow up for problem "Populating Next Right Pointers in Each Node".
+     * What if the given tree could be any binary tree? Would your previous solution still work?
+     * Note:
+     * You may only use constant extra space.
+     * For example,
+     * Given the following binary tree,
+     * 1
+     * /  \
+     * 2    3
+     * / \    \
+     * 4   5    7
+     * After calling your function, the tree should look like:
+     * 1 -> NULL
+     * /  \
+     * 2 -> 3 -> NULL
+     * / \    \
+     * 4-> 5 -> 7 -> NULL
+     */
+    public void connect2(TreeLinkNode root) {
+
+    }
+
+    /**
+     * 118. Pascal's Triangle
+     * Given numRows, generate the first numRows of Pascal's triangle.
+     * For example, given numRows = 5,
+     * Return
+     * [
+     * [1],
+     * [1,1],
+     * [1,2,1],
+     * [1,3,3,1],
+     * [1,4,6,4,1]
+     * ]
+     */
+    public static List<List<Integer>> generate(int numRows) {
+        return null;
+    }
+
+    /**
+     * 119. Pascal's Triangle II
+     * Given an index k, return the kth row of the Pascal's triangle.
+     * For example, given k = 3,
+     * Return [1,3,3,1].
+     * Note:
+     * Could you optimize your algorithm to use only O(k) extra space?
+     */
+    public static List<Integer> getRow(int rowIndex) {
+        return null;
+    }
+
+    /**
+     * 120. Triangle
+     * Given a triangle, find the minimum path sum from top to bottom. Each step you may move to adjacent numbers on the
+     * row below.
+     * For example, given the following triangle
+     * [
+     * [2],
+     * [3,4],
+     * [6,5,7],
+     * [4,1,8,3]
+     * ]
+     * The minimum path sum from top to bottom is 11 (i.e., 2 + 3 + 5 + 1 = 11).
+     * Note:
+     * Bonus point if you are able to do this using only O(n) extra space, where n is the total number of rows in the
+     * triangle.
+     */
+    public static int minimumTotal(List<List<Integer>> triangle) {
+        return 0;
+    }
+
+    /**
+     * 121. Best Time to Buy and Sell Stock
+     * Say you have an array for which the ith element is the price of a given stock on day i.
+     * If you were only permitted to complete at most one transaction (ie, buy one and sell one share of the stock),
+     * design an algorithm to find the maximum profit.
+     */
+    public static int maxProfit1(int[] prices) {
+        return 0;
+    }
+
+    /**
+     * 122. Best Time to Buy and Sell Stock II
+     * Say you have an array for which the ith element is the price of a given stock on day i.
+     * Design an algorithm to find the maximum profit. You may complete as many transactions as you like (ie, buy one
+     * and sell one share of the stock multiple times). However, you may not engage in multiple transactions at the same
+     * time (ie, you must sell the stock before you buy again).
+     */
+    public static int maxProfit2(int[] prices) {
+        return 0;
+    }
+
+    /**
+     * 123. Best Time to Buy and Sell Stock III
+     * Say you have an array for which the ith element is the price of a given stock on day i.
+     * Design an algorithm to find the maximum profit. You may complete at most two transactions.
+     * Note:
+     * You may not engage in multiple transactions at the same time (ie, you must sell the stock before you buy again).
+     */
+    public static int maxProfit3(int[] prices) {
+        return 0;
+    }
+
+    /**
+     * 124. Binary Tree Maximum Path Sum
+     * Given a binary tree, find the maximum path sum.
+     * The path may start and end at any node in the tree.
+     * For example:
+     * Given the below binary tree,
+     * 1
+     * / \
+     * 2   3
+     * Return 6.
+     */
+    public static int maxPathSum(TreeNode root) {
+        return 0;
+    }
+
+    /**
+     * 125. Valid Palindrome
+     * Given a string, determine if it is a palindrome, considering only alphanumeric characters and ignoring cases.
+     * For example,
+     * "A man, a plan, a canal: Panama" is a palindrome.
+     * "race a car" is not a palindrome.
+     * Note:
+     * Have you consider that the string might be empty? This is a good question to ask during an interview.
+     * For the purpose of this problem, we define empty string as valid palindrome.
+     */
+    private static boolean isValidChar(char c) {
+        return false;
+    }
+
     public static void main(String[] args) {
 
         TreeNode n1 = new TreeNode(1);
@@ -5036,8 +5313,11 @@ public class Round2 {
          *
          *
          */
+        PRINT(buildTree1(new int[]{1, 2, 3}, new int[]{3, 2, 1}));
+        PRINT(buildTree2(new int[]{3, 2, 1}, new int[]{3, 2, 1}));
 
-        PRINT(maxDepth(n1));
+        PRINT(buildTree1(new int[]{1, 2, 4, 5, 7, 3, 6}, new int[]{4, 2, 7, 5, 1, 6, 3}));
+        PRINT(buildTree2(new int[]{4, 2, 7, 5, 1, 6, 3}, new int[]{4, 7, 5, 2, 6, 3, 1}));
 
     }
 
