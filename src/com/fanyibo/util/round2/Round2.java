@@ -4996,7 +4996,31 @@ public class Round2 {
      * Given an array where elements are sorted in ascending order, convert it to a height balanced BST.
      */
     public static TreeNode sortedArrayToBST(int[] num) {
-        return null;
+        int size = num.length;
+        if (size == 0) {
+            return null;
+        } else if (size == 1) {
+            return new TreeNode(num[0]);
+        }
+        return _sortedArrayToBST(num, 0, size - 1);
+    }
+
+    public static TreeNode _sortedArrayToBST(int[] num, int start, int end) {
+
+        if (start > end) {
+            return null;
+        } else if (start == end) {
+            return new TreeNode(num[start]);
+        } else if (start + 1 == end) {
+            TreeNode head = new TreeNode(num[end]);
+            head.left = new TreeNode(num[start]);
+            return head;
+        }
+        int mid = (start + end) / 2;
+        TreeNode head = new TreeNode(num[mid]);
+        head.left = _sortedArrayToBST(num, start, mid - 1);
+        head.right = _sortedArrayToBST(num, mid + 1, end);
+        return head;
     }
 
     /**
@@ -5004,7 +5028,48 @@ public class Round2 {
      * Given a singly linked list where elements are sorted in ascending order, convert it to a height balanced BST.
      */
     public static TreeNode sortedListToBST(ListNode head) {
-        return null;
+
+        if (head == null) {
+            return null;
+        }
+        int size = 0;
+        ListNode temp = head;
+        while (temp != null) {
+            size++;
+            temp = temp.next;
+        }
+        if (size == 1) {
+            return new TreeNode(head.val);
+        }
+        return _sortedListToBST(head, size);
+    }
+
+    public static TreeNode _sortedListToBST(ListNode start, int size) {
+
+        if (start == null || size == 0) {
+            return null;
+        }
+        if (size == 1) {
+            return new TreeNode(start.val);
+        } else if (size == 2) {
+            TreeNode head = new TreeNode(start.next.val);
+            head.left = new TreeNode(start.val);
+            return head;
+        }
+        int mid = (size + 1) / 2;
+        ListNode root = start;
+        int count = 0;
+        while (root != null) {
+            count++;
+            if (count == mid) {
+                break;
+            }
+            root = root.next;
+        }
+        TreeNode head = new TreeNode(root.val);
+        head.left = _sortedListToBST(start, mid - 1);
+        head.right = _sortedListToBST(root.next, size - mid);
+        return head;
     }
 
     /**
@@ -5014,7 +5079,30 @@ public class Round2 {
      * subtrees of every node never differ by more than 1.
      */
     public static boolean isBalanced(TreeNode root) {
-        return false;
+        if (root == null) {
+            return true;
+        }
+        int left = maxDepth1(root.left);
+        int right = maxDepth1(root.right);
+        if (Math.abs(left - right) > 1) {
+            return false;
+        }
+        return isBalanced(root.left) && isBalanced(root.right);
+    }
+
+    public static int maxDepth1(TreeNode root) {
+
+        if (root == null) {
+            return 0;
+        } else if (root.left == null && root.right == null) {
+            return 1;
+        } else if (root.left == null && root.right != null) {
+            return 1 + maxDepth1(root.right);
+        } else if (root.left != null && root.right == null) {
+            return 1 + maxDepth1(root.left);
+        } else {
+            return 1 + Math.max(maxDepth1(root.left), maxDepth1(root.right));
+        }
     }
 
     /**
@@ -5024,7 +5112,18 @@ public class Round2 {
      * node.
      */
     public static int minDepth(TreeNode root) {
-        return 0;
+
+        if (root == null) {
+            return 0;
+        } else if (root.left == null && root.right == null) {
+            return 1;
+        } else if (root.left == null && root.right != null) {
+            return 1 + minDepth(root.right);
+        } else if (root.left != null && root.right == null) {
+            return 1 + minDepth(root.left);
+        } else {
+            return 1 + Math.min(minDepth(root.left), minDepth(root.right));
+        }
     }
 
     /**
@@ -5309,15 +5408,10 @@ public class Round2 {
          *           1
          *         2    3
          *       4  5     6
-         *
+         *               7
          *
          *
          */
-        PRINT(buildTree1(new int[]{1, 2, 3}, new int[]{3, 2, 1}));
-        PRINT(buildTree2(new int[]{3, 2, 1}, new int[]{3, 2, 1}));
-
-        PRINT(buildTree1(new int[]{1, 2, 4, 5, 7, 3, 6}, new int[]{4, 2, 7, 5, 1, 6, 3}));
-        PRINT(buildTree2(new int[]{4, 2, 7, 5, 1, 6, 3}, new int[]{4, 7, 5, 2, 6, 3, 1}));
 
     }
 
