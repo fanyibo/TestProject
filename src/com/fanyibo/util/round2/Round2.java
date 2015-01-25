@@ -5142,7 +5142,13 @@ public class Round2 {
      * return true, as there exist a root-to-leaf path 5->4->11->2 which sum is 22.
      */
     public static boolean hasPathSum(TreeNode root, int sum) {
-        return false;
+
+        if (root == null) {
+            return false;
+        } else if (root.left == null && root.right == null) {
+            return root.val == sum;
+        }
+        return hasPathSum(root.left, sum - root.val) || hasPathSum(root.right, sum - root.val);
     }
 
     /**
@@ -5164,7 +5170,34 @@ public class Round2 {
      * ]
      */
     public static List<List<Integer>> pathSum(TreeNode root, int sum) {
-        return null;
+
+        List<List<Integer>> result = new ArrayList<List<Integer>>();
+        if (root == null) {
+            return result;
+        }
+        List<Integer> list = new ArrayList<Integer>();
+        _pathSum(root, sum, result, list);
+        return result;
+    }
+
+    public static void _pathSum(TreeNode root, int sum, List<List<Integer>> lists, List<Integer> list) {
+
+        if (root == null) {
+            return;
+        } else if (root.left == null && root.right == null) {
+            if (root.val == sum) {
+                List<Integer> temp = new ArrayList<Integer>(list);
+                temp.add(root.val);
+                lists.add(temp);
+                return;
+            }
+        }
+        list.add(root.val);
+        _pathSum(root.left, sum - root.val, lists, list);
+        _pathSum(root.right, sum - root.val, lists, list);
+        if (!list.isEmpty()) {
+            list.remove(list.size() - 1);
+        }
     }
 
     /**
@@ -5192,6 +5225,31 @@ public class Round2 {
      */
     public static void flatten(TreeNode root) {
 
+        if (root == null) {
+            return;
+        }
+        _flatten(root);
+    }
+
+    public static TreeNode _flatten(TreeNode node) {
+
+        if (node == null) {
+            return null;
+        } else if (node.left == null && node.right == null) {
+            return node;
+        }
+        TreeNode left = node.left;
+        TreeNode right = node.right;
+        node.left = null;
+        node.right = null;
+        TreeNode lRight = _flatten(left);
+        TreeNode rRight = _flatten(right);
+        if (lRight != null) {
+            lRight.left = null;
+            lRight.right = right;
+        }
+        node.right = (left == null) ? right : left;
+        return rRight == null ? lRight : rRight;
     }
 
     /**
@@ -5206,18 +5264,27 @@ public class Round2 {
      * Return 3.
      */
     public static int numDistinct(String S, String T) {
-        return 0;
+
+        int len1 = T.length();
+        int len2 = S.length();
+        int[][] d = new int[len1 + 1][len2 + 1];
+        for (int i = 0; i <= len2; i++) {
+            d[0][i] = 1;
+        }
+        for (int i = 1; i <= len1; i++) {
+            for (int j = i; j <= len2; j++) {
+                if (i == j) {
+                    d[i][j] = T.charAt(i - 1) == S.charAt(j - 1) ? d[i - 1][j - 1] : 0;
+                } else {
+                    d[i][j] = d[i][j - 1] + (T.charAt(i - 1) == S.charAt(j - 1) ? d[i - 1][j - 1] : 0);
+                }
+            }
+        }
+        return d[len1][len2];
     }
 
     /**
      * 116. Populating Next Right Pointers in Each Node
-     * Submissions Question Solution
-     * Given a binary tree
-     * struct TreeLinkNode {
-     * TreeLinkNode *left;
-     * TreeLinkNode *right;
-     * TreeLinkNode *next;
-     * }
      * Populate each next pointer to point to its next right node. If there is no next right node, the next pointer
      * should be set to NULL.
      * Initially, all next pointers are set to NULL.
@@ -5250,7 +5317,25 @@ public class Round2 {
 
     public static void connect(TreeLinkNode root) {
 
+        if (root == null) {
+            return;
+        }
+        _connect1(root, null);
     }
+
+    public static void _connect1(TreeLinkNode node, TreeLinkNode left) {
+
+        if (node == null || node.left == null || node.right == null) {
+            return;
+        }
+        node.left.next = node.right;
+        if (left != null) {
+            left.right.next = node.left;
+        }
+        _connect1(node.left, left == null ? null : left.right);
+        _connect1(node.right, node.left);
+    }
+
 
     /**
      * 117. Populating Next Right Pointers in Each Node II
@@ -5274,7 +5359,68 @@ public class Round2 {
      */
     public void connect2(TreeLinkNode root) {
 
+        if (root == null) {
+            return;
+        }
+        TreeLinkNode p = root.next;
+        while (p != null) {
+            if (p.left != null) {
+                p = p.left;
+                break;
+            }
+            if (p.right != null) {
+                p = p.right;
+                break;
+            }
+            p = p.next;
+        }
+        if (root.right != null) {
+            root.right.next = p;
+        }
+        if (root.left != null) {
+            root.left.next = root.right == null ? p : root.right;
+        }
+        connect(root.right);
+        connect(root.left);
+
+        //        if (root == null) {
+        //            return;
+        //        }
+        //        List<TreeLinkNode> list = new ArrayList<TreeLinkNode>();
+        //        list.add(root);
+        //        TreeLinkNode newMark = root;
+        //        TreeLinkNode prev = null;
+        //        TreeLinkNode current = null;
+        //        boolean markNew = false;
+        //        while (!list.isEmpty()) {
+        //            current = list.remove(0);
+        //            if (current.left != null) {
+        //                list.add(current.left);
+        //            }
+        //            if (current.right != null) {
+        //                list.add(current.right);
+        //            }
+        //            if (current == newMark) {
+        //                prev = current;
+        //                markNew = true;
+        //            } else {
+        //                if (prev != null) {
+        //                    prev.next = current;
+        //                }
+        //                prev = prev.next;
+        //            }
+        //            if (markNew) {
+        //                if (current.left != null) {
+        //                    newMark = current.left;
+        //                    markNew = false;
+        //                } else if (current.right != null) {
+        //                    newMark = current.right;
+        //                    markNew = false;
+        //                }
+        //            }
+        //        }
     }
+
 
     /**
      * 118. Pascal's Triangle
@@ -5290,7 +5436,27 @@ public class Round2 {
      * ]
      */
     public static List<List<Integer>> generate(int numRows) {
-        return null;
+
+        List<List<Integer>> result = new ArrayList<List<Integer>>();
+        for (int i = 1; i <= numRows; i++) {
+            List<Integer> list = new ArrayList<Integer>();
+            if (result.isEmpty()) {
+                list.add(1);
+            } else {
+                List<Integer> last = result.get(result.size() - 1);
+                for (int j = 0; j <= last.size(); j++) {
+                    if (j == 0) {
+                        list.add(1);
+                    } else if (j == last.size()) {
+                        list.add(last.get(last.size() - 1));
+                    } else {
+                        list.add(last.get(j - 1) + last.get(j));
+                    }
+                }
+            }
+            result.add(list);
+        }
+        return result;
     }
 
     /**
@@ -5302,12 +5468,32 @@ public class Round2 {
      * Could you optimize your algorithm to use only O(k) extra space?
      */
     public static List<Integer> getRow(int rowIndex) {
-        return null;
+
+        List<Integer> result = new ArrayList<Integer>();
+        for (int i = 0; i <= rowIndex; i++) {
+            if (result.isEmpty()) {
+                result.add(1);
+            } else {
+                List<Integer> last = result;
+                result = new ArrayList<Integer>();
+                for (int j = 0; j <= last.size(); j++) {
+                    if (j == 0) {
+                        result.add(1);
+                    } else if (j == last.size()) {
+                        result.add(last.get(last.size() - 1));
+                    } else {
+                        result.add(last.get(j - 1) + last.get(j));
+                    }
+                }
+            }
+        }
+        return result;
     }
 
     /**
      * 120. Triangle
-     * Given a triangle, find the minimum path sum from top to bottom. Each step you may move to adjacent numbers on the
+     * Given a triangle, find the minimum path sum from top to bottom. Each step you may move to adjacent numbers on
+     * the
      * row below.
      * For example, given the following triangle
      * [
@@ -5322,7 +5508,32 @@ public class Round2 {
      * triangle.
      */
     public static int minimumTotal(List<List<Integer>> triangle) {
-        return 0;
+
+        if (triangle == null || triangle.size() == 0) {
+            return 0;
+        }
+        List<Integer> distance = new ArrayList<Integer>();
+        for (int i = 0; i < triangle.size(); i++) {
+            List<Integer> row = triangle.get(i);
+            if (distance.isEmpty()) {
+                distance.addAll(row);
+            } else {
+                int preSize = distance.size();
+                for (int j = 0; j < row.size(); j++) {
+                    int parentDistance = j == 0 ? distance.get(j) : (j == row.size() - 1 ? distance.get(j - 1) : Math
+                            .min(distance.get(j - 1), distance.get(j)));
+                    distance.add(row.get(j) + parentDistance);
+                }
+                for (int j = 0; j < preSize && !distance.isEmpty(); j++) {
+                    distance.remove(0);
+                }
+            }
+        }
+        int min = Integer.MAX_VALUE;
+        for (int i = 0; i < distance.size(); i++) {
+            min = Math.min(min, distance.get(i));
+        }
+        return min;
     }
 
     /**
@@ -5332,18 +5543,45 @@ public class Round2 {
      * design an algorithm to find the maximum profit.
      */
     public static int maxProfit1(int[] prices) {
-        return 0;
+
+        if (prices.length < 2) {
+            return 0;
+        }
+        int max = 0;
+        int min = prices[0];
+        for (int i = 1; i < prices.length; i++) {
+            max = Math.max(max, prices[i] - min);
+            min = Math.min(min, prices[i]);
+        }
+        return max;
     }
 
     /**
      * 122. Best Time to Buy and Sell Stock II
      * Say you have an array for which the ith element is the price of a given stock on day i.
      * Design an algorithm to find the maximum profit. You may complete as many transactions as you like (ie, buy one
-     * and sell one share of the stock multiple times). However, you may not engage in multiple transactions at the same
+     * and sell one share of the stock multiple times). However, you may not engage in multiple transactions at the
+     * same
      * time (ie, you must sell the stock before you buy again).
      */
     public static int maxProfit2(int[] prices) {
-        return 0;
+        if (prices.length < 2) {
+            return 0;
+        }
+        int max = 0;
+        Stack<Integer> stack = new Stack<Integer>();
+        for (int i = 0; i < prices.length; i++) {
+            if (stack.isEmpty()) {
+                stack.push(prices[i]);
+            } else if (stack.peek() <= prices[i]) {
+                max += (prices[i] - stack.pop());
+                stack.push(prices[i]);
+            } else {
+                stack.pop();
+                stack.push(prices[i]);
+            }
+        }
+        return max;
     }
 
     /**
@@ -5354,7 +5592,56 @@ public class Round2 {
      * You may not engage in multiple transactions at the same time (ie, you must sell the stock before you buy again).
      */
     public static int maxProfit3(int[] prices) {
-        return 0;
+
+        int size = prices.length;
+        if (size <= 1) {
+            return 0;
+        }
+        List<Integer> list = new ArrayList<Integer>();
+        for (int i = 0; i < prices.length; i++) {
+            if (list.isEmpty()) {
+                list.add(prices[i]);
+            } else if (list.get(list.size() - 1) <= prices[i]) {
+                if (list.size() % 2 == 0) {
+                    list.remove(list.size() - 1);
+                    list.add(prices[i]);
+                } else {
+                    list.add(prices[i]);
+                }
+            } else {
+                if (list.size() % 2 == 0) {
+                    list.add(prices[i]);
+                } else {
+                    list.remove(list.size() - 1);
+                    list.add(prices[i]);
+                }
+            }
+        }
+        if (list.size() <= 1) {
+            return 0;
+        } else if (list.size() == 2) {
+            return list.get(1) - list.get(0);
+        }
+        int maxOneTrade = 0;
+        int maxTwoTrade = 0;
+
+        int minLeft = list.get(0);
+        for (int i = 0; i < list.size(); i++) {
+            int maxLeftProfit = list.get(i) - minLeft;
+            int maxRightProfit = 0;
+            maxOneTrade = Math.max(maxOneTrade, maxLeftProfit);
+
+            if (i < list.size() - 1) {
+                int minRight = list.get(i + 1);
+                for (int j = i + 1; j < list.size(); j++) {
+                    maxRightProfit = Math.max(maxRightProfit, list.get(j) - minRight);
+                    minRight = Math.min(minRight, list.get(j));
+                }
+            }
+            maxTwoTrade = Math.max(maxTwoTrade, maxLeftProfit + maxRightProfit);
+            minLeft = Math.min(minLeft, list.get(i));
+        }
+        return Math.max(maxOneTrade, maxTwoTrade);
     }
 
     /**
@@ -5368,8 +5655,25 @@ public class Round2 {
      * 2   3
      * Return 6.
      */
+    private static int iMaxPathSum = 0;
+
     public static int maxPathSum(TreeNode root) {
-        return 0;
+        if (root == null) {
+            return 0;
+        }
+        _maxPathSum(root);
+        return iMaxPathSum;
+    }
+
+    public static int _maxPathSum(TreeNode node) {
+
+        if (node == null) {
+            return 0;
+        }
+        int left = Math.max(0, _maxPathSum(node.left));
+        int right = Math.max(0, _maxPathSum(node.right));
+        iMaxPathSum = Math.max(iMaxPathSum, left + right + node.val);
+        return left + right + node.val;
     }
 
     /**
@@ -5382,33 +5686,337 @@ public class Round2 {
      * Have you consider that the string might be empty? This is a good question to ask during an interview.
      * For the purpose of this problem, we define empty string as valid palindrome.
      */
-    private static boolean isValidChar(char c) {
+    public static boolean isPalindrome(String s) {
+
+        int len = s.length();
+        if (len <= 1) {
+            return true;
+        }
+        int index1 = 0;
+        int index2 = len - 1;
+        while (index1 < index2) {
+            char c1 = s.charAt(index1);
+            char c2 = s.charAt(index2);
+            if (!((c1 >= 'a' && c1 <= 'z') || (c1 >= 'A' && c1 <= 'Z') || (c1 >= '0' && c1 <= '9'))) {
+                index1++;
+            } else if (!((c2 >= 'a' && c2 <= 'z') || (c2 >= 'A' && c2 <= 'Z') || (c2 >= '0' && c2 <= '9'))) {
+                index2--;
+            } else if (!isSameCharIgnoreCase(c1, c2)) {
+                return false;
+            } else {
+                index1++;
+                index2--;
+            }
+        }
+        return true;
+    }
+
+    public static boolean isSameCharIgnoreCase(char c1, char c2) {
+        if (c1 == c2) {
+            return true;
+        }
+        int a1 = (c1 >= 'a' && c1 <= 'z') ? ((int) c1) : ((int) c1 - (int) 'A' + (int) 'a');
+        int a2 = (c2 >= 'a' && c2 <= 'z') ? ((int) c2) : ((int) c2 - (int) 'A' + (int) 'a');
+        return a1 == a2;
+    }
+
+
+    /**
+     * 126. Word Ladder II
+     * Given two words (start and end), and a dictionary, find all shortest transformation sequence(s) from start to
+     * end, such that:
+     * Only one letter can be changed at a time
+     * Each intermediate word must exist in the dictionary
+     * For example,
+     * Given:
+     * start = "hit"
+     * end = "cog"
+     * dict = ["hot","dot","dog","lot","log"]
+     * Return
+     * [
+     * ["hit","hot","dot","dog","cog"],
+     * ["hit","hot","lot","log","cog"]
+     * ]
+     * Note:
+     * All words have the same length.
+     * All words contain only lowercase alphabetic characters.
+     */
+    public static List<List<String>> findLadders(String start, String end, Set<String> dict) {
+        return null;
+    }
+
+    /**
+     * 127. Word Ladder
+     * Given two words (start and end), and a dictionary, find the length of shortest transformation sequence from
+     * start
+     * to end, such that:
+     * Only one letter can be changed at a time
+     * Each intermediate word must exist in the dictionary
+     * For example,
+     * Given:
+     * start = "hit"
+     * end = "cog"
+     * dict = ["hot","dot","dog","lot","log"]
+     * As one shortest transformation is "hit" -> "hot" -> "dot" -> "dog" -> "cog",
+     * return its length 5.
+     * Note:
+     * Return 0 if there is no such transformation sequence.
+     * All words have the same length.
+     * All words contain only lowercase alphabetic characters.
+     */
+    public static int ladderLength(String start, String end, Set<String> dict) {
+        return 0;
+    }
+
+
+    /**
+     * 128. Longest Consecutive Sequence
+     * Given an unsorted array of integers, find the length of the longest consecutive elements sequence.
+     * For example,
+     * Given [100, 4, 200, 1, 3, 2],
+     * The longest consecutive elements sequence is [1, 2, 3, 4]. Return its length: 4.
+     * Your algorithm should run in O(n) complexity.
+     */
+    public static int longestConsecutive(int[] num) {
+        return 0;
+    }
+
+
+    /**
+     * 129. Sum Root to Leaf Numbers
+     * Given a binary tree containing digits from 0-9 only, each root-to-leaf path could represent a number.
+     * An example is the root-to-leaf path 1->2->3 which represents the number 123.
+     * Find the total sum of all root-to-leaf numbers.
+     * For example,
+     * 1
+     * / \
+     * 2   3
+     * The root-to-leaf path 1->2 represents the number 12.
+     * The root-to-leaf path 1->3 represents the number 13.
+     * Return the sum = 12 + 13 = 25.
+     */
+    public static int sumNumbers(TreeNode root) {
+        return 0;
+    }
+
+
+    /**
+     * 130. Surrounded Regions
+     * Given a 2D board containing 'X' and 'O', capture all regions surrounded by 'X'.
+     * A region is captured by flipping all 'O's into 'X's in that surrounded region.
+     * For example,
+     * X X X X
+     * X O O X
+     * X X O X
+     * X O X X
+     * After running your function, the board should be:
+     * X X X X
+     * X X X X
+     * X X X X
+     * X O X X
+     */
+    public static void solve(char[][] board) {
+
+    }
+
+
+    /**
+     * 131. Palindrome Partitioning
+     * Given a string s, partition s such that every substring of the partition is a palindrome.
+     * Return all possible palindrome partitioning of s.
+     * For example, given s = "aab",
+     * Return
+     * [
+     * ["aa","b"],
+     * ["a","a","b"]
+     * ]
+     */
+    public static List<List<String>> partition(String s) {
+        return null;
+    }
+
+
+    /**
+     * 132. Palindrome Partitioning II
+     * Given a string s, partition s such that every substring of the partition is a palindrome.
+     * Return the minimum cuts needed for a palindrome partitioning of s.
+     * For example, given s = "aab",
+     * Return 1 since the palindrome partitioning ["aa","b"] could be produced using 1 cut.
+     */
+    public static int minCut(String s) {
+        return 0;
+    }
+
+
+    /**
+     * 133. Clone Graph
+     * Clone an undirected graph. Each node in the graph contains a label and a list of its neighbors.
+     * OJ's undirected graph serialization:
+     * Nodes are labeled uniquely.
+     * We use # as a separator for each node, and , as a separator for node label and each neighbor of the node.
+     * As an example, consider the serialized graph {0,1,2#1,2#2,2}.
+     * The graph has a total of three nodes, and therefore contains three parts as separated by #.
+     * First node is labeled as 0. Connect node 0 to both nodes 1 and 2.
+     * Second node is labeled as 1. Connect node 1 to node 2.
+     * Third node is labeled as 2. Connect node 2 to node 2 (itself), thus forming a self-cycle.
+     * Visually, the graph looks like the following:
+     * 1
+     * / \
+     * /   \
+     * 0 --- 2
+     * / \
+     * \_/
+     */
+    public static class UndirectedGraphNode {
+        int                       label;
+        List<UndirectedGraphNode> neighbors;
+
+        UndirectedGraphNode(int x) {
+            label = x;
+            neighbors = new ArrayList<UndirectedGraphNode>();
+        }
+    }
+
+    public static UndirectedGraphNode cloneGraph(UndirectedGraphNode node) {
+        return null;
+    }
+
+
+    /**
+     * 134. Gas Station
+     * There are N gas stations along a circular route, where the amount of gas at station i is gas[i].
+     * You have a car with an unlimited gas tank and it costs cost[i] of gas to travel from station i to its next
+     * station (i+1). You begin the journey with an empty tank at one of the gas stations.
+     * Return the starting gas station's index if you can travel around the circuit once, otherwise return -1.
+     * Note:
+     * The solution is guaranteed to be unique.
+     */
+    public static int canCompleteCircuit(int[] gas, int[] cost) {
+        return 0;
+    }
+
+
+    /**
+     * 135. Candy
+     * There are N children standing in a line. Each child is assigned a rating value.
+     * You are giving candies to these children subjected to the following requirements:
+     * Each child must have at least one candy.
+     * Children with a higher rating get more candies than their neighbors.
+     * What is the minimum candies you must give?
+     */
+    public static int candy(int[] ratings) {
+        return 0;
+    }
+
+
+    /**
+     * 136. Single Number
+     * Given an array of integers, every element appears twice except for one. Find that single one.
+     * Note:
+     * Your algorithm should have a linear runtime complexity. Could you implement it without using extra memory?
+     */
+    public static int singleNumber1(int[] A) {
+        return 0;
+    }
+
+
+    /**
+     * 137. Single Number II
+     * Given an array of integers, every element appears three times except for one. Find that single one.
+     * Note:
+     * Your algorithm should have a linear runtime complexity. Could you implement it without using extra memory?
+     */
+    public static int singleNumber2(int[] A) {
+        return 0;
+    }
+
+
+    /**
+     * 138. Copy List with Random Pointer
+     * A linked list is given such that each node contains an additional random pointer which could point to any node
+     * in
+     * the list or null.
+     * Return a deep copy of the list.
+     */
+    public static class RandomListNode {
+        int            label;
+        RandomListNode next, random;
+
+        RandomListNode(int x) {
+            this.label = x;
+        }
+    }
+
+    public static RandomListNode copyRandomList(RandomListNode head) {
+        return null;
+    }
+
+
+    /**
+     * 139. Word Break
+     * Given a string s and a dictionary of words dict, determine if s can be segmented into a space-separated sequence
+     * of one or more dictionary words.
+     * For example, given
+     * s = "leetcode",
+     * dict = ["leet", "code"].
+     * Return true because "leetcode" can be segmented as "leet code".
+     */
+    public static boolean wordBreak1(String s, Set<String> dict) {
         return false;
     }
 
+
+    /**
+     * 140. Word Break II
+     * Given a string s and a dictionary of words dict, add spaces in s to construct a sentence where each word is a
+     * valid dictionary word.
+     * Return all such possible sentences.
+     * For example, given
+     * s = "catsanddog",
+     * dict = ["cat", "cats", "and", "sand", "dog"].
+     * A solution is ["cats and dog", "cat sand dog"].
+     */
+    public static List<String> wordBreak2(String s, Set<String> dict) {
+        return null;
+    }
+
+
     public static void main(String[] args) {
 
-        TreeNode n1 = new TreeNode(1);
-        TreeNode n2 = new TreeNode(2);
-        TreeNode n3 = new TreeNode(3);
-        TreeNode n4 = new TreeNode(4);
-        TreeNode n5 = new TreeNode(5);
-        TreeNode n6 = new TreeNode(6);
+        TreeNode n1 = new TreeNode(5);
+        TreeNode n2 = new TreeNode(4);
+        TreeNode n3 = new TreeNode(8);
+        TreeNode n4 = new TreeNode(11);
+        TreeNode n5 = new TreeNode(13);
+        TreeNode n6 = new TreeNode(4);
+        TreeNode n7 = new TreeNode(7);
+        TreeNode n8 = new TreeNode(2);
+        TreeNode n9 = new TreeNode(5);
+        TreeNode n10 = new TreeNode(1);
         n1.left = n2;
         n1.right = n3;
 
         n2.left = n4;
-        n2.right = n5;
 
+        n3.left = n5;
         n3.right = n6;
-        n6.left = new TreeNode(7);
 
+        n4.left = n7;
+        n4.right = n8;
+
+        n6.left = n9;
+        n6.right = n10;
+
+        PRINT(isPalindrome("0k.;r0.k;"));
 
         /**
-         *           1
-         *         2    3
-         *       4  5     6
-         *               7
+         5
+         * / \
+         * 4   8
+         * /   / \
+         * 11  13  4
+         * /  \    / \
+         * 7    2  5   1
          *
          *
          */
