@@ -3,7 +3,6 @@ package com.fanyibo.util.round2;
 import com.fanyibo.tree.TreeNode;
 import com.fanyibo.util.ListNode;
 
-import java.lang.reflect.Array;
 import java.util.*;
 
 public class Round2 {
@@ -5753,15 +5752,18 @@ public class Round2 {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o)
+            if (this == o) {
                 return true;
-            if (o == null || getClass() != o.getClass())
+            }
+            if (o == null || getClass() != o.getClass()) {
                 return false;
+            }
 
             Node node = (Node) o;
 
-            if (val != null ? !val.equals(node.val) : node.val != null)
+            if (val != null ? !val.equals(node.val) : node.val != null) {
                 return false;
+            }
 
             return true;
         }
@@ -6127,7 +6129,46 @@ public class Round2 {
      * ]
      */
     public static List<List<String>> partition(String s) {
-        return null;
+
+        int size = s.length();
+        boolean[][] d = new boolean[size][size];
+        for (int i = size - 1; i >= 0; i--) {
+            for (int j = i; j < size; j++) {
+                if (i == j) {
+                    d[i][j] = true;
+                } else if (i + 1 == j) {
+                    d[i][j] = s.charAt(i) == s.charAt(j);
+                } else {
+                    d[i][j] = d[i + 1][j - 1] && s.charAt(i) == s.charAt(j);
+                }
+            }
+        }
+        return _partition(s, 0, d);
+    }
+
+    public static List<List<String>> _partition(String s, int start, boolean[][] d) {
+
+        List<List<String>> result = new ArrayList<List<String>>();
+        if (start >= s.length()) {
+            return result;
+        }
+        if (d[start][s.length() - 1]) {
+            List<String> list = new ArrayList<String>();
+            list.add(s.substring(start));
+            result.add(list);
+        }
+        for (int i = start; i < s.length(); i++) {
+            if (!d[start][i]) {
+                continue;
+            }
+            String head = s.substring(start, i + 1);
+            List<List<String>> rest = _partition(s, i + 1, d);
+            for (List<String> _rest : rest) {
+                _rest.add(0, head);
+            }
+            result.addAll(rest);
+        }
+        return result;
     }
 
 
@@ -6139,9 +6180,37 @@ public class Round2 {
      * Return 1 since the palindrome partitioning ["aa","b"] could be produced using 1 cut.
      */
     public static int minCut(String s) {
-        return 0;
+        int size = s.length();
+        if (size <= 1) {
+            return 0;
+        }
+        int[] cuts = new int[size];
+        boolean[][] d = new boolean[size][size];
+        for (int i = size - 1; i >= 0; i--) {
+            cuts[i] = i;
+            for (int j = i; j < size; j++) {
+                if (i == j) {
+                    d[i][j] = true;
+                } else if (i + 1 == j) {
+                    d[i][j] = s.charAt(i) == s.charAt(j);
+                } else {
+                    d[i][j] = d[i + 1][j - 1] && s.charAt(i) == s.charAt(j);
+                }
+            }
+        }
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j <= i; j++) {
+                if (d[j][i]) {
+                    if (j == 0) {
+                        cuts[i] = 0;
+                    } else {
+                        cuts[i] = Math.min(cuts[i], cuts[j - 1] + 1);
+                    }
+                }
+            }
+        }
+        return cuts[size - 1];
     }
-
 
     /**
      * 133. Clone Graph
@@ -6173,7 +6242,29 @@ public class Round2 {
     }
 
     public static UndirectedGraphNode cloneGraph(UndirectedGraphNode node) {
-        return null;
+
+        Map<Integer, UndirectedGraphNode> visited = new HashMap<Integer, UndirectedGraphNode>();
+        if (node == null) {
+            return null;
+        }
+        return _cloneGraph(node, visited);
+    }
+
+    public static UndirectedGraphNode _cloneGraph(UndirectedGraphNode node, Map<Integer, UndirectedGraphNode> visited) {
+        if (node == null) {
+            return null;
+        }
+        int hashCode = node.hashCode();
+        if (visited.containsKey(hashCode)) {
+            return visited.get(hashCode);
+        } else {
+            UndirectedGraphNode newNode = new UndirectedGraphNode(node.label);
+            visited.put(hashCode, newNode);
+            for (UndirectedGraphNode next : node.neighbors) {
+                newNode.neighbors.add(_cloneGraph(next, visited));
+            }
+            return newNode;
+        }
     }
 
 
@@ -6187,7 +6278,39 @@ public class Round2 {
      * The solution is guaranteed to be unique.
      */
     public static int canCompleteCircuit(int[] gas, int[] cost) {
-        return 0;
+
+        if (gas.length != cost.length || gas.length == 0) {
+            return -1;
+        }
+        int size = gas.length;
+        int max = gas[0];
+        int maxIndex = 0;
+        for (int i = 0; i < size; i++) {
+            if (max < gas[i]) {
+                max = gas[i];
+                maxIndex = i;
+            }
+        }
+        int currentStart = maxIndex;
+        for (int i = 0; i < size; i++) {
+            int tank = gas[currentStart];
+            int last = currentStart;
+            int index = last == size - 1 ? 0 : last + 1;
+            for (int j = 1; j <= size; j++) {
+                tank -= cost[last];
+                if (tank < 0) {
+                    break;
+                }
+                tank += gas[index];
+                last = index;
+                index = last == size - 1 ? 0 : last + 1;
+            }
+            if (tank >= 0) {
+                return currentStart;
+            }
+            currentStart = currentStart == size - 1 ? 0 : currentStart + 1;
+        }
+        return -1;
     }
 
 
@@ -6200,7 +6323,43 @@ public class Round2 {
      * What is the minimum candies you must give?
      */
     public static int candy(int[] ratings) {
-        return 0;
+
+        if (ratings == null || ratings.length == 0) {
+            return 0;
+        }
+        int length = ratings.length;
+        int[] candies = new int[length];
+        candies[0] = 1;
+        for (int i = 1; i < length; i++) {
+            candies[i] = 1;
+            if (ratings[i] > ratings[i - 1]) {
+                candies[i] = candies[i - 1] + 1;
+            } else if (ratings[i] < ratings[i - 1]) {
+                candies[i] = candies[i - 1] - 1;
+            }
+            if (i < length - 1 && ratings[i] < ratings[i - 1] && ratings[i] <= ratings[i + 1]) {
+                ReAdjustCandy(ratings, candies, i);
+            } else if (i == length - 1 && ratings[i] < ratings[i - 1]) {
+                ReAdjustCandy(ratings, candies, i);
+            }
+        }
+        int total = 0;
+        for (int i = 0; i < length; i++) {
+            total += candies[i];
+        }
+        return total;
+    }
+
+    public static void ReAdjustCandy(int[] ratings, int[] candy, int startIndex) {
+        int k = startIndex;
+        int diff = 1 - candy[k];
+        while (k > 0 && ratings[k - 1] > ratings[k]) {
+            candy[k] = candy[k] + diff;
+            k--;
+        }
+        if (diff > 0) {
+            candy[k] += diff;
+        }
     }
 
 
@@ -6278,22 +6437,7 @@ public class Round2 {
 
     public static void main(String[] args) {
 
-
-        char[][] board = {
-                {'O', 'O', 'O', 'O', 'O', 'O', 'O'},
-                {'X', 'X', 'X', 'O', 'X', 'X', 'X'},
-                {'O', 'X', 'O', 'X', 'O', 'X', 'X'},
-                {'X', 'O', 'O', 'O', 'X', 'X', 'X'},
-                {'X', 'X', 'O', 'X', 'O', 'X', 'X'},
-                {'X', 'O', 'O', 'X', 'O', 'X', 'X'},
-                {'X', 'O', 'X', 'X', 'O', 'X', 'X'},
-                {'X', 'X', 'O', 'O', 'O', 'X', 'X'},
-                {'X', 'X', 'O', 'O', 'O', 'X', 'X'}
-        };
-        solve(board);
-        for (char[] row : board) {
-            PRINT(Arrays.toString(row));
-        }
+        PRINT(candy(new int[]{10, 9, 8, 7, 6, 5, 4, 3, 2, 1}));
 
 
         TreeNode n1 = new TreeNode(5);
