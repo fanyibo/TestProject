@@ -3,6 +3,7 @@ package com.fanyibo.util.round2;
 import com.fanyibo.tree.TreeNode;
 import com.fanyibo.util.ListNode;
 
+import java.lang.reflect.Array;
 import java.util.*;
 
 public class Round2 {
@@ -5741,8 +5742,134 @@ public class Round2 {
      * All words have the same length.
      * All words contain only lowercase alphabetic characters.
      */
+
+    public static class Node {
+        String val;
+        Set<Node> next = new HashSet<Node>();
+
+        public Node(String val) {
+            this.val = val;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o)
+                return true;
+            if (o == null || getClass() != o.getClass())
+                return false;
+
+            Node node = (Node) o;
+
+            if (val != null ? !val.equals(node.val) : node.val != null)
+                return false;
+
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            return val != null ? val.hashCode() : 0;
+        }
+    }
+
     public static List<List<String>> findLadders(String start, String end, Set<String> dict) {
-        return null;
+
+        List<List<String>> result = new ArrayList<List<String>>();
+        List<String> d = new ArrayList<String>(dict);
+        d.remove(start);
+        if (!d.contains(end)) {
+            d.add(end);
+        }
+        HashSet<String> lastRow = new HashSet<String>();
+        lastRow.add(start);
+        result.add(new ArrayList<String>(lastRow));
+        while (!lastRow.contains(end)) {
+            HashSet<String> newRow = new HashSet<String>();
+            for (String elem : lastRow) {
+                for (int i = 0; i < d.size(); i++) {
+                    if (oneChange(d.get(i), elem)) {
+                        newRow.add(d.get(i));
+                        int size = result.size();
+                        for (int k = 0; k < size; k++) {
+                            if (result.get(k).get(result.get(k).size() - 1).equals(elem)) {
+                                List<String> list = new ArrayList<String>(result.get(k));
+                                list.add(d.get(i));
+                                result.add(list);
+                            }
+                        }
+                    }
+                }
+            }
+            if (newRow.isEmpty()) {
+                return new ArrayList<List<String>>();
+            }
+            for (String newRowElem : newRow) {
+                d.remove(newRowElem);
+            }
+            lastRow = newRow;
+        }
+        List<List<String>> _result = new ArrayList<List<String>>();
+        for (int i = 0; i < result.size(); i++) {
+            if (!result.get(i).get(result.get(i).size() - 1).equals(end)) {
+                _result.add(result.get(i));
+            }
+        }
+        return _result;
+
+        //        Map<String, Node> d = new HashMap<String, Node>();
+        //        for (String _dict : dict) {
+        //            d.put(_dict, new Node(_dict));
+        //        }
+        //        if (d.containsKey(start)) {
+        //            d.remove(start);
+        //        }
+        //        if (!d.containsKey(end)) {
+        //            d.put(end, new Node(end));
+        //        }
+        //        Node head = new Node(start);
+        //        Node last = d.get(end);
+        //        HashSet<Node> level = new HashSet<Node>();
+        //        level.add(head);
+        //
+        //        while (!level.contains(last)) {
+        //            HashSet<Node> newRow = new HashSet<Node>();
+        //            for (String key : d.keySet()) {
+        //                for (Node elem : level) {
+        //                    if (oneChange(key, elem.val)) {
+        //                        elem.next.add(d.get(key));
+        //                        newRow.add(d.get(key));
+        //                    }
+        //                }
+        //            }
+        //            if (newRow.isEmpty()) {
+        //                return new ArrayList<List<String>>();
+        //            }
+        //            for (Node elem : newRow) {
+        //                d.remove(elem.val);
+        //            }
+        //            level = newRow;
+        //        }
+        //        List<List<String>> result = new ArrayList<List<String>>();
+        //        DFS(head, end, result, new ArrayList<String>());
+        //        return result;
+    }
+
+    public static void DFS(Node node, String target, List<List<String>> result, List<String> current) {
+
+        if (node == null) {
+            return;
+        }
+        if (node.val.equals(target)) {
+            List<String> list = new ArrayList<String>(current);
+            list.add(target);
+            result.add(list);
+        } else {
+            current.add(node.val);
+            for (Node n : node.next) {
+                DFS(n, target, result, current);
+            }
+            current.remove(node.val);
+        }
     }
 
     /**
@@ -5765,7 +5892,47 @@ public class Round2 {
      * All words contain only lowercase alphabetic characters.
      */
     public static int ladderLength(String start, String end, Set<String> dict) {
-        return 0;
+
+        List<String> d = new ArrayList<String>(dict);
+        List<List<String>> levels = new ArrayList<List<String>>();
+        List<String> root = new ArrayList<String>();
+        root.add(start);
+        levels.add(root);
+        d.remove(start);
+        if (!d.contains(end)) {
+            d.add(end);
+        }
+        while (!levels.get(levels.size() - 1).contains(end)) {
+            List<String> lastRow = levels.get(levels.size() - 1);
+            List<String> newRow = new ArrayList<String>();
+            for (String elem : lastRow) {
+                for (int i = 0; i < d.size(); i++) {
+                    if (oneChange(d.get(i), elem)) {
+                        newRow.add(d.get(i));
+                        d.remove(i);
+                        i--;
+                    }
+                }
+            }
+            if (newRow.isEmpty()) {
+                return 0;
+            }
+            levels.add(newRow);
+        }
+        return levels.size();
+    }
+
+    public static boolean oneChange(String w1, String w2) {
+        if (w1.length() != w2.length()) {
+            return false;
+        }
+        int count = 0;
+        for (int i = 0; i < w1.length(); i++) {
+            if (w1.charAt(i) != w2.charAt(i)) {
+                count++;
+            }
+        }
+        return count == 1;
     }
 
 
@@ -5778,6 +5945,35 @@ public class Round2 {
      * Your algorithm should run in O(n) complexity.
      */
     public static int longestConsecutive(int[] num) {
+
+        Map<Integer, Boolean> visited = new HashMap<Integer, Boolean>();
+        Map<Integer, Integer> distance = new HashMap<Integer, Integer>();
+        for (int n : num) {
+            visited.put(n, false);
+            distance.put(n, 1);
+        }
+        for (int n : num) {
+            if (!visited.get(n)) {
+                _longestConsecutive(visited, distance, n);
+            }
+        }
+        int max = 0;
+        for (Integer key : distance.keySet()) {
+            max = Math.max(max, distance.get(key));
+        }
+        return max;
+    }
+
+    public static int _longestConsecutive(Map<Integer, Boolean> visited, Map<Integer, Integer> distance, int num) {
+
+        if (visited.containsKey(num)) {
+            if (!visited.get(num)) {
+                visited.put(num, true);
+                int len = _longestConsecutive(visited, distance, num - 1);
+                distance.put(num, len + 1);
+            }
+            return distance.get(num);
+        }
         return 0;
     }
 
@@ -5796,7 +5992,30 @@ public class Round2 {
      * Return the sum = 12 + 13 = 25.
      */
     public static int sumNumbers(TreeNode root) {
-        return 0;
+
+        if (root == null) {
+            return 0;
+        }
+        int[] pathSum = new int[1];
+        pathSum[0] = 0;
+        int[] totalSum = new int[1];
+        totalSum[0] = 0;
+        _sumNumbers(root, pathSum, totalSum);
+        return totalSum[0];
+    }
+
+    public static void _sumNumbers(TreeNode node, int[] pathSum, int[] totalSum) {
+
+        if (node == null) {
+            return;
+        }
+        pathSum[0] = pathSum[0] * 10 + node.val;
+        if (node.left == null && node.right == null) {
+            totalSum[0] += pathSum[0];
+        }
+        _sumNumbers(node.left, pathSum, totalSum);
+        _sumNumbers(node.right, pathSum, totalSum);
+        pathSum[0] = (pathSum[0] - node.val) / 10;
     }
 
 
@@ -5817,6 +6036,82 @@ public class Round2 {
      */
     public static void solve(char[][] board) {
 
+        if (board == null || board.length == 0) {
+            return;
+        }
+        int rows = board.length;
+        int cols = board[0].length;
+        if (rows < 3 || cols < 3) {
+            return;
+        }
+
+        List<Integer> indexX = new ArrayList<Integer>();
+        List<Integer> indexY = new ArrayList<Integer>();
+
+        int[][] marks = new int[rows][cols];
+        for (int i = 0; i < rows; i++) {
+            if (board[i][0] != 'X' && marks[i][0] != 1) {
+                indexX.add(i);
+                indexY.add(0);
+            }
+            if (board[i][cols - 1] != 'X' && marks[i][cols - 1] != 1) {
+                indexX.add(i);
+                indexY.add(cols - 1);
+            }
+        }
+        for (int j = 1; j < cols - 1; j++) {
+            if (board[0][j] != 'X' && marks[0][j] != 1) {
+                indexX.add(0);
+                indexY.add(j);
+            }
+            if (board[rows - 1][j] != 'X' && marks[rows - 1][j] != 1) {
+                indexX.add(rows - 1);
+                indexY.add(j);
+            }
+        }
+
+
+        while (!indexX.isEmpty()) {
+
+            int x = indexX.remove(0);
+            int y = indexY.remove(0);
+
+            marks[x][y] = 1;
+
+            int leftX = x;
+            int leftY = y - 1;
+            int upX = x - 1;
+            int upY = y;
+            int rightX = x;
+            int rightY = y + 1;
+            int downX = x + 1;
+            int downY = y;
+
+            if (rightY < cols && marks[rightX][rightY] != 1 && board[rightX][rightY] != 'X') {
+                indexX.add(rightX);
+                indexY.add(rightY);
+            }
+            if (downX < rows && marks[downX][downY] != 1 && board[downX][downY] != 'X') {
+                indexX.add(downX);
+                indexY.add(downY);
+            }
+            if (upX >= 0 && marks[upX][upY] != 1 && board[upX][upY] != 'X') {
+                indexX.add(upX);
+                indexY.add(upY);
+            }
+            if (leftY >= 0 && marks[leftX][leftY] != 1 && board[leftX][leftY] != 'X') {
+                indexX.add(leftX);
+                indexY.add(leftY);
+            }
+        }
+
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                if (marks[i][j] != 1) {
+                    board[i][j] = 'X';
+                }
+            }
+        }
     }
 
 
@@ -5983,6 +6278,24 @@ public class Round2 {
 
     public static void main(String[] args) {
 
+
+        char[][] board = {
+                {'O', 'O', 'O', 'O', 'O', 'O', 'O'},
+                {'X', 'X', 'X', 'O', 'X', 'X', 'X'},
+                {'O', 'X', 'O', 'X', 'O', 'X', 'X'},
+                {'X', 'O', 'O', 'O', 'X', 'X', 'X'},
+                {'X', 'X', 'O', 'X', 'O', 'X', 'X'},
+                {'X', 'O', 'O', 'X', 'O', 'X', 'X'},
+                {'X', 'O', 'X', 'X', 'O', 'X', 'X'},
+                {'X', 'X', 'O', 'O', 'O', 'X', 'X'},
+                {'X', 'X', 'O', 'O', 'O', 'X', 'X'}
+        };
+        solve(board);
+        for (char[] row : board) {
+            PRINT(Arrays.toString(row));
+        }
+
+
         TreeNode n1 = new TreeNode(5);
         TreeNode n2 = new TreeNode(4);
         TreeNode n3 = new TreeNode(8);
@@ -6007,7 +6320,7 @@ public class Round2 {
         n6.left = n9;
         n6.right = n10;
 
-        PRINT(isPalindrome("0k.;r0.k;"));
+        //PRINT(isPalindrome("0k.;r0.k;"));
 
         /**
          5
