@@ -6370,7 +6370,12 @@ public class Round2 {
      * Your algorithm should have a linear runtime complexity. Could you implement it without using extra memory?
      */
     public static int singleNumber1(int[] A) {
-        return 0;
+
+        int result = 0;
+        for (int aA : A) {
+            result = (~(result & aA)) & (result | aA);
+        }
+        return result;
     }
 
 
@@ -6381,7 +6386,18 @@ public class Round2 {
      * Your algorithm should have a linear runtime complexity. Could you implement it without using extra memory?
      */
     public static int singleNumber2(int[] A) {
-        return 0;
+        int n = A.length;
+        int result = 0;
+        for (int i = 0; i < 32; i++) {
+            int count = 0;
+            for (int j = 0; j < n; j++) {
+                if (((A[j] >> i) & 1) != 0) {
+                    count++;
+                }
+            }
+            result |= ((count % 3) << i);
+        }
+        return result;
     }
 
 
@@ -6402,7 +6418,53 @@ public class Round2 {
     }
 
     public static RandomListNode copyRandomList(RandomListNode head) {
-        return null;
+
+        if (head == null) {
+            return null;
+        }
+        HashMap<Integer, RandomListNode> copied = new HashMap<Integer, RandomListNode>();
+        RandomListNode oriTemp = head;
+        RandomListNode newHead = null;
+        RandomListNode newTemp = null;
+        while (oriTemp != null) {
+            if (!copied.containsKey(oriTemp.hashCode())) {
+                RandomListNode newNode = new RandomListNode(oriTemp.label);
+                copied.put(oriTemp.hashCode(), newNode);
+            }
+            if (oriTemp.random != null) {
+                if (copied.containsKey(oriTemp.random.hashCode())) {
+                    copied.get(oriTemp.hashCode()).random = copied.get(oriTemp.random.hashCode());
+                } else {
+                    copied.get(oriTemp.hashCode()).random = new RandomListNode(oriTemp.random.label);
+                    copied.put(oriTemp.random.hashCode(), copied.get(oriTemp.hashCode()).random);
+                }
+            }
+            if (newHead == null) {
+                newHead = copied.get(oriTemp.hashCode());
+                newTemp = newHead;
+            } else {
+                newTemp.next = copied.get(oriTemp.hashCode());
+                newTemp = newTemp.next;
+            }
+            oriTemp = oriTemp.next;
+        }
+        return newHead;
+    }
+
+    public static RandomListNode _copyRandomList(RandomListNode node, HashMap<Integer, RandomListNode> copied) {
+
+        if (node == null) {
+            return null;
+        }
+        int hash = node.hashCode();
+        if (copied.containsKey(hash)) {
+            return copied.get(hash);
+        }
+        RandomListNode newNode = new RandomListNode(node.label);
+        copied.put(hash, newNode);
+        newNode.next = _copyRandomList(node.next, copied);
+        newNode.random = _copyRandomList(node.random, copied);
+        return newNode;
     }
 
 
@@ -6416,7 +6478,25 @@ public class Round2 {
      * Return true because "leetcode" can be segmented as "leet code".
      */
     public static boolean wordBreak1(String s, Set<String> dict) {
-        return false;
+
+        if (s.length() == 0) {
+            return true;
+        }
+        int size = s.length();
+        boolean[][] d = new boolean[size][size];
+        for (int i = size; i >= 0; i--) {
+            for (int j = i; j < size; j++) {
+                d[i][j] = dict.contains(s.substring(i, j + 1));
+                if (!d[i][j]) {
+                    for (int k = i; k < j; k++) {
+                        if (d[i][k] && d[k + 1][j]) {
+                            d[i][j] = true;
+                        }
+                    }
+                }
+            }
+        }
+        return d[0][size - 1];
     }
 
 
@@ -6431,13 +6511,76 @@ public class Round2 {
      * A solution is ["cats and dog", "cat sand dog"].
      */
     public static List<String> wordBreak2(String s, Set<String> dict) {
-        return null;
+
+        if (s.length() == 0) {
+            return new ArrayList<String>();
+        }
+        int size = s.length();
+        boolean[][] d = new boolean[size][size];
+        for (int i = size; i >= 0; i--) {
+            for (int j = i; j < size; j++) {
+                d[i][j] = dict.contains(s.substring(i, j + 1));
+                if (!d[i][j]) {
+                    for (int k = i; k < j; k++) {
+                        if (d[i][k] && d[k + 1][j]) {
+                            d[i][j] = true;
+                        }
+                    }
+                }
+            }
+        }
+
+        List<List<String>> lists = _wordBreak2(s, 0, size - 1, dict, d);
+        List<String> result = new ArrayList<String>();
+        for (List<String> list : lists) {
+            StringBuilder builder = new StringBuilder();
+            for (int i = 0; i < list.size(); i++) {
+                builder.append(list.get(i));
+                if (i < list.size() - 1) {
+                    builder.append(" ");
+                }
+            }
+            result.add(builder.toString());
+        }
+        return result;
+    }
+
+    public static List<List<String>> _wordBreak2(String s, int start, int end, Set<String> dict, boolean[][] d) {
+
+        if (end < start) {
+            return new ArrayList<List<String>>();
+        }
+        List<List<String>> result = new ArrayList<List<String>>();
+        for (int i = start + 1; i <= end + 1; i++) {
+            String head = s.substring(start, i);
+            if (dict.contains(head) && (i == end + 1 || d[i][end])) {
+                if (i == s.length()) {
+                    List<String> list = new ArrayList<String>();
+                    list.add(head);
+                    result.add(list);
+                } else {
+                    List<List<String>> rest = _wordBreak2(s, i, end, dict, d);
+                    for (List<String> _rest : rest) {
+                        _rest.add(0, head);
+                        result.add(_rest);
+                    }
+                }
+            }
+        }
+        return result;
     }
 
 
     public static void main(String[] args) {
 
-        PRINT(candy(new int[]{10, 9, 8, 7, 6, 5, 4, 3, 2, 1}));
+
+        Set<String> dict = new HashSet<String>();
+        dict.add("cat");
+        dict.add("cats");
+        dict.add("and");
+        dict.add("sand");
+        dict.add("dog");
+        PRINT(wordBreak2("catsanddog", dict));
 
 
         TreeNode n1 = new TreeNode(5);
