@@ -6570,42 +6570,887 @@ public class Round2 {
         return result;
     }
 
+    /**
+     * 141. Linked List Cycle
+     * Given a linked list, determine if it has a cycle in it.
+     * Follow up:
+     * Can you solve it without using extra space?
+     */
+    public static boolean hasCycle(ListNode head) {
+
+        if (head == null) {
+            return false;
+        }
+        ListNode index1 = head;
+        ListNode index2 = head.next;
+        if (index2 == null) {
+            return false;
+        }
+        index2 = index2.next;
+        while (index1 != null && index2 != null && index1 != index2) {
+            index1 = index1.next;
+            index2 = index2.next;
+            if (index2 == null) {
+                return false;
+            }
+            index2 = index2.next;
+        }
+        if (index1 == index2 && index1 != null) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * 142. Linked List Cycle II
+     * Given a linked list, return the node where the cycle begins. If there is no cycle, return null.
+     * Follow up:
+     * Can you solve it without using extra space?
+     */
+    public static ListNode detectCycle(ListNode head) {
+        if (head == null) {
+            return null;
+        }
+        ListNode index1 = head;
+        ListNode index2 = head;
+        boolean first = true;
+        while (index1 != null && index2 != null && (index1 != index2 || first)) {
+            index1 = index1.next;
+            index2 = index2.next;
+            if (index2 == null) {
+                return null;
+            }
+            index2 = index2.next;
+            first = false;
+        }
+        if (index1 == index2 && index1 != null) {
+
+            index1 = head;
+            while (index1 != index2) {
+                index1 = index1.next;
+                index2 = index2.next;
+            }
+            return index1;
+        }
+        return null;
+    }
+
+    /**
+     * 143. Reorder List
+     * Given a singly linked list L: L0→L1→…→Ln-1→Ln,
+     * reorder it to: L0→Ln→L1→Ln-1→L2→Ln-2→…
+     * You must do this in-place without altering the nodes' values.
+     * For example,
+     * Given {1,2,3,4}, reorder it to {1,4,2,3}.
+     */
+    public static ListNode reorderList(ListNode head) {
+
+        if (head == null) {
+            return head;
+        }
+        ListNode temp = head;
+        int count = 0;
+        while (temp != null) {
+            count++;
+            temp = temp.next;
+        }
+        if (count <= 2) {
+            return head;
+        }
+        int mid = count / 2;
+        ListNode rightStart = head;
+        while (rightStart != null) {
+            mid--;
+            if (mid == 0) {
+                break;
+            }
+            rightStart = rightStart.next;
+        }
+        if (count % 2 == 0) {
+            temp = rightStart.next;
+            rightStart.next = null;
+            rightStart = temp;
+            temp = null; // temp is the mid one which is left;
+        } else {
+            temp = rightStart.next;
+            rightStart.next = null;
+            rightStart = temp.next;
+            temp.next = null;
+        }
+
+        ListNode left = head;
+        ListNode right = _reverseLinkList(rightStart);
+        ListNode middle = temp;
+
+        while (left != null && right != null) {
+            ListNode temp1 = left.next;
+            ListNode temp2 = right.next;
+
+            left.next = right;
+            right.next = temp1;
+
+            if (temp1 == null) {
+                right.next = middle;
+                break;
+            }
+
+            left = temp1;
+            right = temp2;
+        }
+        return head;
+    }
+
+    public static ListNode _reverseLinkList(ListNode start) {
+
+        if (start == null) {
+            return start;
+        }
+        ListNode newHead = null;
+        ListNode temp1 = start;
+        ListNode temp2 = start.next;
+        while (temp2 != null) {
+            ListNode temp = temp2.next;
+            temp2.next = temp1;
+            temp1 = temp2;
+            temp2 = temp;
+            if (temp == null) {
+                newHead = temp1;
+            }
+        }
+        return newHead == null ? start : newHead;
+    }
+
+    /**
+     * 144. Binary Tree Preorder Traversal
+     * Solution
+     * Given a binary tree, return the preorder traversal of its nodes' values.
+     * For example:
+     * Given binary tree {1,#,2,3},
+     * 1
+     * \
+     * 2
+     * /
+     * 3
+     * return [1,2,3].
+     * Note: Recursive solution is trivial, could you do it iteratively?
+     */
+    public static List<Integer> preorderTraversal(TreeNode root) {
+
+        List<Integer> result = new ArrayList<Integer>();
+        if (root == null) {
+            return result;
+        }
+        Stack<TreeNode> stack = new Stack<TreeNode>();
+        TreeNode node = root;
+        while (!stack.isEmpty() || node != null) {
+            if (node != null) {
+                result.add(node.val);
+                stack.push(node);
+                node = node.left;
+            } else {
+                node = stack.pop().right;
+            }
+        }
+        return result;
+    }
+
+
+    /**
+     * 145. Binary Tree Postorder Traversal
+     * Solution
+     * Given a binary tree, return the postorder traversal of its nodes' values.
+     * For example:
+     * Given binary tree {1,#,2,3},
+     * 1
+     * \
+     * 2
+     * /
+     * 3
+     * return [3,2,1].
+     * Note: Recursive solution is trivial, could you do it iteratively?
+     */
+    public static List<Integer> postorderTraversal(TreeNode root) {
+        List<Integer> result = new ArrayList<Integer>();
+        if (root == null) {
+            return result;
+        }
+        Stack<TreeNode> stack = new Stack<TreeNode>();
+        TreeNode node = root;
+        TreeNode lastnodevisited = null;
+        while (!stack.isEmpty() || node != null) {
+            if (node != null) {
+                stack.push(node);
+                node = node.left;
+            } else {
+                TreeNode peeknode = stack.peek();
+                if (peeknode.right != null && lastnodevisited != peeknode.right) {
+                    node = peeknode.right;
+                } else {
+                    result.add(peeknode.val);
+                    lastnodevisited = stack.pop();
+                }
+            }
+        }
+        return result;
+    }
+
+    /**
+     * 146. LRU Cache
+     * Design and implement a data structure for Least Recently Used (LRU) cache. It should support the following
+     * operations: get and set.
+     * get(key) - Get the value (will always be positive) of the key if the key exists in the cache, otherwise return
+     * -1.
+     * set(key, value) - Set or insert the value if the key is not already present. When the cache reached its
+     * capacity,
+     * it should invalidate the least recently used item before inserting a new item.
+     */
+    public static class LRUCache {
+
+        private class DoubleLinkedNode {
+            int              key;
+            int              val;
+            DoubleLinkedNode prev;
+            DoubleLinkedNode next;
+
+            public DoubleLinkedNode(int key, int val) {
+                this.key = key;
+                this.val = val;
+                this.prev = null;
+                this.next = null;
+            }
+        }
+
+        private HashMap<Integer, DoubleLinkedNode> values = new HashMap<Integer, DoubleLinkedNode>();
+        private DoubleLinkedNode                   head   = null;
+        private DoubleLinkedNode                   last   = null;
+        private int                                cap    = 0;
+
+        public LRUCache(int capacity) {
+            this.cap = capacity;
+        }
+
+        public int get(int key) {
+            if (!values.containsKey(key)) {
+                return -1;
+            }
+            DoubleLinkedNode target = values.get(key);
+            if (target != head) {
+                if (target == last) {
+                    last = last.prev;
+                }
+                if (target.prev != null) {
+                    target.prev.next = target.next;
+                }
+                if (target.next != null) {
+                    target.next.prev = target.prev;
+                }
+                target.prev = null;
+                target.next = head;
+                head.prev = target;
+                head = target;
+            }
+            return target.val;
+        }
+
+        public void set(int key, int value) {
+
+            DoubleLinkedNode target = null;
+            if (values.containsKey(key)) {
+                target = values.get(key);
+                target.val = value;
+                if (target != head) {
+                    if (target == last) {
+                        last = last.prev;
+                    }
+                    if (target.prev != null) {
+                        target.prev.next = target.next;
+                    }
+                    if (target.next != null) {
+                        target.next.prev = target.prev;
+                    }
+                    target.prev = null;
+                    target.next = head;
+                    head.prev = target;
+                    head = target;
+                }
+            } else {
+                if (values.size() == cap) {
+                    if (last != null) {
+                        values.remove(last.key);
+                        DoubleLinkedNode temp = last.prev;
+                        last.prev = null;
+                        last.next = null;
+                        if (temp != null) {
+                            temp.next = null;
+                        }
+                        last = temp;
+                        if (values.size() == 0) {
+                            head = null;
+                        }
+                    }
+                }
+                target = new DoubleLinkedNode(key, value);
+                values.put(key, target);
+                if (head == null) {
+                    head = target;
+                    last = target;
+                } else {
+                    head.prev = target;
+                    target.next = head;
+                    head = target;
+                }
+            }
+        }
+    }
+
+    /**
+     * 147. Insertion Sort List
+     * Sort a linked list using insertion sort.
+     */
+    public static ListNode insertionSortList(ListNode head) {
+
+        if (head == null) {
+            return head;
+        }
+        ListNode newHead = head;
+        ListNode i = head.next;
+        ListNode leftEnd = head;
+
+        while (i != null) {
+
+            ListNode rightStart = i.next;
+            i.next = null;
+            leftEnd.next = null;
+
+            ListNode temp = newHead;
+            ListNode parent = null;
+            while (temp != null && temp.val < i.val) {
+                parent = temp;
+                temp = temp.next;
+            }
+            if (temp == null) {
+                parent.next = i;
+                leftEnd = i;
+            } else {
+                if (parent == null) {
+                    i.next = newHead;
+                    newHead = i;
+                } else {
+                    i.next = temp;
+                    parent.next = i;
+                }
+            }
+            leftEnd.next = rightStart;
+            i = rightStart;
+        }
+        return newHead;
+    }
+
+    /**
+     * 148. Sort List
+     * Sort a linked list in O(n log n) time using constant space complexity.
+     */
+    public static ListNode sortList(ListNode head) {
+
+        if (head == null) {
+            return head;
+        }
+        int count = 0;
+        ListNode temp = head;
+        while (temp != null) {
+            count++;
+            temp = temp.next;
+        }
+        if (count == 1) {
+            return head;
+        }
+        int midIndex = count / 2;
+        temp = head;
+        while (temp != null) {
+            midIndex--;
+            if (midIndex == 0) {
+                break;
+            }
+            temp = temp.next;
+        }
+        ListNode mid = temp;
+
+        ListNode rightStart = mid.next;
+        mid.next = null;
+
+        ListNode newHead = null;
+        temp = null;
+        ListNode temp1 = sortList(head);
+        ListNode temp2 = sortList(rightStart);
+
+        while (temp1 != null && temp2 != null) {
+            if (temp1.val <= temp2.val) {
+                if (newHead == null) {
+                    newHead = temp1;
+                    temp = newHead;
+                } else {
+                    temp.next = temp1;
+                    temp = temp.next;
+                }
+                temp1 = temp1.next;
+            } else {
+                if (newHead == null) {
+                    newHead = temp2;
+                    temp = newHead;
+                } else {
+                    temp.next = temp2;
+                    temp = temp.next;
+                }
+                temp2 = temp2.next;
+            }
+        }
+        if (temp1 != null && temp2 == null) {
+            while (temp1 != null) {
+                if (newHead == null) {
+                    newHead = temp1;
+                    temp = newHead;
+                } else {
+                    temp.next = temp1;
+                    temp = temp.next;
+                }
+                temp1 = temp1.next;
+            }
+        } else if (temp1 == null && temp2 != null) {
+            while (temp2 != null) {
+                if (newHead == null) {
+                    newHead = temp2;
+                    temp = newHead;
+                } else {
+                    temp.next = temp2;
+                    temp = temp.next;
+                }
+                temp2 = temp2.next;
+            }
+        }
+        return newHead;
+    }
+
+    /**
+     * 149. Max Points on a Line
+     * Given n points on a 2D plane, find the maximum number of points that lie on the same straight line.
+     */
+    public static class Point {
+        int x;
+        int y;
+
+        Point() {
+            x = 0;
+            y = 0;
+        }
+
+        Point(int a, int b) {
+            x = a;
+            y = b;
+        }
+    }
+
+    public static int maxPoints(Point[] points) {
+
+        if (points.length <= 2) {
+            return points.length;
+        }
+        int max = 1;
+        for (int i = 0; i < points.length; i++) {
+            int x1 = points[i].x;
+            int y1 = points[i].y;
+            int dup = 1;
+            HashMap<Float, Integer> map = new HashMap<Float, Integer>();
+            for (int j = i + 1; j < points.length; j++) {
+                int x2 = points[j].x;
+                int y2 = points[j].y;
+                if (x2 == x1 && y2 == y1) {
+                    dup++;
+                    continue;
+                }
+                float key = (x1 == x2) ? Float.MAX_VALUE : (y1 == y2 ? 0 : (float) (y2 - y1) / (float) (x2 - x1));
+                if (map.containsKey(key)) {
+                    map.put(key, map.get(key) + 1);
+                } else {
+                    map.put(key, 1);
+                }
+            }
+            if (map.isEmpty()) {
+                max = Math.max(max, dup);
+            } else {
+                for (Float key : map.keySet()) {
+                    int num = map.get(key) + dup;
+                    max = Math.max(max, num);
+                }
+            }
+        }
+        return max;
+    }
+
+    /**
+     * 150. Evaluate Reverse Polish Notation
+     * Solution
+     * Evaluate the value of an arithmetic expression in Reverse Polish Notation.
+     * Valid operators are +, -, *, /. Each operand may be an integer or another expression.
+     * Some examples:
+     * ["2", "1", "+", "3", "*"] -> ((2 + 1) * 3) -> 9
+     * ["4", "13", "5", "/", "+"] -> (4 + (13 / 5)) -> 6
+     */
+    public static int evalRPN(String[] tokens) {
+
+        if (tokens.length == 0) {
+            return 0;
+        } else if (tokens.length == 1) {
+            return Integer.parseInt(tokens[0]);
+        } else if (tokens.length < 3) {
+            return 0;
+        }
+
+        Stack<Integer> stack = new Stack<Integer>();
+        for (String token : tokens) {
+            if (isSymbol(token)) {
+                int b = stack.pop();
+                int a = stack.pop();
+
+                int result = 0;
+                if (token.equals("+")) {
+                    result = a + b;
+                } else if (token.equals("-")) {
+                    result = a - b;
+                } else if (token.equals("*")) {
+                    result = a * b;
+                } else if (token.equals("/")) {
+                    result = a / b;
+                }
+                stack.push(result);
+            } else {
+                stack.push(Integer.parseInt(token));
+            }
+        }
+        return stack.pop();
+    }
+
+    public static boolean isSymbol(String s) {
+        return s.equals("+") || s.equals("-") || s.equals("*") || s.equals("/");
+    }
+
+    /**
+     * 151. Reverse Words in a String
+     * Given an input string, reverse the string word by word.
+     * For example,
+     * Given s = "the sky is blue",
+     * return "blue is sky the".
+     * click to show clarification.
+     * Clarification:
+     * What constitutes a word?
+     * A sequence of non-space characters constitutes a word.
+     * Could the input string contain leading or trailing spaces?
+     * Yes. However, your reversed string should not contain leading or trailing spaces.
+     * How about multiple spaces between two words?
+     * Reduce them to a single space in the reversed string.
+     */
+    public static String reverseWords(String s) {
+        return null;
+    }
+
+    /**
+     * 152. Maximum Product Subarray
+     * Find the contiguous subarray within an array (containing at least one number) which has the largest product.
+     * For example, given the array [2,3,-2,4],
+     * the contiguous subarray [2,3] has the largest product = 6.
+     */
+    public static int maxProduct(int[] A) {
+        return 0;
+    }
+
+    /**
+     * 153. Find Minimum in Rotated Sorted Array
+     * Solution
+     * Suppose a sorted array is rotated at some pivot unknown to you beforehand.
+     * (i.e., 0 1 2 4 5 6 7 might become 4 5 6 7 0 1 2).
+     * Find the minimum element.
+     * You may assume no duplicate exists in the array.
+     */
+    public static int findMin1(int[] num) {
+        return 0;
+    }
+
+    /**
+     * 154. Find Minimum in Rotated Sorted Array II
+     * Question Solution
+     * Follow up for "Find Minimum in Rotated Sorted Array":
+     * What if duplicates are allowed?
+     * Would this affect the run-time complexity? How and why?
+     * Suppose a sorted array is rotated at some pivot unknown to you beforehand.
+     * (i.e., 0 1 2 4 5 6 7 might become 4 5 6 7 0 1 2).
+     * Find the minimum element.
+     * The array may contain duplicates.
+     */
+    public static int findMin2(int[] num) {
+        return 0;
+    }
+
+    /**
+     * 155. Min Stack
+     * Design a stack that supports push, pop, top, and retrieving the minimum element in constant time.
+     * push(x) -- Push element x onto stack.
+     * pop() -- Removes the element on top of the stack.
+     * top() -- Get the top element.
+     * getMin() -- Retrieve the minimum element in the stack.
+     */
+    public static class MinStack {
+        public void push(int x) {
+
+        }
+
+        public void pop() {
+
+        }
+
+        public int top() {
+            return 0;
+        }
+
+        public int getMin() {
+            return 0;
+        }
+    }
+
+    /**
+     * 160. Intersection of Two Linked Lists
+     * Solution
+     * Write a program to find the node at which the intersection of two singly linked lists begins.
+     * For example, the following two linked lists:
+     * A:          a1 → a2
+     * ↘
+     * c1 → c2 → c3
+     * ↗
+     * B:     b1 → b2 → b3
+     * begin to intersect at node c1.
+     * Notes:
+     * If the two linked lists have no intersection at all, return null.
+     * The linked lists must retain their original structure after the function returns.
+     * You may assume there are no cycles anywhere in the entire linked structure.
+     * Your code should preferably run in O(n) time and use only O(1) memory.
+     */
+    public static ListNode getIntersectionNode(ListNode headA, ListNode headB) {
+        return null;
+    }
+
+    /**
+     * 162. Find Peak Element
+     * A peak element is an element that is greater than its neighbors.
+     * Given an input array where num[i] ≠ num[i+1], find a peak element and return its index.
+     * The array may contain multiple peaks, in that case return the index to any one of the peaks is fine.
+     * You may imagine that num[-1] = num[n] = -∞.
+     * For example, in array [1, 2, 3, 1], 3 is a peak element and your function should return the index number 2.
+     * click to show spoilers.
+     * Note:
+     * Your solution should be in logarithmic complexity.
+     */
+    public static int findPeakElement(int[] num) {
+        return 0;
+    }
+
+    /**
+     * 164. Maximum Gap
+     * Given an unsorted array, find the maximum difference between the successive elements in its sorted form.
+     * Try to solve it in linear time/space.
+     * Return 0 if the array contains less than 2 elements.
+     * You may assume all elements in the array are non-negative integers and fit in the 32-bit signed integer range.
+     */
+    public static int maximumGap(int[] num) {
+        return 0;
+    }
+
+    /**
+     * 165. Compare Version Numbers
+     * Compare two version numbers version1 and version1.
+     * If version1 > version2 return 1, if version1 < version2 return -1, otherwise return 0.
+     * You may assume that the version strings are non-empty and contain only digits and the . character.
+     * The . character does not represent a decimal point and is used to separate number sequences.
+     * For instance, 2.5 is not "two and a half" or "half way to version three", it is the fifth second-level revision
+     * of the second first-level revision.
+     * Here is an example of version numbers ordering:
+     * 0.1 < 1.1 < 1.2 < 13.37
+     */
+    public static int compareVersion(String version1, String version2) {
+        return 0;
+    }
+
+    /**
+     * 166. Fraction to Recurring Decimal
+     * Solution
+     * Given two integers representing the numerator and denominator of a fraction, return the fraction in string
+     * format.
+     * If the fractional part is repeating, enclose the repeating part in parentheses.
+     * For example,
+     * Given numerator = 1, denominator = 2, return "0.5".
+     * Given numerator = 2, denominator = 1, return "2".
+     * Given numerator = 2, denominator = 3, return "0.(6)".
+     */
+    public static String fractionToDecimal(int numerator, int denominator) {
+        return null;
+    }
+
+    /**
+     * 168. Excel Sheet Column Title
+     * Given a positive integer, return its corresponding column title as appear in an Excel sheet.
+     * For example:
+     * 1 -> A
+     * 2 -> B
+     * 3 -> C
+     * ...
+     * 26 -> Z
+     * 27 -> AA
+     * 28 -> AB
+     */
+    public static String convertToTitle(int n) {
+        return null;
+    }
+
+
+    /**
+     * 169. Majority Element
+     * Given an array of size n, find the majority element. The majority element is the element that appears more than
+     * ⌊
+     * n/2 ⌋ times.
+     * You may assume that the array is non-empty and the majority element always exist in the array.
+     */
+    public static int majorityElement(int[] num) {
+        return 0;
+    }
+
+    /**
+     * 171. Excel Sheet Column Number
+     * Related to question Excel Sheet Column Title
+     * Given a column title as appear in an Excel sheet, return its corresponding column number.
+     * For example:
+     * A -> 1
+     * B -> 2
+     * C -> 3
+     * ...
+     * Z -> 26
+     * AA -> 27
+     * AB -> 28
+     */
+    public static int titleToNumber(String s) {
+        return 0;
+    }
+
+
+    /**
+     * 172. Factorial Trailing Zeroes
+     * Given an integer n, return the number of trailing zeroes in n!.
+     * Note: Your solution should be in logarithmic time complexity.
+     */
+    public static int trailingZeroes(int n) {
+        return 0;
+    }
+
+    /**
+     * 173. Binary Search Tree Iterator
+     * Implement an iterator over a binary search tree (BST). Your iterator will be initialized with the root node of a
+     * BST.
+     * Calling next() will return the next smallest number in the BST.
+     * Note: next() and hasNext() should run in average O(1) time and uses O(h) memory, where h is the height of the
+     * tree.
+     */
+    public static class BSTIterator {
+
+        public BSTIterator(TreeNode root) {
+
+        }
+
+        /**
+         * @return whether we have a next smallest number
+         */
+        public boolean hasNext() {
+            return false;
+        }
+
+        /**
+         * @return the next smallest number
+         */
+        public int next() {
+            return 0;
+        }
+    }
+
+    /**
+     * Your BSTIterator will be called like this:
+     * BSTIterator i = new BSTIterator(root);
+     * while (i.hasNext()) v[f()] = i.next();
+     */
+
+    /**
+     * 174. Dungeon Game
+     * The demons had captured the princess (P) and imprisoned her in the bottom-right corner of a dungeon. The dungeon
+     * consists of M x N rooms laid out in a 2D grid. Our valiant knight (K) was initially positioned in the top-left
+     * room and must fight his way through the dungeon to rescue the princess.
+     * The knight has an initial health point represented by a positive integer. If at any point his health point drops
+     * to 0 or below, he dies immediately.
+     * Some of the rooms are guarded by demons, so the knight loses health (negative integers) upon entering these
+     * rooms; other rooms are either empty (0's) or contain magic orbs that increase the knight's health (positive
+     * integers).
+     * In order to reach the princess as quickly as possible, the knight decides to move only rightward or downward in
+     * each step.
+     * Write a function to determine the knight's minimum initial health so that he is able to rescue the princess.
+     * For example, given the dungeon below, the initial health of the knight must be at least 7 if he follows the
+     * optimal path RIGHT-> RIGHT -> DOWN -> DOWN.
+     * -2 (K)	-3	3
+     * -5	-10	1
+     * 10	30	-5 (P)
+     * Notes:
+     * The knight's health has no upper bound.
+     * Any room can contain threats or power-ups, even the first room the knight enters and the bottom-right room where
+     * the princess is imprisoned.
+     */
+    public static int calculateMinimumHP(int[][] dungeon) {
+        return 0;
+    }
+
+    /**
+     * 179. Largest Number
+     * Given a list of non negative integers, arrange them such that they form the largest number.
+     * For example, given [3, 30, 34, 5, 9], the largest formed number is 9534330.
+     * Note: The result may be very large, so you need to return a string instead of an integer.
+     */
+    public static String largestNumber(int[] num) {
+        return null;
+    }
+
 
     public static void main(String[] args) {
 
+        PRINT(evalRPN(new String[]{"2", "1", "+", "3", "*"}));
+        PRINT(evalRPN(new String[]{"4", "13", "5", "/", "+"}));
 
-        Set<String> dict = new HashSet<String>();
-        dict.add("cat");
-        dict.add("cats");
-        dict.add("and");
-        dict.add("sand");
-        dict.add("dog");
-        PRINT(wordBreak2("catsanddog", dict));
-
-
-        TreeNode n1 = new TreeNode(5);
-        TreeNode n2 = new TreeNode(4);
-        TreeNode n3 = new TreeNode(8);
-        TreeNode n4 = new TreeNode(11);
-        TreeNode n5 = new TreeNode(13);
-        TreeNode n6 = new TreeNode(4);
+        TreeNode n1 = new TreeNode(1);
+        TreeNode n2 = new TreeNode(2);
+        TreeNode n3 = new TreeNode(3);
+        TreeNode n4 = new TreeNode(4);
+        TreeNode n5 = new TreeNode(5);
+        TreeNode n6 = new TreeNode(6);
         TreeNode n7 = new TreeNode(7);
-        TreeNode n8 = new TreeNode(2);
-        TreeNode n9 = new TreeNode(5);
-        TreeNode n10 = new TreeNode(1);
+        TreeNode n8 = new TreeNode(8);
+        TreeNode n9 = new TreeNode(9);
+
         n1.left = n2;
         n1.right = n3;
 
         n2.left = n4;
+        n2.right = n5;
 
-        n3.left = n5;
-        n3.right = n6;
+        n3.right = n7;
 
-        n4.left = n7;
-        n4.right = n8;
+        n5.left = n6;
 
-        n6.left = n9;
-        n6.right = n10;
+        n7.left = n8;
+
+        n8.right = n9;
+
+        //PRINT(preorderTraversal(n1));
+        //PRINT(postorderTraversal(n1));
 
         //PRINT(isPalindrome("0k.;r0.k;"));
 
