@@ -7207,19 +7207,43 @@ public class Round2 {
 
     /**
      * 153. Find Minimum in Rotated Sorted Array
-     * Solution
      * Suppose a sorted array is rotated at some pivot unknown to you beforehand.
-     * (i.e., 0 1 2 4 5 6 7 might become 4 5 6 7 0 1 2).
+     * (i.e., 0 1 2 4 5 6 7 might become 4 5 6 7 0 1 2). 7 0 1 2 4 5 6
      * Find the minimum element.
      * You may assume no duplicate exists in the array.
      */
     public static int findMin1(int[] num) {
-        return 0;
+
+        if (num.length == 0) {
+            return Integer.MAX_VALUE;
+        }
+        return _findMin1(num, 0, num.length - 1);
+    }
+
+    public static int _findMin1(int[] num, int start, int end) {
+
+        if (start > end) {
+            return Integer.MAX_VALUE;
+        } else if (start == end) {
+            return num[start];
+        } else if (start + 1 == end) {
+            return Math.min(num[start], num[end]);
+        } else {
+            int mid = (start + end) / 2;
+            if (num[mid] > num[start]) {
+                if (num[start] > num[end]) {
+                    return _findMin1(num, mid + 1, end);
+                } else {
+                    return num[start];
+                }
+            } else {
+                return _findMin1(num, start, mid);
+            }
+        }
     }
 
     /**
      * 154. Find Minimum in Rotated Sorted Array II
-     * Question Solution
      * Follow up for "Find Minimum in Rotated Sorted Array":
      * What if duplicates are allowed?
      * Would this affect the run-time complexity? How and why?
@@ -7229,7 +7253,45 @@ public class Round2 {
      * The array may contain duplicates.
      */
     public static int findMin2(int[] num) {
-        return 0;
+        if (num.length == 0) {
+            return Integer.MAX_VALUE;
+        }
+        return _findMin2(num, 0, num.length - 1);
+    }
+
+    public static int _findMin2(int[] num, int start, int end) {
+
+        if (start > end) {
+            return Integer.MAX_VALUE;
+        } else if (start == end) {
+            return num[start];
+        } else if (start + 1 == end) {
+            return Math.min(num[start], num[end]);
+        } else if (start + 2 == end) {
+            return Math.min(num[start], Math.min(num[start + 1], num[end]));
+        }
+        int mid = (start + end) / 2;
+        int left = mid - 1;
+        int right = mid + 1;
+        while (left > start && num[left] == num[mid]) {
+            left--;
+        }
+        while (right < end && num[right] == num[mid]) {
+            right++;
+        }
+        if (num[left] >= num[start]) {
+            if (num[start] >= num[end]) {
+                return Math.min(_findMin2(num, right, end), num[mid]);
+            } else {
+                return num[start];
+            }
+        } else {
+            if (num[start] >= num[end]) {
+                return Math.min(_findMin2(num, start, left), num[mid]);
+            } else {
+                return num[start];
+            }
+        }
     }
 
     /**
@@ -7241,26 +7303,76 @@ public class Round2 {
      * getMin() -- Retrieve the minimum element in the stack.
      */
     public static class MinStack {
-        public void push(int x) {
 
+        private class DoubleLinkedListNode {
+            int val;
+            DoubleLinkedListNode prev = null;
+            DoubleLinkedListNode next = null;
+
+            public DoubleLinkedListNode(int val) {
+                this.val = val;
+            }
+        }
+
+        DoubleLinkedListNode head = null;
+        DoubleLinkedListNode min  = null;
+
+        public void push(int x) {
+            DoubleLinkedListNode node = new DoubleLinkedListNode(x);
+            if (head == null) {
+                head = node;
+                min = new DoubleLinkedListNode(x);
+            } else {
+                node.next = head;
+                head.prev = node;
+                head = node;
+                if (head.val <= min.val) {
+                    DoubleLinkedListNode minNode = new DoubleLinkedListNode(x);
+                    minNode.next = min;
+                    min.prev = minNode;
+                    min = minNode;
+                }
+            }
         }
 
         public void pop() {
 
+            if (head == null) {
+                return;
+            }
+            DoubleLinkedListNode popOut = head;
+            head = head.next;
+            if (head != null) {
+                head.prev = null;
+            }
+            popOut.next = null;
+            if (min.val == popOut.val) {
+                DoubleLinkedListNode popOutMin = min;
+                min = min.next;
+                if (min != null) {
+                    min.prev = null;
+                }
+                popOutMin.next = null;
+            }
         }
 
         public int top() {
+            if (head != null) {
+                return head.val;
+            }
             return 0;
         }
 
         public int getMin() {
+            if (min != null) {
+                return min.val;
+            }
             return 0;
         }
     }
 
     /**
      * 160. Intersection of Two Linked Lists
-     * Solution
      * Write a program to find the node at which the intersection of two singly linked lists begins.
      * For example, the following two linked lists:
      * A:          a1 → a2
@@ -7276,7 +7388,49 @@ public class Round2 {
      * Your code should preferably run in O(n) time and use only O(1) memory.
      */
     public static ListNode getIntersectionNode(ListNode headA, ListNode headB) {
-        return null;
+
+        if (headA == null || headB == null) {
+            return null;
+        }
+
+
+        ListNode tailA = headA;
+        while (tailA != null) {
+            if (tailA == headB) {
+                return headB;
+            }
+            if (tailA.next == null) {
+                break;
+            }
+            tailA = tailA.next;
+        }
+        tailA.next = headA;
+
+        ListNode temp1 = headB;
+        ListNode temp2 = headB;
+        boolean first = true;
+        while (temp1 != null && temp2 != null && (temp1 != temp2 || first)) {
+            temp1 = temp1.next;
+            if (temp2.next == null) {
+                tailA.next = null;
+                return null;
+            }
+            temp2 = temp2.next.next;
+            first = false;
+        }
+        if (temp1 == null || temp2 == null) {
+            tailA.next = null;
+            return null;
+        }
+        first = true;
+        temp1 = headB;
+        while (temp1 != temp2 || first) {
+            temp1 = temp1.next;
+            temp2 = temp2.next;
+            first = false;
+        }
+        tailA.next = null;
+        return temp1;
     }
 
     /**
@@ -7291,7 +7445,19 @@ public class Round2 {
      * Your solution should be in logarithmic complexity.
      */
     public static int findPeakElement(int[] num) {
-        return 0;
+
+        Stack<Integer> stack = new Stack<Integer>();
+        for (int i = 0; i < num.length; i++) {
+            if (stack.isEmpty()) {
+                stack.push(i);
+            } else if (num[stack.peek()] < num[i]) {
+                stack.pop();
+                stack.push(i);
+            } else if (num[stack.peek()] > num[i]) {
+                return stack.peek();
+            }
+        }
+        return stack.isEmpty() ? -1 : stack.peek();
     }
 
     /**
@@ -7302,12 +7468,46 @@ public class Round2 {
      * You may assume all elements in the array are non-negative integers and fit in the 32-bit signed integer range.
      */
     public static int maximumGap(int[] num) {
-        return 0;
+        int size = num.length;
+        if (size < 2) {
+            return 0;
+        }
+        int max = num[0];
+        int min = num[0];
+        for (int i = 1; i < size; i++) {
+            max = Math.max(max, num[i]);
+            min = Math.min(min, num[i]);
+        }
+        int bucketLen = (max - min) / size + 1;
+        int numBuckets = ((max - min) / bucketLen) + 1;
+        int[][] buckets = new int[numBuckets][2];
+        for (int i = 0; i < numBuckets; i++) {
+            buckets[i][0] = Integer.MAX_VALUE;
+            buckets[i][1] = Integer.MIN_VALUE;
+        }
+        for (int i = 0; i < size; i++) {
+            int value = num[i];
+            int iBucket = (value - min) / bucketLen;
+            buckets[iBucket][0] = Math.min(value, buckets[iBucket][0]);
+            buckets[iBucket][1] = Math.max(value, buckets[iBucket][1]);
+        }
+        int maxGap = 0;
+        int prev = 0;
+        for (int i = 1; i < numBuckets; i++) {
+            int[] curBucket = buckets[i];
+            int[] preBucket = buckets[prev];
+            if (curBucket[0] == Integer.MAX_VALUE || preBucket[0] == Integer.MAX_VALUE) {
+                continue;
+            }
+            maxGap = Math.max(maxGap, curBucket[0] - preBucket[1]);
+            prev = i;
+        }
+        return maxGap;
     }
 
     /**
      * 165. Compare Version Numbers
-     * Compare two version numbers version1 and version1.
+     * Compare two version numbers version1 and version2.
      * If version1 > version2 return 1, if version1 < version2 return -1, otherwise return 0.
      * You may assume that the version strings are non-empty and contain only digits and the . character.
      * The . character does not represent a decimal point and is used to separate number sequences.
@@ -7317,12 +7517,52 @@ public class Round2 {
      * 0.1 < 1.1 < 1.2 < 13.37
      */
     public static int compareVersion(String version1, String version2) {
+
+        List<String> v1 = _compareVersion(version1);
+        List<String> v2 = _compareVersion(version2);
+        int size1 = v1.size();
+        int size2 = v2.size();
+        if (size1 < size2) {
+            for (int i = 0; i < size2 - size1; i++) {
+                v1.add("0");
+            }
+        } else if (size1 > size2) {
+            for (int i = 0; i < size1 - size2; i++) {
+                v2.add("0");
+            }
+        }
+        int len = v1.size();
+        for (int i = 0; i < len; i++) {
+            int _v1 = Integer.parseInt(v1.get(i));
+            int _v2 = Integer.parseInt(v2.get(i));
+            if (_v1 > _v2) {
+                return 1;
+            } else if (_v1 < _v2) {
+                return -1;
+            }
+        }
         return 0;
+    }
+
+    public static List<String> _compareVersion(String version) {
+        List<String> result = new ArrayList<String>();
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i <= version.length(); i++) {
+            char c = i == version.length() ? '.' : version.charAt(i);
+            if (c == '.') {
+                if (builder.length() > 0) {
+                    result.add(builder.toString());
+                    builder.delete(0, builder.length());
+                }
+            } else {
+                builder.append(c);
+            }
+        }
+        return result;
     }
 
     /**
      * 166. Fraction to Recurring Decimal
-     * Solution
      * Given two integers representing the numerator and denominator of a fraction, return the fraction in string
      * format.
      * If the fractional part is repeating, enclose the repeating part in parentheses.
@@ -7330,9 +7570,85 @@ public class Round2 {
      * Given numerator = 1, denominator = 2, return "0.5".
      * Given numerator = 2, denominator = 1, return "2".
      * Given numerator = 2, denominator = 3, return "0.(6)".
+     * -----------
+     * 16 6
+     * 2  2
+     * _16_____
+     * 3|50
+     * ----------
+     * 20
+     * 18
+     * -----------
+     * 2
      */
     public static String fractionToDecimal(int numerator, int denominator) {
-        return null;
+
+        if (numerator == 0 || denominator == 0) {
+            return "0";
+        }
+        boolean isNegative = false;
+        long a = numerator;
+        long b = denominator;
+        if (a < 0) {
+            a = -a;
+            isNegative = true;
+        }
+        if (b < 0) {
+            b = -b;
+            isNegative = !isNegative;
+        }
+
+        List<Long> ans = new ArrayList<Long>();
+        List<Long> res = new ArrayList<Long>();
+        int dotIndex = -1;
+        int leftBrace = -1;
+        while (a > 0) {
+            if (a < b) {
+                ans.add(0L);
+                res.add(a);
+                if (dotIndex == -1) {
+                    dotIndex = ans.size();
+                }
+                a *= 10;
+                continue;
+            }
+            long _ans = a / b;
+            a = a % b;
+            ans.add(_ans);
+            if (res.contains(a) && dotIndex != -1) {
+                for (int i = res.size() - 1; i >= 0; i--) {
+                    if (res.get(i) == a) {
+                        leftBrace = i;
+                        break;
+                    }
+                }
+                a = 0;
+            } else {
+                res.add(a);
+            }
+            if (a < b && dotIndex == -1) {
+                dotIndex = ans.size();
+            }
+            a *= 10;
+        }
+
+        StringBuilder builder = new StringBuilder();
+        if (isNegative) {
+            builder.append("-");
+        }
+        for (int i = 0; i < ans.size(); i++) {
+            builder.append(ans.get(i));
+            if (i + 1 == dotIndex && dotIndex != ans.size()) {
+                builder.append(".");
+            }
+            if (i == leftBrace) {
+                builder.append("(");
+            }
+        }
+        if (leftBrace != -1) {
+            builder.append(")");
+        }
+        return builder.toString();
     }
 
     /**
@@ -7347,21 +7663,61 @@ public class Round2 {
      * 27 -> AA
      * 28 -> AB
      */
+    private static String[] CHARS = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P",
+                                     "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"};
+
     public static String convertToTitle(int n) {
-        return null;
+
+        if (n < 1) {
+            return "";
+        }
+        if (n >= 1 && n <= 26) {
+            return CHARS[n - 1];
+        }
+
+        Stack<String> stack = new Stack<String>();
+        while (n > 0) {
+            int temp = n % 26;
+            stack.add(CHARS[(temp == 0 ? CHARS.length : temp) - 1]);
+            n = (n - (temp == 0 ? CHARS.length : temp)) / 26;
+        }
+        StringBuilder builder = new StringBuilder();
+        while (!stack.isEmpty()) {
+            builder.append(stack.pop());
+        }
+        return builder.toString();
     }
 
 
     /**
      * 169. Majority Element
      * Given an array of size n, find the majority element. The majority element is the element that appears more than
-     * ⌊
-     * n/2 ⌋ times.
+     * ⌊n/2 ⌋ times.
      * You may assume that the array is non-empty and the majority element always exist in the array.
      */
     public static int majorityElement(int[] num) {
+
+        int size = num.length;
+        if (size == 0) {
+            return 0;
+        } else if (size <= 2) {
+            return num[0];
+        }
+        int half = size / 2;
+        HashMap<Integer, Integer> map = new HashMap<Integer, Integer>();
+        for (int n : num) {
+            if (map.containsKey(n)) {
+                map.put(n, map.get(n) + 1);
+            } else {
+                map.put(n, 1);
+            }
+            if (map.get(n) > half) {
+                return n;
+            }
+        }
         return 0;
     }
+
 
     /**
      * 171. Excel Sheet Column Number
@@ -7375,9 +7731,19 @@ public class Round2 {
      * Z -> 26
      * AA -> 27
      * AB -> 28
+     * ABC = 26*26*A + 26*B + C
+     * 26*0+     1 2 3 4 5 6 ... 26
+     * 26*1+
+     * 26*2+
      */
     public static int titleToNumber(String s) {
-        return 0;
+
+        int total = 0;
+        for (int i = 0; i < s.length(); i++) {
+            int val = ((int) s.charAt(i)) - 64;
+            total = 26 * total + val;
+        }
+        return total;
     }
 
 
@@ -7387,7 +7753,14 @@ public class Round2 {
      * Note: Your solution should be in logarithmic time complexity.
      */
     public static int trailingZeroes(int n) {
-        return 0;
+
+        double num = 0;
+        long pow = 5;
+        do {
+            num += Math.floor(n / pow);
+            pow *= 5;
+        } while (pow <= n);
+        return (int) num;
     }
 
     /**
@@ -7465,7 +7838,10 @@ public class Round2 {
 
     public static void main(String[] args) {
 
-        PRINT(reverseWords(" sky is   blue    "));
+        PRINT(convertToTitle(52));
+        PRINT(convertToTitle(27));
+        PRINT(titleToNumber("AZ"));
+        PRINT(titleToNumber("AAA"));
 
         TreeNode n1 = new TreeNode(1);
         TreeNode n2 = new TreeNode(2);
