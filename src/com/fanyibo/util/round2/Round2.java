@@ -7149,7 +7149,28 @@ public class Round2 {
      * Reduce them to a single space in the reversed string.
      */
     public static String reverseWords(String s) {
-        return null;
+
+        Stack<String> stack = new Stack<String>();
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i <= s.length(); i++) {
+            char c = i == s.length() ? ' ' : s.charAt(i);
+            if (c == ' ') {
+                if (builder.length() > 0) {
+                    stack.push(builder.toString());
+                    builder.delete(0, builder.length());
+                }
+            } else {
+                builder.append(c);
+            }
+        }
+        StringBuilder result = new StringBuilder();
+        while (!stack.isEmpty()) {
+            result.append(stack.pop());
+            if (!stack.isEmpty()) {
+                result.append(" ");
+            }
+        }
+        return result.toString();
     }
 
     /**
@@ -7159,7 +7180,29 @@ public class Round2 {
      * the contiguous subarray [2,3] has the largest product = 6.
      */
     public static int maxProduct(int[] A) {
-        return 0;
+
+        int len = A.length;
+        if (len == 0) {
+            return 0;
+        }
+        int result = A[0];
+        int postive = Math.max(0, A[0]);
+        int negative = Math.min(0, A[0]);
+        for (int i = 1; i < len; i++) {
+            if (A[i] > 0) {
+                postive = Math.max(1, postive) * A[i];
+                negative = negative * A[i];
+            } else if (A[i] < 0) {
+                int prev_max = postive;
+                postive = negative * A[i];
+                negative = Math.min(A[i], prev_max * A[i]);
+            } else {
+                postive = 0;
+                negative = 0;
+            }
+            result = Math.max(result, postive);
+        }
+        return result;
     }
 
     /**
@@ -7422,8 +7465,7 @@ public class Round2 {
 
     public static void main(String[] args) {
 
-        PRINT(evalRPN(new String[]{"2", "1", "+", "3", "*"}));
-        PRINT(evalRPN(new String[]{"4", "13", "5", "/", "+"}));
+        PRINT(reverseWords(" sky is   blue    "));
 
         TreeNode n1 = new TreeNode(1);
         TreeNode n2 = new TreeNode(2);
