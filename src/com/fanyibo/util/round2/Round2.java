@@ -7773,22 +7773,35 @@ public class Round2 {
      */
     public static class BSTIterator {
 
-        public BSTIterator(TreeNode root) {
+        private Deque<Integer> inorder = new ArrayDeque<Integer>();
 
+        public BSTIterator(TreeNode root) {
+            Stack<TreeNode> stack = new Stack<TreeNode>();
+            TreeNode temp = root;
+            while (!stack.isEmpty() || temp != null) {
+                if (temp != null) {
+                    stack.push(temp);
+                    temp = temp.left;
+                } else {
+                    temp = stack.pop();
+                    inorder.addLast(temp.val);
+                    temp = temp.right;
+                }
+            }
         }
 
         /**
          * @return whether we have a next smallest number
          */
         public boolean hasNext() {
-            return false;
+            return !inorder.isEmpty();
         }
 
         /**
          * @return the next smallest number
          */
         public int next() {
-            return 0;
+            return inorder.removeFirst();
         }
     }
 
@@ -7813,16 +7826,54 @@ public class Round2 {
      * Write a function to determine the knight's minimum initial health so that he is able to rescue the princess.
      * For example, given the dungeon below, the initial health of the knight must be at least 7 if he follows the
      * optimal path RIGHT-> RIGHT -> DOWN -> DOWN.
-     * -2 (K)	-3	3
-     * -5	-10	1
-     * 10	30	-5 (P)
+     * -2 (7)	 -3 (7)   3(4)
+     * -5 (19)	 -10(15)  1(5)
+     * 10 (14)	  30(24) -5(6)
      * Notes:
      * The knight's health has no upper bound.
      * Any room can contain threats or power-ups, even the first room the knight enters and the bottom-right room where
      * the princess is imprisoned.
      */
     public static int calculateMinimumHP(int[][] dungeon) {
-        return 0;
+
+        int m = dungeon.length;
+        if (m == 0) {
+            return 0;
+        }
+        int n = dungeon[0].length;
+        if (n == 0) {
+            return 0;
+        }
+        int[][] blood = new int[m][n];
+        for (int i = m - 1; i >= 0; i--) {
+            for (int j = n - 1; j >= 0; j--) {
+                if (dungeon[i][j] >= 0) {
+                    if (i == m - 1) {
+                        blood[i][j] = (j == n - 1) ? 1 : (blood[i][j + 1] <= dungeon[i][j] ? 1 : Math
+                                .abs(blood[i][j + 1] - dungeon[i][j]));
+                    } else if (j == n - 1) {
+                        blood[i][j] = (blood[i + 1][j] <= dungeon[i][j] ? 1 : Math
+                                .abs(blood[i + 1][j] - dungeon[i][j]));
+                    } else {
+                        int minReq = Math.min(blood[i + 1][j], blood[i][j + 1]);
+                        if (minReq <= dungeon[i][j]) {
+                            blood[i][j] = 1;
+                        } else {
+                            blood[i][j] = minReq - dungeon[i][j];
+                        }
+                    }
+                } else {
+                    if (i == m - 1) {
+                        blood[i][j] = ((j == n - 1) ? 1 : blood[i][j + 1]) - dungeon[i][j];
+                    } else if (j == n - 1) {
+                        blood[i][j] = blood[i + 1][j] - dungeon[i][j];
+                    } else {
+                        blood[i][j] = Math.min(blood[i + 1][j], blood[i][j + 1]) - dungeon[i][j];
+                    }
+                }
+            }
+        }
+        return blood[0][0];
     }
 
     /**
@@ -7859,8 +7910,8 @@ public class Round2 {
             return result;
         }
         int mid = (start + end) / 2;
-        return _largestNumberMerge(_largestNumberMergeSort(num, start, mid), _largestNumberMergeSort(num, mid + 1,
-                                                                                                     end));
+        return _largestNumberMerge(_largestNumberMergeSort(num, start, mid),
+                                   _largestNumberMergeSort(num, mid + 1, end));
     }
 
     public static List<String> _largestNumberMerge(List<String> arr1, List<String> arr2) {
@@ -7916,52 +7967,6 @@ public class Round2 {
 
 
     public static void main(String[] args) {
-
-        PRINT(convertToTitle(52));
-        PRINT(convertToTitle(27));
-        PRINT(titleToNumber("AZ"));
-        PRINT(titleToNumber("AAA"));
-
-        TreeNode n1 = new TreeNode(1);
-        TreeNode n2 = new TreeNode(2);
-        TreeNode n3 = new TreeNode(3);
-        TreeNode n4 = new TreeNode(4);
-        TreeNode n5 = new TreeNode(5);
-        TreeNode n6 = new TreeNode(6);
-        TreeNode n7 = new TreeNode(7);
-        TreeNode n8 = new TreeNode(8);
-        TreeNode n9 = new TreeNode(9);
-
-        n1.left = n2;
-        n1.right = n3;
-
-        n2.left = n4;
-        n2.right = n5;
-
-        n3.right = n7;
-
-        n5.left = n6;
-
-        n7.left = n8;
-
-        n8.right = n9;
-
-        //PRINT(preorderTraversal(n1));
-        //PRINT(postorderTraversal(n1));
-
-        //PRINT(isPalindrome("0k.;r0.k;"));
-
-        /**
-         5
-         * / \
-         * 4   8
-         * /   / \
-         * 11  13  4
-         * /  \    / \
-         * 7    2  5   1
-         *
-         *
-         */
 
     }
 
