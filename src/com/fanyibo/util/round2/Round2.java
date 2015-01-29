@@ -7832,7 +7832,86 @@ public class Round2 {
      * Note: The result may be very large, so you need to return a string instead of an integer.
      */
     public static String largestNumber(int[] num) {
-        return null;
+
+        List<String> array = new ArrayList<String>();
+        for (int n : num) {
+            array.add(Integer.toString(n));
+        }
+        List<String> sorted = _largestNumberMergeSort(array, 0, array.size() - 1);
+        StringBuilder builder = new StringBuilder();
+        for (String elem : sorted) {
+            if (builder.length() == 0 && elem.equals("0")) {
+                continue;
+            }
+            builder.append(elem);
+        }
+        return builder.length() == 0 ? "0" : builder.toString();
+    }
+
+    public static List<String> _largestNumberMergeSort(List<String> num, int start, int end) {
+
+        int size = end - start + 1;
+        if (size <= 0) {
+            return new ArrayList<String>();
+        } else if (size == 1) {
+            List<String> result = new ArrayList<String>();
+            result.add(num.get(start));
+            return result;
+        }
+        int mid = (start + end) / 2;
+        return _largestNumberMerge(_largestNumberMergeSort(num, start, mid), _largestNumberMergeSort(num, mid + 1,
+                                                                                                     end));
+    }
+
+    public static List<String> _largestNumberMerge(List<String> arr1, List<String> arr2) {
+
+        int size1 = arr1.size();
+        int size2 = arr2.size();
+        if (size1 == 0) {
+            return arr2;
+        }
+        if (size2 == 0) {
+            return arr1;
+        }
+
+        List<String> result = new ArrayList<String>();
+        int index1 = 0;
+        int index2 = 0;
+        while (index1 < size1 && index2 < size2) {
+            if (_largestNumberCmp(arr1.get(index1), arr2.get(index2)) >= 0) {
+                result.add(arr1.get(index1));
+                index1++;
+            } else {
+                result.add(arr2.get(index2));
+                index2++;
+            }
+        }
+        if (index1 == size1 && index2 != size2) {
+            for (int i = index2; i < size2; i++) {
+                result.add(arr2.get(i));
+            }
+        } else if (index1 != size1 && index2 == size2) {
+            for (int i = index1; i < size1; i++) {
+                result.add(arr1.get(i));
+            }
+        }
+        return result;
+    }
+
+    public static int _largestNumberCmp(String num1, String num2) {
+
+        String str1 = num1 + num2;
+        String str2 = num2 + num1;
+        for (int i = 0; i < str1.length(); i++) {
+            char c1 = str1.charAt(i);
+            char c2 = str2.charAt(i);
+            if (c1 > c2) {
+                return 1;
+            } else if (c1 < c2) {
+                return -1;
+            }
+        }
+        return 0;
     }
 
 
