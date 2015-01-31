@@ -159,7 +159,7 @@ public class Sorting {
     public static void bubbleSort(int[] array) {
 
         int n = array.length;
-        boolean swapped = false;
+        boolean swapped;
         do {
             int newN = 0;
             swapped = false;
@@ -198,8 +198,8 @@ public class Sorting {
         for (int i = 0; i < size; i++) {
             buckets.add(new ArrayList<Integer>());
         }
-        for (int i = 0; i < array.length; i++) {
-            buckets.get((array[i] - min) / len).add(array[i]);
+        for (int anArray : array) {
+            buckets.get((anArray - min) / len).add(anArray);
         }
         for (int i = 0; i < size; i++) {
             if (!buckets.get(i).isEmpty()) {
@@ -210,8 +210,8 @@ public class Sorting {
         for (int i = 0; i < size; i++) {
             List<Integer> list = buckets.get(i);
             if (!list.isEmpty()) {
-                for (int j = 0; j < list.size(); j++) {
-                    array[index++] = list.get(j);
+                for (Integer aList : list) {
+                    array[index++] = aList;
                 }
             }
         }
@@ -219,47 +219,152 @@ public class Sorting {
 
     public static void radixSort(int[] array) {
 
+        List<List<Integer>> radix = new ArrayList<List<Integer>>();
+        for (int i = 0; i < 10; i++) {
+            radix.add(new ArrayList<Integer>());
+        }
+        List<Integer> pos = new ArrayList<Integer>();
+        List<Integer> neg = new ArrayList<Integer>();
+        for (int anArray : array) {
+            if (anArray >= 0) {
+                pos.add(anArray);
+            } else {
+                neg.add(anArray);
+            }
+        }
+        boolean allZero;
+        int mod = 10;
+        int dev = 1;
+        do {
+            allZero = true;
+            for (int posNum : pos) {
+                int num = (posNum % mod) / dev;
+                radix.get(num).add(posNum);
+                if (num != 0) {
+                    allZero = false;
+                }
+            }
+            mod *= 10;
+            dev *= 10;
+            pos.clear();
+            for (List<Integer> aRadix : radix) {
+                while (!aRadix.isEmpty()) {
+                    pos.add(aRadix.remove(0));
+                }
+            }
+        } while (!allZero);
+        mod = 10;
+        dev = 1;
+        do {
+            allZero = true;
+            for (int negNum : neg) {
+                int num = (-negNum % mod) / dev;
+                radix.get(num).add(negNum);
+                if (num != 0) {
+                    allZero = false;
+                }
+            }
+            mod *= 10;
+            dev *= 10;
+            neg.clear();
+            for (List<Integer> aRadix : radix) {
+                while (!aRadix.isEmpty()) {
+                    neg.add(aRadix.remove(0));
+                }
+            }
+        } while (!allZero);
+        int index = 0;
+        for (int i = neg.size() - 1; i >= 0; i--) {
+            array[index++] = neg.get(i);
+        }
+        for (Integer po : pos) {
+            array[index++] = po;
+        }
     }
 
-    public static int[] heapSort(int[] array) {
-        return null;
+    public static void heapSort(int[] array) {
+
+        if (array.length <= 1) {
+            return;
+        }
+        heapify(array);
+        for (int i = array.length - 1; i >= 0; i--) {
+            siftdown(array, 0, i);
+            swap(array, 0, i);
+        }
+    }
+
+    private static void heapify(int[] array) {
+        int len = array.length;
+        int start = (len - 2) / 2;
+        while (start >= 0) {
+            siftdown(array, start, array.length - 1);
+            start--;
+        }
+    }
+
+    private static void siftdown(int[] array, int start, int end) {
+
+        int root = start;
+        int leftChild = 2 * root + 1;
+        while (leftChild <= end) {
+            int swap = root;
+            if (array[swap] < array[leftChild]) {
+                swap = leftChild;
+            }
+            if (leftChild + 1 <= end && array[swap] < array[leftChild + 1]) {
+                swap = leftChild + 1;
+            }
+            if (swap == root) {
+                return;
+            } else {
+                swap(array, root, swap);
+                root = swap;
+                leftChild = 2 * root + 1;
+            }
+        }
     }
 
 
     public static void main(String[] args) {
 
         {
-            int[] A = {5, 4, 6, 2, 8, 1, 2, 9, 1, 10, 5};
+            int[] A = {5, 4, 6, 2, 8, 1, 2, 9, 1, -10, 5};
             quickSort(A);
             PRINT(A);
         }
         {
-            int[] A = {5, 4, 6, 2, 8, 1, 2, 9, 1, 10, 5};
+            int[] A = {5, 4, 6, 2, 8, 1, 2, 9, 1, -10, 5};
             PRINT(mergeSort(A));
         }
         {
-            int[] A = {5, 4, 6, 2, 8, 1, 2, 9, 1, 10, 5};
+            int[] A = {5, 4, 6, 2, 8, 1, 2, 9, 1, -10, 5};
             insertionSort(A);
             PRINT(A);
         }
         {
-            int[] A = {5, 4, 6, 2, 8, 1, 2, 9, 1, 10, 5};
+            int[] A = {5, 4, 6, 2, 8, 1, 2, 9, 1, -10, 5};
             selectionSort(A);
             PRINT(A);
         }
         {
-            int[] A = {5, 4, 6, 2, 8, 1, 2, 9, 1, 10, 5};
+            int[] A = {5, 4, 6, 2, 8, 1, 2, 9, 1, -10, 5};
             bubbleSort(A);
             PRINT(A);
         }
         {
-            int[] A = {5, 4, 6, 2, 8, 1, 2, 9, 1, 10, 5};
+            int[] A = {5, 4, 6, 2, 8, 1, 2, 9, 1, -10, 5};
             bucketSort(A);
             PRINT(A);
         }
         {
-            int[] A = {5, 4, 6, 2, 8, 1, 2, 9, 1, 10, 5};
+            int[] A = {5, 4, 6, 2, -8, 1, 2, 9, 1, -10, 5};
             radixSort(A);
+            PRINT(A);
+        }
+        {
+            int[] A = {5, 4, 6, 2, -8, 1, 2, 9, 1, -10, 5};
+            heapSort(A);
             PRINT(A);
         }
 
