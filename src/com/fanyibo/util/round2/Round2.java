@@ -7970,46 +7970,42 @@ public class Round2 {
 
         HashMap<Integer, Integer> map = new HashMap<Integer, Integer>();
         for (int i = 0; i < x.length; i++) {
-            map.put(x[i], t[i]);
+            if (x[i] >= 1 && x[i] <= N) {
+                map.put(x[i], t[i]);
+            }
         }
 
         long[] height = new long[N];
-        long[] max = new long[N];
+        height[0] = 0;
         for (int i = 1; i < N; i++) {
             int number = i + 1;
             if (map.containsKey(number)) {
                 int maxH = map.get(number);
-                long h = Math.min(maxH, height[i - 1] + K);
-                if (Math.abs(h - height[i - 1]) > K) {
-                    long diff = height[i - 1] - h;
-                    for (int j = i - 1; j >= 1; j--) {
-                        if (height[j] - diff < 0) {
-                            height[j] = 0;
-                        } else {
-                            height[j] -= diff;
-                        }
-                    }
-                    max[0] = 0;
-                    for (int j = 1; j <= i - 1; j++) {
-                        max[j] = Math.max(max[j - 1], height[j]);
-                    }
+                height[i] = Math.min(maxH, height[i - 1] + K);
+                int j = i;
+                while (j >= 1 && Math.abs(height[j - 1] - height[j]) > K) {
+                    height[j - 1] = height[j] + K;
+                    j--;
                 }
-                height[i] = h;
-                max[i] = Math.max(max[i - 1], height[i]);
             } else {
-                long h = height[i - 1] + K;
-                height[i] = h;
-                max[i] = Math.max(max[i - 1], height[i]);
+                height[i] = height[i - 1] + K;
             }
         }
-        return max[N - 1];
+        long max = 0;
+        for (int i = 0; i < height.length; i++) {
+            if (max < height[i]) {
+                max = height[i];
+            }
+        }
+        return max;
     }
 
 
     public static void main(String[] args) {
 
+        PRINT("17 => " + maxHeight(20, 3, new int[]{9, 14, 5, 18}, new int[]{15, 5, 4, 1}));
         PRINT("3 => " + maxHeight(10, 1, new int[]{3, 8}, new int[]{1, 1}));
-        PRINT("999999999000000000 => " + maxHeight(1000000000, 1000000000, new int[]{}, new int[]{}));
+        //PRINT("999999999000000000 => " + maxHeight(1000000000, 1000000000, new int[]{}, new int[]{}));
         PRINT("22 => " + maxHeight(20, 3,
                                    new int[]{34, 35, 48, 86, 110, 170, 275, 288, 313, 321, 344, 373, 390, 410, 412, 441,
                                              499, 525, 538, 568, 585, 627, 630, 671, 692, 699, 719, 752, 755, 764, 772},
