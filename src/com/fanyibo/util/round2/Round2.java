@@ -4614,7 +4614,7 @@ public class Round2 {
                     node = node.left;
                 } else {
                     pre.right = null;
-                    result.add(pre.val);
+                    result.add(node.val);
                     node = node.right;
                 }
             }
@@ -5251,6 +5251,7 @@ public class Round2 {
         node.right = (left == null) ? right : left;
         return rRight == null ? lRight : rRight;
     }
+
 
     /**
      * 115. Distinct Subsequences
