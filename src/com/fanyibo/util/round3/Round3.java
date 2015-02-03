@@ -18,29 +18,92 @@ public class Round3 {
      * 1. Two Sum
      * Given an array of integers, find two numbers such that they add up to a specific target number.
      * The function twoSum should return indices of the two numbers such that they add up to the target, where
-     * index1
-     * must be less than index2. Please note that your returned answers (both index1 and index2) are not zero-based.
-     * You may assume that each input would have exactly one solution.
+     * index1 must be less than index2. Please note that your returned answers (both index1 and index2) are not
+     * zero-based. You may assume that each input would have exactly one solution.
      * Input: numbers={2, 7, 11, 15}, target=9
      * Output: index1=1, index2=2
      */
     public static int[] twoSum(int[] numbers, int target) {
 
-        return null;
+        int[] result = new int[2];
+        HashMap<Integer, List<Integer>> map = new HashMap<Integer, List<Integer>>();
+        for (int i = 0; i < numbers.length; i++) {
+            if (map.containsKey(numbers[i])) {
+                map.get(numbers[i]).add(i);
+            } else {
+                List<Integer> list = new ArrayList<Integer>();
+                list.add(i);
+                map.put(numbers[i], list);
+            }
+        }
+        for (int i = 0; i < numbers.length; i++) {
+            int a = numbers[i];
+            int b = target - a;
+            if (map.containsKey(b) && ((a == b && map.get(b).size() > 1) || (a != b))) {
+                List<Integer> indexes = map.get(b);
+                if (a == b) {
+                    result[0] = i + 1;
+                    result[1] = indexes.get(1) + 1;
+                } else {
+                    result[0] = i + 1;
+                    result[1] = indexes.get(0) + 1;
+                }
+                return result;
+            }
+        }
+        return result;
     }
 
 
     /**
      * 2.Add Two Numbers
      * You are given two linked lists representing two non-negative numbers. The digits are stored in reverse
-     * order and
-     * each of their nodes contain a single digit. Add the two numbers and return it as a linked list.
+     * order and each of their nodes contain a single digit. Add the two numbers and return it as a linked list.
      * Input: (2 -> 4 -> 3) + (5 -> 6 -> 4)
      * Output: 7 -> 0 -> 8
      */
     public static ListNode addTwoNumbers(ListNode l1, ListNode l2) {
 
-        return null;
+        if (l1 == null) {
+            return l2;
+        } else if (l2 == null) {
+            return l1;
+        }
+        ListNode result = null;
+        ListNode temp = null;
+        ListNode temp1 = l1;
+        ListNode temp2 = l2;
+        boolean markOne = false;
+        while (temp1 != null || temp2 != null) {
+            int a = 0;
+            int b = 0;
+            if (temp1 != null) {
+                a = temp1.val;
+                temp1 = temp1.next;
+            }
+            if (temp2 != null) {
+                b = temp2.val;
+                temp2 = temp2.next;
+            }
+            int c = a + b + (markOne ? 1 : 0);
+            if (c >= 10) {
+                markOne = true;
+                c = c % 10;
+            } else {
+                markOne = false;
+            }
+            if (temp == null) {
+                result = new ListNode(c);
+                temp = result;
+            } else {
+                temp.next = new ListNode(c);
+                temp = temp.next;
+            }
+        }
+        if (markOne) {
+            temp.next = new ListNode(1);
+        }
+        return result;
     }
 
     /**
@@ -52,7 +115,33 @@ public class Round3 {
      */
     public static int lengthOfLongestSubstring(String s) {
 
-        return 0;
+        if (s.length() < 2) {
+            return s.length();
+        }
+        int index1 = 0;
+        int index2 = 0;
+        int max = 0;
+        Set<Character> set = new HashSet<Character>();
+        while (index2 < s.length()) {
+            char c = s.charAt(index2);
+            if (!set.contains(c)) {
+                set.add(c);
+                index2++;
+            } else {
+                max = Math.max(max, index2 - index1);
+                for (; index1 < index2; index1++) {
+                    if (s.charAt(index1) == c) {
+                        index1++;
+                        break;
+                    } else {
+                        set.remove(s.charAt(index1));
+                    }
+                }
+                index2++;
+            }
+        }
+        max = Math.max(max, index2 - index1);
+        return max;
     }
 
     /**
@@ -62,7 +151,66 @@ public class Round3 {
      */
     public static double findMedianSortedArrays(int A[], int B[]) {
 
-        return 0;
+        int sizeA = A.length;
+        int sizeB = B.length;
+        if (sizeA == 0 && sizeB == 0) {
+            return 0;
+        } else if (sizeA == 0) {
+            return sizeB % 2 == 0 ? ((double) B[(sizeB - 1) / 2] + (double) B[sizeB / 2]) / 2.0 : (double) B[(sizeB -
+                    1) / 2];
+        } else if (sizeB == 0) {
+            return sizeA % 2 == 0 ? ((double) A[(sizeA - 1) / 2] + (double) A[sizeA / 2]) / 2.0 : (double) A[(sizeA -
+                    1) / 2];
+        }
+        if ((sizeA + sizeB) % 2 == 0) {
+            int first = findKth(A, 0, sizeA - 1, B, 0, sizeB - 1, (sizeA + sizeB ) / 2);
+            int second = findKth(A, 0, sizeA - 1, B, 0, sizeB - 1, (sizeA + sizeB) / 2 + 1);
+            return (double) (first + second) / 2.0;
+        } else {
+            return (double) findKth(A, 0, sizeA - 1, B, 0, sizeB - 1, (sizeA + sizeB) / 2 + 1);
+        }
+    }
+
+    public static int findKth(int A[], int startA, int endA, int B[], int startB, int endB, int k) {
+
+        int sizeA = endA - startA + 1;
+        int sizeB = endB - startB + 1;
+        if (sizeA <= 0) {
+            return B[startB + k - 1];
+        } else if (sizeB <= 0) {
+            return A[startA + k - 1];
+        } else if (k == 1) {
+            return Math.min(A[startA], B[startB]);
+        } else if (k == sizeA + sizeB) {
+            return Math.max(A[endA], B[endB]);
+        } else if (sizeA == 1) {
+            if (B[startB + k - 1] <= A[startA]) {
+                return B[startB + k - 1];
+            } else {
+                return findKth(A, startA, endA, B, startB, startB + k - 2, k);
+            }
+        } else if (sizeB == 1) {
+            if (A[startA + k - 1] <= B[startB]) {
+                return A[startA + k - 1];
+            } else {
+                return findKth(A, startA, startA + k - 2, B, startB, endB, k);
+            }
+        }
+        int midAIndex = (startA + endA) / 2;
+        int midBIndex = (startB + endB) / 2;
+        if (A[midAIndex] >= B[midBIndex]) {
+            if (k <= midAIndex + midBIndex - startA - startB + 2) {
+                return findKth(A, startA, midAIndex, B, startB, endB, k);
+            } else {
+                return findKth(A, startA, endA, B, midBIndex + 1, endB, k - midBIndex - 1 + startB);
+            }
+        } else {
+            if (k <= midAIndex + midBIndex - startA - startB + 2) {
+                return findKth(A, startA, endA, B, startB, midBIndex, k);
+            } else {
+                return findKth(A, midAIndex + 1, endA, B, startB, endB, k - midAIndex - 1 + startA);
+            }
+        }
     }
 
     /**
@@ -72,7 +220,24 @@ public class Round3 {
      */
     public static String longestPalindrome(String s) {
 
-        return null;
+        int size = s.length();
+        if (size <= 1) {
+            return s;
+        }
+        boolean[][] d = new boolean[size][size];
+        int maxI = 0;
+        int maxJ = 0;
+        for (int i = size - 1; i >= 0; i--) {
+            for (int j = i; j < size; j++) {
+                d[i][j] = (i == j) || (i + 1 == j && s.charAt(i) == s.charAt(j)) || (s.charAt(i) == s
+                        .charAt(j) && d[i + 1][j - 1]);
+                if (d[i][j] && (j - i) > (maxJ - maxI)) {
+                    maxI = i;
+                    maxJ = j;
+                }
+            }
+        }
+        return s.substring(maxI, maxJ + 1);
     }
 
     /**
@@ -90,7 +255,42 @@ public class Round3 {
      */
     public static String convert(String s, int nRows) {
 
-        return null;
+        if (nRows <= 1) {
+            return s;
+        }
+        int m = nRows;
+        int numPerBlock = 2 * m - 2;
+        int numBlock = s.length() / numPerBlock;
+        int numLeft = s.length() % numPerBlock;
+        int colLeft = 0;
+        if (numLeft > m) {
+            colLeft = 1 + numLeft % m;
+        } else if (numLeft > 0) {
+            colLeft = 1;
+        }
+        int n = numBlock * (m - 1) + colLeft;
+        char[][] matrix = new char[m][n];
+
+        int indexI = 0;
+        int indexJ = 0;
+        for (int i = 0; i < s.length(); i++) {
+            matrix[indexI][indexJ] = s.charAt(i);
+
+            int nextI = (indexJ % (m - 1) == 0 && indexI != m - 1) ? indexI + 1 : indexI - 1;
+            int nextJ = (indexJ % (m - 1) == 0) ? ((indexI == m - 1 ? indexJ + 1 : indexJ)) : (indexJ + 1);
+
+            indexI = nextI;
+            indexJ = nextJ;
+        }
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                if (matrix[i][j] != '\0') {
+                    builder.append(matrix[i][j]);
+                }
+            }
+        }
+        return builder.toString();
     }
 
     /**
@@ -101,7 +301,22 @@ public class Round3 {
      */
     public static int reverse(int x) {
 
-        return 0;
+        if (x == 0) {
+            return x;
+        }
+        long result = 0;
+        long target = x;
+        boolean isNegative = false;
+        if (target < 0) {
+            isNegative = true;
+            target = -target;
+        }
+        while (target != 0) {
+            result = result * 10 + target % 10;
+            target /= 10;
+        }
+        result = isNegative ? -result : result;
+        return (result > Integer.MAX_VALUE || result < Integer.MIN_VALUE) ? 0 : (int) result;
     }
 
     /**
@@ -114,7 +329,26 @@ public class Round3 {
      */
     public static int atoi(String str) {
 
-        return 0;
+        int len = str.length();
+        if (len == 0) {
+            return 0;
+        }
+        long result = 0;
+        boolean isNegative = false;
+        for (int i = 0; i < len; i++) {
+            char c = str.charAt(i);
+            if (i == 0 && c == '-') {
+                isNegative = true;
+            } else if (c >= '0' && c <= '9') {
+                result = result * 10 + ((int) c - 48);
+                if (!isNegative && result > Integer.MAX_VALUE) {
+                    return Integer.MAX_VALUE;
+                } else if (isNegative && result - 1 > Integer.MAX_VALUE) {
+                    return Integer.MIN_VALUE;
+                }
+            }
+        }
+        return isNegative ? (int) -result : (int) result;
     }
 
     /**
@@ -130,7 +364,28 @@ public class Round3 {
      */
     public static boolean isPalindrome(int x) {
 
-        return false;
+        if (x < 0) {
+            return false;
+        } else if (x == 0) {
+            return true;
+        }
+        int len = 0;
+        int temp = x;
+        while (temp != 0) {
+            len++;
+            temp /= 10;
+        }
+        int dev = (int) Math.pow(10, len - 1);
+        while (x != 0) {
+            int firstDigit = x / dev;
+            int lastDigit = x % 10;
+            if (firstDigit != lastDigit) {
+                return false;
+            }
+            x = (x % dev) / 10;
+            dev /= 100;
+        }
+        return true;
     }
 
     /**
@@ -152,7 +407,26 @@ public class Round3 {
      */
     public static boolean isMatch(String s, String p) {
 
-        return false;
+        int size1 = s.length();
+        int size2 = p.length();
+        if (size2 == 0) {
+            return size1 == 0;
+        }
+        if (size2 == 1 || p.charAt(1) != '*') {
+            if (size1 == 0 || (p.charAt(0) != '.' && p.charAt(0) != s.charAt(0))) {
+                return false;
+            }
+            return isMatch(s.substring(1), p.substring(1));
+        } else {
+            int index = -1;
+            while (index < size1 && (index < 0 || p.charAt(0) == '.' || p.charAt(0) == s.charAt(index))) {
+                if (isMatch(s.substring(index + 1), p.substring(2))) {
+                    return true;
+                }
+                index++;
+            }
+            return false;
+        }
     }
 
     /**
@@ -161,11 +435,25 @@ public class Round3 {
      * lines are drawn such that the two endpoints of line i is at (i, ai) and (i, 0). Find two lines, which together
      * with x-axis forms a container, such that the container contains the most water.
      * Note: You may not slant the container.
-     * find max: (j-i)*min([i],[j])
      */
     public static int maxArea(int[] height) {
 
-        return 0;
+        int size = height.length;
+        if (size < 2) {
+            return 0;
+        }
+        int index1 = 0;
+        int index2 = size - 1;
+        int max = 0;
+        while (index1 < index2) {
+            max = Math.max(max, Math.min(height[index1], height[index2]) * (index2 - index1));
+            if (height[index1] < height[index2]) {
+                index1++;
+            } else {
+                index2--;
+            }
+        }
+        return max;
     }
 
     /**
@@ -184,7 +472,22 @@ public class Round3 {
         map.put(500, "D");
         map.put(1000, "M");
 
-        return null;
+        StringBuilder builder = new StringBuilder();
+        int dev = 1000;
+        while (num != 0) {
+            int t = num / dev;
+            String c = map.get(dev);
+            if (t >= 5 && dev != 1000) {
+                builder.append(map.get(5 * dev));
+                t -= 5;
+            }
+            for (int i = 0; i < t; i++) {
+                builder.append(c);
+            }
+            num = num % dev;
+            dev /= 10;
+        }
+        return builder.toString();
     }
 
     /**
@@ -193,7 +496,28 @@ public class Round3 {
      * Input is guaranteed to be within the range from 1 to 3999.
      */
     public static int romanToInt(String s) {
-        return 0;
+
+        HashMap<Character, Integer> map = new HashMap<Character, Integer>();
+        map.put('I', 1);
+        map.put('V', 5);
+        map.put('X', 10);
+        map.put('L', 50);
+        map.put('C', 100);
+        map.put('D', 500);
+        map.put('M', 1000);
+
+        int result = 0;
+        for (int i = 0; i < s.length(); i++) {
+            int current = map.get(s.charAt(i));
+            int next = (i == s.length() - 1) ? 0 : map.get(i + 1);
+            if (current < next) {
+                result += (next - current);
+                i++;
+            } else {
+                result += current;
+            }
+        }
+        return result;
     }
 
     /**
@@ -202,7 +526,42 @@ public class Round3 {
      */
     public static String longestCommonPrefix(String[] strs) {
 
-        return null;
+        if (strs.length == 0) {
+            return "";
+        }
+        String result = _longestCommonPrefix(strs, 0, strs.length - 1);
+        return result == null ? "" : result;
+    }
+
+    public static String _longestCommonPrefix(String[] strs, int start, int end) {
+
+        int size = end - start + 1;
+        if (size <= 0) {
+            return null;
+        } else if (size == 1) {
+            return strs[start];
+        }
+        int mid = (start + end) / 2;
+        String left = _longestCommonPrefix(strs, start, mid);
+        String right = _longestCommonPrefix(strs, mid + 1, end);
+        if (left == null && right == null) {
+            return null;
+        } else if (left == null) {
+            return right;
+        } else if (right == null) {
+            return left;
+        } else {
+            StringBuilder builder = new StringBuilder();
+            int len = Math.min(left.length(), right.length());
+            for (int i = 0; i < len; i++) {
+                if (left.charAt(i) != right.charAt(i)) {
+                    break;
+                } else {
+                    builder.append(left.charAt(i));
+                }
+            }
+            return builder.toString();
+        }
     }
 
     /**
@@ -219,7 +578,35 @@ public class Round3 {
      */
     public static List<List<Integer>> threeSum(int[] num) {
 
-        return null;
+        List<List<Integer>> result = new ArrayList<List<Integer>>();
+        if (num.length < 3) {
+            return result;
+        }
+        Arrays.sort(num);
+        for (int i = 0; i < num.length; i++) {
+            int a = num[i];
+            int target = -a;
+            int index1 = i + 1;
+            int index2 = num.length - 1;
+            while (index1 < index2) {
+                int b = num[index1];
+                int c = num[index2];
+                if (b + c == target) {
+                    List<Integer> list = new ArrayList<Integer>();
+                    list.add(a);
+                    list.add(b);
+                    list.add(c);
+                    result.add(list);
+                    index1++;
+                    index2--;
+                } else if (b + c > target) {
+                    index2--;
+                } else {
+                    index1++;
+                }
+            }
+        }
+        return result;
     }
 
     /**
@@ -231,7 +618,35 @@ public class Round3 {
      */
     public static int threeSumClosest(int[] num, int target) {
 
-        return 0;
+        if (num.length < 3) {
+            return 0;
+        }
+        Arrays.sort(num);
+        int sum = 0;
+        boolean set = false;
+        for (int i = 0; i < num.length; i++) {
+            int a = num[i];
+            int t = target - a;
+            int index1 = i + 1;
+            int index2 = num.length - 1;
+            while (index1 < index2) {
+                int b = num[index1];
+                int c = num[index2];
+                if (b + c == target) {
+                    return target;
+                } else if (b + c > target) {
+                    index2--;
+                } else {
+                    index1++;
+                }
+                int currSum = a + b + c;
+                if (!set || Math.abs(currSum - target) < Math.abs(sum - target)) {
+                    set = true;
+                    sum = currSum;
+                }
+            }
+        }
+        return sum;
     }
 
     /**
@@ -243,17 +658,35 @@ public class Round3 {
      */
     public static List<String> letterCombinations(String digits) {
 
-        HashMap<Integer, String> map = new HashMap<Integer, String>();
-        map.put(2, "abc");
-        map.put(3, "def");
-        map.put(4, "ghi");
-        map.put(5, "jkl");
-        map.put(6, "mno");
-        map.put(7, "pqrs");
-        map.put(8, "tuv");
-        map.put(9, "wxyz");
+        HashMap<Character, String> map = new HashMap<Character, String>();
+        map.put('2', "abc");
+        map.put('3', "def");
+        map.put('4', "ghi");
+        map.put('5', "jkl");
+        map.put('6', "mno");
+        map.put('7', "pqrs");
+        map.put('8', "tuv");
+        map.put('9', "wxyz");
 
-        return null;
+        List<String> result = new ArrayList<String>();
+        for (int i = 0; i < digits.length(); i++) {
+            char c = digits.charAt(i);
+            String str = map.get(c);
+            if (result.isEmpty()) {
+                for (int j = 0; j < str.length(); j++) {
+                    result.add(Character.toString(str.charAt(j)));
+                }
+            } else {
+                List<String> temp = new ArrayList<String>();
+                for (String elem : result) {
+                    for (int j = 0; j < str.length(); j++) {
+                        temp.add(elem + Character.toString(str.charAt(j)));
+                    }
+                }
+                result = temp;
+            }
+        }
+        return result;
     }
 
     /**
@@ -270,7 +703,42 @@ public class Round3 {
      * (-2,  0, 0, 2)
      */
     public static List<List<Integer>> fourSum(int[] num, int target) {
-        return null;
+
+        int size = num.length;
+        if (size < 4) {
+            return new ArrayList<List<Integer>>();
+        }
+        Arrays.sort(num);
+        List<List<Integer>> result = new ArrayList<List<Integer>>();
+        for (int i = 0; i <= size - 4; i++) {
+            int a = num[i];
+            for (int j = i + 1; j <= size - 3; j++) {
+                int b = num[j];
+                int t = target - a - b;
+                int index1 = j + 1;
+                int index2 = size - 1;
+                while (index1 < index2) {
+                    int c = num[index1];
+                    int d = num[index2];
+                    int sum = c + d;
+                    if (sum == t) {
+                        List<Integer> list = new ArrayList<Integer>();
+                        list.add(a);
+                        list.add(b);
+                        list.add(c);
+                        list.add(d);
+                        result.add(list);
+                        index1++;
+                        index2--;
+                    } else if (sum > t) {
+                        index2--;
+                    } else {
+                        index1++;
+                    }
+                }
+            }
+        }
+        return result;
     }
 
     /**
@@ -285,7 +753,31 @@ public class Round3 {
      */
     public static ListNode removeNthFromEnd(ListNode head, int n) {
 
-        return null;
+        if (head == null || n <= 0) {
+            return head;
+        }
+        ListNode father = null;
+        ListNode temp = head;
+        int count = 0;
+        while (temp != null) {
+            count++;
+            if (count == n + 1) {
+                father = head;
+            } else if (father != null) {
+                father = father.next;
+            }
+            temp = temp.next;
+        }
+        if (father == null) {
+            if (count == n) {
+                ListNode newHead = head.next;
+                head.next = null;
+                return newHead;
+            }
+        } else {
+            father.next = father.next.next;
+        }
+        return head;
     }
 
     /**
@@ -296,7 +788,24 @@ public class Round3 {
      */
     public static boolean isValid(String s) {
 
-        return false;
+        int size = s.length();
+        if (size == 0 || size % 2 != 0) {
+            return false;
+        }
+        Stack<Character> stack = new Stack<Character>();
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+            if (stack.isEmpty() || c == '(' || c == '[' || c == '{') {
+                stack.push(c);
+            } else {
+                if ((c == ')' && stack.peek() == '(') || (c == ']' && stack.peek() == '[') || (c == '}' && stack
+                        .peek() == '{')) {
+                    stack.pop();
+                }
+                return false;
+            }
+        }
+        return stack.isEmpty();
     }
 
     /**
@@ -306,7 +815,50 @@ public class Round3 {
      */
     public static ListNode mergeTwoLists(ListNode l1, ListNode l2) {
 
-        return null;
+        if (l1 == null) {
+            return l2;
+        } else if (l2 == null) {
+            return l1;
+        }
+        ListNode head = null;
+        ListNode temp = null;
+        ListNode temp1 = l1;
+        ListNode temp2 = l2;
+        while (temp1 != null && temp2 != null) {
+            ListNode use;
+            if (temp1.val <= temp2.val) {
+                use = temp1;
+                temp1 = temp1.next;
+                use.next = null;
+            } else {
+                use = temp2;
+                temp2 = temp2.next;
+                use.next = null;
+            }
+            if (head == null) {
+                head = use;
+                temp = head;
+            } else {
+                temp.next = use;
+                temp = temp.next;
+            }
+        }
+        if (temp2 != null) {
+            while (temp2 != null) {
+                temp.next = temp2;
+                temp2 = temp2.next;
+                temp = temp.next;
+                temp.next = null;
+            }
+        } else if (temp1 != null) {
+            while (temp1 != null) {
+                temp.next = temp1;
+                temp1 = temp1.next;
+                temp = temp.next;
+                temp.next = null;
+            }
+        }
+        return head;
     }
 
     /**
@@ -317,17 +869,95 @@ public class Round3 {
      */
     public static List<String> generateParenthesis(int n) {
 
-        return null;
+        if (n <= 0) {
+            return new ArrayList<String>();
+        }
+        Set<String> set = new HashSet<String>();
+        for (int i = 1; i <= n; i++) {
+            if (i == 1) {
+                set.add("()");
+            } else {
+                Set<String> temp = new HashSet<String>();
+                for (String elem : set) {
+                    for (int j = 0; j < elem.length(); j++) {
+                        temp.add("(" + elem.substring(0, j + 1) + ")" + (j == elem.length() - 1 ? "" : elem
+                                .substring(j + 1, elem.length())));
+                    }
+                }
+                set = temp;
+            }
+        }
+        return new ArrayList<String>(set);
     }
 
     /**
      * 23. Merge k Sorted Lists
-     * Total Accepted: 29062 Total Submissions: 137998
      * Merge k sorted linked lists and return it as one sorted list. Analyze and describe its complexity.
      */
     public static ListNode mergeKLists(List<ListNode> lists) {
 
-        return null;
+        if (lists == null || lists.size() == 0) {
+            return null;
+        }
+        return _mergeKLists(lists, 0, lists.size() - 1);
+    }
+
+    public static ListNode _mergeKLists(List<ListNode> lists, int start, int end) {
+
+        int size = end - start + 1;
+        if (size == 0) {
+            return null;
+        } else if (size == 1) {
+            return lists.get(start);
+        } else if (size == 2) {
+            return _mergeKLists(lists.get(start), lists.get(end));
+        }
+        int mid = (start + end) / 2;
+        return _mergeKLists(_mergeKLists(lists, start, mid), _mergeKLists(lists, mid + 1, end));
+    }
+
+    public static ListNode _mergeKLists(ListNode l1, ListNode l2) {
+
+        if (l1 == null) {
+            return l2;
+        } else if (l2 == null) {
+            return l1;
+        }
+        ListNode head = null;
+        ListNode temp = null;
+        ListNode temp1 = l1;
+        ListNode temp2 = l2;
+        while (temp1 != null && temp2 != null) {
+            ListNode node = null;
+            if (temp1.val <= temp2.val) {
+                node = new ListNode(temp1.val);
+                temp1 = temp1.next;
+            } else {
+                node = new ListNode(temp2.val);
+                temp2 = temp2.next;
+            }
+            if (head == null) {
+                head = node;
+                temp = head;
+            } else {
+                temp.next = node;
+                temp = temp.next;
+            }
+        }
+        if (temp1 == null && temp2 != null) {
+            while (temp2 != null) {
+                temp.next = new ListNode(temp2.val);
+                temp = temp.next;
+                temp2 = temp2.next;
+            }
+        } else if (temp1 != null && temp2 == null) {
+            while (temp1 != null) {
+                temp.next = new ListNode(temp1.val);
+                temp = temp.next;
+                temp1 = temp1.next;
+            }
+        }
+        return head;
     }
 
     /**
@@ -340,7 +970,29 @@ public class Round3 {
      */
     public static ListNode swapPairs(ListNode head) {
 
-        return null;
+        if (head == null) {
+            return null;
+        }
+        ListNode newHead = null;
+        ListNode parent = null;
+        ListNode temp = head;
+        while (temp != null) {
+            ListNode next = temp.next;
+            if (next == null) {
+                return newHead == null ? head : newHead;
+            }
+            ListNode nextNext = next.next;
+            next.next = temp;
+            temp.next = nextNext;
+            if (newHead == null) {
+                newHead = next;
+            } else {
+                parent.next = next;
+            }
+            parent = temp;
+            temp = nextNext;
+        }
+        return newHead;
     }
 
     /**
@@ -350,15 +1002,55 @@ public class Round3 {
      * You may not alter the values in the nodes, only nodes itself may be changed.
      * Only constant memory is allowed.
      * For example,
-     * Given this linked list: 1->2->3->4->5
+     * Given this linked list: 1->2->3->4->5->6
      * For k = 2, you should return: 2->1->4->3->5
      * For k = 3, you should return: 3->2->1->4->5
      */
     public static ListNode reverseKGroup(ListNode head, int k) {
 
-        return null;
+        ListNode newHead = null;
+        ListNode lastTail = null;
+        ListNode endNode = head;
+        int count = 0;
+        while (endNode != null) {
+            count++;
+            if (count == k) {
+                ListNode nextHead = endNode.next;
+                ListNode subOriHead = (lastTail == null) ? head : lastTail.next;
+                ListNode subHead = _reverseKGroup(subOriHead, k);
+                if (newHead == null) {
+                    newHead = subHead;
+                } else {
+                    lastTail.next = subHead;
+                }
+                subOriHead.next = nextHead;
+                lastTail = subOriHead;
+                endNode = nextHead;
+                count = 0;
+            } else {
+                endNode = endNode.next;
+            }
+        }
+        return newHead == null ? head : newHead;
     }
 
+    public static ListNode _reverseKGroup(ListNode head, int k) {
+
+        if (head == null || head.next == null || k <= 1) {
+            return head;
+        }
+        ListNode temp1 = head;
+        ListNode temp2 = temp1.next;
+        head.next = null;
+        int count = 2;
+        while (temp2 != null && count++ <= k) {
+            ListNode temp = temp2.next;
+            temp2.next = temp1;
+            temp1 = temp2;
+            temp2 = temp;
+        }
+        return temp1;
+    }
 
     /**
      * 26. Remove Duplicates from Sorted Array
@@ -2703,7 +3395,7 @@ public class Round3 {
 
     public static void main(String[] args) {
 
-
+        PRINT(findMedianSortedArrays(new int[]{1, 2}, new int[]{1,1}));
     }
 
     public static ListNode createListNode(int[] num) {
