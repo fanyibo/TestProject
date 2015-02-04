@@ -163,7 +163,7 @@ public class Round3 {
                     1) / 2];
         }
         if ((sizeA + sizeB) % 2 == 0) {
-            int first = findKth(A, 0, sizeA - 1, B, 0, sizeB - 1, (sizeA + sizeB ) / 2);
+            int first = findKth(A, 0, sizeA - 1, B, 0, sizeB - 1, (sizeA + sizeB) / 2);
             int second = findKth(A, 0, sizeA - 1, B, 0, sizeB - 1, (sizeA + sizeB) / 2 + 1);
             return (double) (first + second) / 2.0;
         } else {
@@ -335,17 +335,32 @@ public class Round3 {
         }
         long result = 0;
         boolean isNegative = false;
+        boolean started = false;
         for (int i = 0; i < len; i++) {
             char c = str.charAt(i);
-            if (i == 0 && c == '-') {
-                isNegative = true;
+            if (!started && c == ' ') {
+                continue;
+            } else if (started && c == ' ') {
+                break;
+            }
+
+            if (c == '+' || c == '-') {
+                if (started) {
+                    return 0;
+                } else {
+                    isNegative = c == '-';
+                    started = true;
+                }
             } else if (c >= '0' && c <= '9') {
+                started = true;
                 result = result * 10 + ((int) c - 48);
                 if (!isNegative && result > Integer.MAX_VALUE) {
                     return Integer.MAX_VALUE;
                 } else if (isNegative && result - 1 > Integer.MAX_VALUE) {
                     return Integer.MIN_VALUE;
                 }
+            } else {
+                break;
             }
         }
         return isNegative ? (int) -result : (int) result;
@@ -478,8 +493,18 @@ public class Round3 {
             int t = num / dev;
             String c = map.get(dev);
             if (t >= 5 && dev != 1000) {
+                if (t == 9) {
+                    builder.append(c);
+                    builder.append(map.get(10 * dev));
+                    t = 0;
+                } else {
+                    builder.append(map.get(5 * dev));
+                    t -= 5;
+                }
+            } else if (t == 4 && dev != 1000) {
+                builder.append(c);
                 builder.append(map.get(5 * dev));
-                t -= 5;
+                t = 0;
             }
             for (int i = 0; i < t; i++) {
                 builder.append(c);
@@ -509,7 +534,7 @@ public class Round3 {
         int result = 0;
         for (int i = 0; i < s.length(); i++) {
             int current = map.get(s.charAt(i));
-            int next = (i == s.length() - 1) ? 0 : map.get(i + 1);
+            int next = (i == s.length() - 1) ? 0 : map.get(s.charAt(i + 1));
             if (current < next) {
                 result += (next - current);
                 i++;
@@ -578,9 +603,9 @@ public class Round3 {
      */
     public static List<List<Integer>> threeSum(int[] num) {
 
-        List<List<Integer>> result = new ArrayList<List<Integer>>();
+        Set<List<Integer>> result = new HashSet<List<Integer>>();
         if (num.length < 3) {
-            return result;
+            return new ArrayList<List<Integer>>();
         }
         Arrays.sort(num);
         for (int i = 0; i < num.length; i++) {
@@ -606,7 +631,7 @@ public class Round3 {
                 }
             }
         }
-        return result;
+        return new ArrayList<List<Integer>>(result);
     }
 
     /**
@@ -632,9 +657,9 @@ public class Round3 {
             while (index1 < index2) {
                 int b = num[index1];
                 int c = num[index2];
-                if (b + c == target) {
+                if (b + c == t) {
                     return target;
-                } else if (b + c > target) {
+                } else if (b + c > t) {
                     index2--;
                 } else {
                     index1++;
@@ -669,6 +694,10 @@ public class Round3 {
         map.put('9', "wxyz");
 
         List<String> result = new ArrayList<String>();
+        if (digits.length() == 0) {
+            result.add("");
+            return result;
+        }
         for (int i = 0; i < digits.length(); i++) {
             char c = digits.charAt(i);
             String str = map.get(c);
@@ -709,7 +738,7 @@ public class Round3 {
             return new ArrayList<List<Integer>>();
         }
         Arrays.sort(num);
-        List<List<Integer>> result = new ArrayList<List<Integer>>();
+        Set<List<Integer>> result = new HashSet<List<Integer>>();
         for (int i = 0; i <= size - 4; i++) {
             int a = num[i];
             for (int j = i + 1; j <= size - 3; j++) {
@@ -738,7 +767,7 @@ public class Round3 {
                 }
             }
         }
-        return result;
+        return new ArrayList<List<Integer>>(result);
     }
 
     /**
@@ -801,8 +830,9 @@ public class Round3 {
                 if ((c == ')' && stack.peek() == '(') || (c == ']' && stack.peek() == '[') || (c == '}' && stack
                         .peek() == '{')) {
                     stack.pop();
+                } else {
+                    return false;
                 }
-                return false;
             }
         }
         return stack.isEmpty();
@@ -879,7 +909,7 @@ public class Round3 {
             } else {
                 Set<String> temp = new HashSet<String>();
                 for (String elem : set) {
-                    for (int j = 0; j < elem.length(); j++) {
+                    for (int j = -1; j < elem.length(); j++) {
                         temp.add("(" + elem.substring(0, j + 1) + ")" + (j == elem.length() - 1 ? "" : elem
                                 .substring(j + 1, elem.length())));
                     }
@@ -3395,7 +3425,7 @@ public class Round3 {
 
     public static void main(String[] args) {
 
-        PRINT(findMedianSortedArrays(new int[]{1, 2}, new int[]{1,1}));
+        PRINT(findMedianSortedArrays(new int[]{1, 2}, new int[]{1, 1}));
     }
 
     public static ListNode createListNode(int[] num) {
