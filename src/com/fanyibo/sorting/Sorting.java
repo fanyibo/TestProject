@@ -329,7 +329,7 @@ public class Sorting {
     public static void main(String[] args) {
 
         {
-            int[] A = {5, 4, 6, 2, 8, 1, 2, 9, 1, -10, 5};
+            int[] A = {5, 5, 2, 5, 2, 1, 8, 9, 6, 5, 5};
             quickSort(A);
             PRINT(A);
         }
