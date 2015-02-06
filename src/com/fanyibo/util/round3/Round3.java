@@ -8,6 +8,7 @@ package com.fanyibo.util.round3;
 
 import com.fanyibo.tree.TreeNode;
 import com.fanyibo.util.ListNode;
+import javafx.beans.binding.When;
 
 import java.util.*;
 
@@ -3786,6 +3787,29 @@ public class Round3 {
      */
     public static boolean isScramble(String s1, String s2) {
 
+        int size1 = s1.length();
+        int size2 = s2.length();
+        if (size1 != size2) {
+            return false;
+        } else if (size1 == 0) {
+            return true;
+        } else if (size1 == 1) {
+            return s1.charAt(0) == s2.charAt(0);
+        }
+        for (int i = 0; i < size1; i++) {
+            if (isScramble(s1.substring(0, i + 1), s2.substring(0, i + 1)) && isScramble(s1.substring(i + 1),
+                                                                                         s2.substring(i + 1))) {
+                return true;
+            }
+            if (isScramble(s1.substring(0, i + 1), s2.substring(size2 - i - 1)) && isScramble(s1.substring(i + 1),
+                                                                                              s2.substring(0,
+                                                                                                           size2 - i
+                                                                                                                   -
+                                                                                                                   1)
+            )) {
+                return true;
+            }
+        }
         return false;
     }
 
@@ -3798,6 +3822,32 @@ public class Round3 {
      */
     public static void merge(int A[], int m, int B[], int n) {
 
+        if (m < 0 || n < 0) {
+            return;
+        }
+        int index1 = m - 1;
+        int index2 = n - 1;
+        for (int i = m + n - 1; i >= 0; i--) {
+            int c;
+            if (index1 >= 0 && index2 >= 0) {
+                if (A[index1] >= B[index2]) {
+                    c = A[index1];
+                    index1--;
+                } else {
+                    c = B[index2];
+                    index2--;
+                }
+            } else if (index1 >= 0) {
+                c = A[index1];
+                index1--;
+            } else if (index2 >= 0) {
+                c = B[index2];
+                index2--;
+            } else {
+                break;
+            }
+            A[i] = c;
+        }
     }
 
     /**
@@ -3817,7 +3867,24 @@ public class Round3 {
      */
     public static List<Integer> grayCode(int n) {
 
-        return null;
+        if (n <= 0) {
+            return new ArrayList<Integer>();
+        }
+        int elem = 2;
+        List<Integer> result = new ArrayList<Integer>();
+        for (int i = 1; i <= n; i++) {
+            if (i == 1) {
+                result.add(0);
+                result.add(1);
+            } else {
+                int size = result.size();
+                for (int j = size - 1; j >= 0; j--) {
+                    result.add(result.get(j) + elem);
+                }
+                elem *= 2;
+            }
+        }
+        return result;
     }
 
     /**
@@ -3839,7 +3906,26 @@ public class Round3 {
      */
     public static List<List<Integer>> subsetsWithDup(int[] num) {
 
-        return null;
+        Set<List<Integer>> set = new HashSet<List<Integer>>();
+        if (num.length > 0) {
+            for (int i = 0; i < num.length; i++) {
+                List<Integer> singleList = new ArrayList<Integer>();
+                singleList.add(num[i]);
+                if (!set.isEmpty()) {
+                    Set<List<Integer>> temp = new HashSet<List<Integer>>();
+                    for (List<Integer> aSet : set) {
+                        temp.add(new ArrayList<Integer>(aSet));
+                        List<Integer> list = new ArrayList<Integer>(aSet);
+                        list.add(num[i]);
+                        temp.add(list);
+                    }
+                    set = temp;
+                }
+                set.add(singleList);
+            }
+        }
+        set.add(new ArrayList<Integer>());
+        return new ArrayList<List<Integer>>(set);
     }
 
     /**
@@ -3856,7 +3942,33 @@ public class Round3 {
      */
     public static int numDecodings(String s) {
 
-        return 0;
+        int size = s.length();
+        if (size == 0) {
+            return 0;
+        }
+        int[] d = new int[size];
+        for (int i = 0; i < size - 1; i++) {
+            char c = s.charAt(i);
+            if (c == '0') {
+                if (i == 0 || (s.charAt(i - 1) != '1' && s.charAt(i - 1) != '2')) {
+                    return 0;
+                }
+                d[i] = i < 2 ? 1 : d[i - 2];
+            } else if (s.charAt(i - 1) == '1') {
+                if (i == 0) {
+                    d[i] = 1;
+                } else {
+                    d[i] = d[i - 1] + (i < 2 ? 1 : d[i - 2] + 1);
+                }
+            } else if (s.charAt(i - 1) == '2') {
+                if (c >= '7') {
+                    d[i] = d[i - 1];
+                } else {
+                    d[i] = d[i - 1] + (i < 2 ? 1 : d[i - 2] + 1);
+                }
+            }
+        }
+        return d[size - 1];
     }
 
     /**
@@ -3871,7 +3983,43 @@ public class Round3 {
      */
     public static ListNode reverseBetween(ListNode head, int m, int n) {
 
-        return null;
+        if (m >= n) {
+            return head;
+        }
+        ListNode newHead = null;
+        ListNode tailA = null;
+        ListNode start = head;
+        int count = 0;
+        while (start != null) {
+            count++;
+            if (count == m) {
+                break;
+            }
+            tailA = start;
+            start = start.next;
+        }
+        if (tailA != null) {
+            tailA.next = null;
+        }
+        int size = n - m + 1;
+        count = 1;
+        ListNode temp1 = start;
+        ListNode temp2 = temp1.next;
+        while (temp1 != null && temp2 != null && ++count <= size) {
+            ListNode next = temp2.next;
+            temp2.next = temp1;
+            temp1 = temp2;
+            temp2 = next;
+        }
+        if (tailA != null) {
+            tailA.next = temp1;
+            start.next = temp2;
+            newHead = head;
+        } else {
+            newHead = temp1;
+            start.next = temp2;
+        }
+        return newHead;
     }
 
     /**
@@ -3883,7 +4031,59 @@ public class Round3 {
      */
     public static List<String> restoreIpAddresses(String s) {
 
-        return null;
+        if (s.length() <= 3) {
+            return new ArrayList<String>();
+        }
+        List<List<String>> lists = _restoreIpAddresses(s, 4);
+        List<String> result = new ArrayList<String>();
+        for (List<String> list : lists) {
+            if (list.size() != 4) {
+                continue;
+            }
+            StringBuilder builder = new StringBuilder();
+            for (int i = 0; i < list.size(); i++) {
+                builder.append(list.get(i));
+                if (i < list.size() - 1) {
+                    builder.append(".");
+                }
+            }
+            result.add(builder.toString());
+        }
+        return result;
+    }
+
+    public static List<List<String>> _restoreIpAddresses(String s, int level) {
+
+        List<List<String>> result = new ArrayList<List<String>>();
+        if (level <= 0 || (level == 1 && s.length() > 3) || s.length() == 0) {
+            return result;
+        } else if (level == 1) {
+            int num = Integer.parseInt(s);
+            if (num > 255 || (s.charAt(0) == '0' && num != 0)) {
+                return result;
+            } else {
+                List<String> list = new ArrayList<String>();
+                list.add(s);
+                result.add(list);
+            }
+        } else {
+            int endIndex = Math.min(3, s.length());
+            if (s.length() > 0 && s.charAt(0) == '0') {
+                endIndex = 1;
+            }
+            for (int i = 0; i < endIndex; i++) {
+                String strNum = s.substring(0, i + 1);
+                int num = Integer.parseInt(strNum);
+                if ((num == 0 && i == 0) || (num > 0 && num <= 255)) {
+                    List<List<String>> rest = _restoreIpAddresses(s.substring(i + 1), level - 1);
+                    for (List<String> aRest : rest) {
+                        aRest.add(0, strNum);
+                        result.add(aRest);
+                    }
+                }
+            }
+        }
+        return result;
     }
 
     /**
@@ -3901,8 +4101,55 @@ public class Round3 {
      */
     public static List<Integer> inorderTraversal(TreeNode root) {
 
-        return null;
+        List<Integer> result = new ArrayList<Integer>();
+        if (root == null) {
+            return result;
+        }
+        Stack<TreeNode> stack = new Stack<TreeNode>();
+        TreeNode node = root;
+        while (!stack.isEmpty() || node != null) {
+            if (node != null) {
+                stack.push(node);
+                node = node.left;
+            } else {
+                node = stack.pop();
+                result.add(node.val);
+                node = node.right;
+            }
+        }
+        return result;
     }
+
+    public static List<Integer> constSpaceInorderTraversal(TreeNode root) {
+
+        List<Integer> result = new ArrayList<Integer>();
+        if (root == null) {
+            return result;
+        }
+        TreeNode node = root;
+        TreeNode pre = null;
+        while (node != null) {
+            if (node.left == null) {
+                result.add(node.val);
+                node = node.right;
+            } else {
+                pre = node.left;
+                while (pre.right != null && pre.right != node) {
+                    pre = pre.right;
+                }
+                if (pre.right == null) {
+                    pre.right = node;
+                    node = node.left;
+                } else {
+                    pre.right = null;
+                    result.add(node.val);
+                    node = node.right;
+                }
+            }
+        }
+        return result;
+    }
+
 
     /**
      * 95. Unique Binary Search Trees II
@@ -3919,7 +4166,47 @@ public class Round3 {
 
     public static List<TreeNode> generateTrees(int n) {
 
-        return null;
+        return generateTrees(1, n);
+    }
+
+    public static List<TreeNode> generateTrees(int start, int end) {
+
+        List<TreeNode> roots = new ArrayList<TreeNode>();
+        if (start > end) {
+            return roots;
+        } else if (start == end) {
+            roots.add(new TreeNode(start));
+            return roots;
+        }
+        for (int i = start; i <= end; i++) {
+            List<TreeNode> lefts = generateTrees(start, i - 1);
+            List<TreeNode> rights = generateTrees(i + 1, end);
+            if (lefts.isEmpty()) {
+                for (TreeNode right : rights) {
+                    TreeNode root = new TreeNode(i);
+                    root.left = null;
+                    root.right = right;
+                    roots.add(root);
+                }
+            } else if (rights.isEmpty()) {
+                for (TreeNode left : lefts) {
+                    TreeNode root = new TreeNode(i);
+                    root.left = left;
+                    root.right = null;
+                    roots.add(root);
+                }
+            } else {
+                for (TreeNode left : lefts) {
+                    for (TreeNode right : rights) {
+                        TreeNode root = new TreeNode(i);
+                        root.left = left;
+                        root.right = right;
+                        roots.add(root);
+                    }
+                }
+            }
+        }
+        return roots;
     }
 
 
@@ -3936,8 +4223,19 @@ public class Round3 {
      */
     public static int numTrees(int n) {
 
-        return 0;
+        if (n <= 0) {
+            return 0;
+        }
+        int[] d = new int[n + 1];
+        d[0] = 1;
+        for (int i = 1; i <= n; i++) {
+            for (int j = 1; j <= i; j++) {
+                d[i] += (d[j - 1] * d[i - j]);
+            }
+        }
+        return d[n];
     }
+
 
     /**
      * 97. Interleaving String
@@ -3951,7 +4249,26 @@ public class Round3 {
      */
     public static boolean isInterleave(String s1, String s2, String s3) {
 
-        return false;
+        int size1 = s1.length();
+        int size2 = s2.length();
+        int size3 = s3.length();
+        if (size1 + size2 != size3) {
+            return false;
+        }
+        boolean[][] d = new boolean[size1 + 1][size2 + 1];
+        for (int i = 0; i <= size1; i++) {
+            for (int j = 0; j <= size2; j++) {
+                if (i == 0) {
+                    d[i][j] = s2.substring(0, j).equals(s3.substring(0, i + j));
+                } else if (j == 0) {
+                    d[i][j] = s1.substring(0, i).equals(s3.substring(0, i + j));
+                } else {
+                    d[i][j] = (s1.charAt(i - 1) == s3.charAt(i + j - 1) && d[i - 1][j]) || (s2.charAt(j - 1) == s3
+                            .charAt(i + j - 1) && d[i][j - 1]);
+                }
+            }
+        }
+        return d[size1][size2];
     }
 
     /**
@@ -3964,7 +4281,35 @@ public class Round3 {
      */
     public static boolean isValidBST(TreeNode root) {
 
-        return false;
+        int lastVal = Integer.MIN_VALUE;
+        TreeNode pre = null;
+        TreeNode node = root;
+        while (node != null) {
+            if (node.left == null) {
+                if (lastVal >= node.val) {
+                    return false;
+                }
+                lastVal = node.val;
+                node = node.right;
+            } else {
+                pre = node.right;
+                while (pre.right != null && pre.right != node) {
+                    pre = pre.right;
+                }
+                if (pre.right == null) {
+                    pre.right = node;
+                    node = node.left;
+                } else {
+                    pre.right = null;
+                    if (lastVal >= node.val) {
+                        return false;
+                    }
+                    lastVal = node.val;
+                    node = node.right;
+                }
+            }
+        }
+        return true;
     }
 
 
@@ -3975,10 +4320,49 @@ public class Round3 {
      * Note:
      * A solution using O(n) space is pretty straight forward. Could you devise a constant space solution?
      */
-
-
     public static void recoverTree(TreeNode root) {
 
+        TreeNode parent = null;
+        TreeNode pre = null;
+        TreeNode node = root;
+        TreeNode nodeA = null;
+        TreeNode nodeB = null;
+        while (node != null) {
+            if (node.left == null) {
+                if (parent != null && parent.val >= node.val) {
+                    if (nodeA == null) {
+                        nodeA = parent;
+                    }
+                    nodeB = node;
+                }
+                parent = node;
+                node = node.right;
+            } else {
+                pre = node.right;
+                while (pre.right != null && pre.right != node) {
+                    pre = pre.right;
+                }
+                if (pre.right == null) {
+                    pre.right = node;
+                    node = node.left;
+                } else {
+                    pre.right = null;
+                    if (parent != null && parent.val >= node.val) {
+                        if (nodeA == null) {
+                            nodeA = parent;
+                        }
+                        nodeB = node;
+                    }
+                    parent = node;
+                    node = node.right;
+                }
+            }
+        }
+        if (nodeA != null && nodeB != null) {
+            int temp = nodeA.val;
+            nodeA.val = nodeB.val;
+            nodeB.val = temp;
+        }
     }
 
 
@@ -3989,7 +4373,12 @@ public class Round3 {
      */
     public static boolean isSameTree(TreeNode p, TreeNode q) {
 
-        return false;
+        if (p == null) {
+            return q == null;
+        } else if (q == null) {
+            return false;
+        }
+        return p.val == q.val && isSameTree(p.left, q.left) && isSameTree(p.right, q.right);
     }
 
 
@@ -4011,11 +4400,18 @@ public class Round3 {
      * Note:
      * Bonus points if you could solve it both recursively and iteratively.
      */
-
-
     public static boolean isSymmetric(TreeNode root) {
 
-        return false;
+        return root == null || isSymmetric(root.left, root.right);
+    }
+    public static boolean isSymmetric(TreeNode p, TreeNode q) {
+
+        if (p == null) {
+            return q == null;
+        } else if (q == null) {
+            return false;
+        }
+        return p.val == q.val && isSymmetric(p.left, q.right) && isSameTree(p.right, q.left);
     }
 
 
@@ -4039,7 +4435,51 @@ public class Round3 {
      */
     public static List<List<Integer>> levelOrder(TreeNode root) {
 
-        return null;
+        List<List<Integer>> result = new ArrayList<List<Integer>>();
+        if (root == null) {
+            return result;
+        }
+        boolean markNew = true;
+        TreeNode mark = root;
+        Deque<TreeNode> dequeue = new ArrayDeque<TreeNode>();
+        dequeue.addLast(root);
+        List<Integer> row = new ArrayList<Integer>();
+        while (!dequeue.isEmpty()) {
+            TreeNode node = dequeue.removeFirst();
+            TreeNode left = node.left;
+            TreeNode right = node.right;
+            if (left != null) {
+                dequeue.addLast(left);
+            }
+            if (right != null) {
+                dequeue.addLast(right);
+            }
+            if (node == mark) {
+                markNew = true;
+                if (node == root) {
+                    row.add(node.val);
+                } else {
+                    result.add(row);
+                    row = new ArrayList<Integer>();
+                    row.add(node.val);
+                }
+            } else {
+                row.add(node.val);
+            }
+            if (markNew) {
+                if (left != null) {
+                    mark = left;
+                    markNew = false;
+                } else if (right != null) {
+                    mark = right;
+                    markNew = false;
+                }
+            }
+        }
+        if (!row.isEmpty()) {
+            result.add(row);
+        }
+        return result;
     }
 
 
@@ -4063,7 +4503,61 @@ public class Round3 {
      */
     public static List<List<Integer>> zigzagLevelOrder(TreeNode root) {
 
-        return null;
+        List<List<Integer>> result = new ArrayList<List<Integer>>();
+        if (root == null) {
+            return result;
+        }
+        boolean markNew = true;
+        TreeNode mark = root;
+        Deque<TreeNode> dequeue = new ArrayDeque<TreeNode>();
+        dequeue.addLast(root);
+        List<Integer> row = new ArrayList<Integer>();
+        int level = 1;
+        while (!dequeue.isEmpty()) {
+            TreeNode node = dequeue.removeFirst();
+            TreeNode left = node.left;
+            TreeNode right = node.right;
+            if (left != null) {
+                dequeue.addLast(left);
+            }
+            if (right != null) {
+                dequeue.addLast(right);
+            }
+            if (node == mark) {
+                markNew = true;
+                if (node == root) {
+                    row.add(node.val);
+                } else {
+                    result.add(row);
+                    row = new ArrayList<Integer>();
+                    if (level % 2 != 0) {
+                        row.add(0, node.val);
+                    } else {
+                        row.add(node.val);
+                    }
+                }
+                level++;
+            } else {
+                if (level % 2 != 0) {
+                    row.add(0, node.val);
+                } else {
+                    row.add(node.val);
+                }
+            }
+            if (markNew) {
+                if (left != null) {
+                    mark = left;
+                    markNew = false;
+                } else if (right != null) {
+                    mark = right;
+                    markNew = false;
+                }
+            }
+        }
+        if (!row.isEmpty()) {
+            result.add(row);
+        }
+        return result;
     }
 
     /**
@@ -4074,7 +4568,13 @@ public class Round3 {
      */
     public static int maxDepth(TreeNode root) {
 
-        return 0;
+        if (root == null) {
+            return 0;
+        } else if (root.left == null && root.right == null) {
+            return 1;
+        } else {
+            return Math.max(maxDepth(root.left), maxDepth(root.right)) + 1;
+        }
     }
 
     /**
@@ -4159,7 +4659,13 @@ public class Round3 {
      */
     public static int minDepth(TreeNode root) {
 
-        return 0;
+        if (root == null) {
+            return 0;
+        } else if (root.left == null && root.right == null) {
+            return 1;
+        } else {
+            return Math.min(maxDepth(root.left), maxDepth(root.right)) + 1;
+        }
     }
 
     /**
@@ -4761,7 +5267,23 @@ public class Round3 {
      */
     public static List<Integer> preorderTraversal(TreeNode root) {
 
-        return null;
+        List<Integer> result = new ArrayList<Integer>();
+        if (root == null) {
+            return result;
+        }
+        Stack<TreeNode> stack = new Stack<TreeNode>();
+        TreeNode node = root;
+        while (!stack.isEmpty() || node != null) {
+            if (node != null) {
+                stack.push(node);
+                result.add(node.val);
+                node = node.left;
+            } else {
+                node = stack.pop();
+                node = node.right;
+            }
+        }
+        return result;
     }
 
 
@@ -5173,10 +5695,42 @@ public class Round3 {
 
     public static void main(String[] args) {
 
-        List<String> list = fullJustify(new String[]{"What", "must", "be", "shall", "be."}, 12);
-        for (String row : list) {
-            PRINT("#" + row + "#");
-        }
+        PRINT(isInterleave("aabcc","dbbca","aadbbcbcac"));
+        PRINT(isInterleave("aabcc","dbbca","aadbbbaccc"));
+        PRINT(generateTrees(3).size());
+        PRINT(numTrees(3));
+
+        TreeNode n1 = new TreeNode(1);
+        TreeNode n2 = new TreeNode(2);
+        TreeNode n3 = new TreeNode(3);
+        TreeNode n4 = new TreeNode(4);
+        TreeNode n5 = new TreeNode(5);
+        TreeNode n6 = new TreeNode(6);
+        TreeNode n7 = new TreeNode(7);
+        n1.left = n2;
+        n1.right = n3;
+        n2.left = n4;
+        n2.right = n5;
+        n3.right = n6;
+        n5.left = n7;
+
+        /*
+
+             1
+           2   3
+         4   5   6
+            7
+
+            4,2,7,5,1,3,6
+
+         */
+        PRINT(preorderTraversal(n1));
+        PRINT(inorderTraversal(n1));
+        PRINT(constSpaceInorderTraversal(n1));
+        PRINT(levelOrder(n1));
+        PRINT(zigzagLevelOrder(n1));
+        PRINT(maxDepth(n1));
+        PRINT(minDepth(n1));
     }
 
     public static ListNode createListNode(int[] num) {
