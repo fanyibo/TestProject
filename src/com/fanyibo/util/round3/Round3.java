@@ -2684,7 +2684,11 @@ public class Round3 {
         int[][] d = new int[m][n];
         for (int i = 0; i < m; i++) {
             for (int j = 0; j < n; j++) {
-                d[i][j] = (i == 0 ? 0 : d[i - 1][j]) + (j == 0 ? 0 : d[i][j - 1]);
+                if (i == 0 && j == 0) {
+                    d[i][j] = 1;
+                } else {
+                    d[i][j] = (i == 0 ? 0 : d[i - 1][j]) + (j == 0 ? 0 : d[i][j - 1]);
+                }
             }
         }
         return d[m - 1][n - 1];
@@ -2718,7 +2722,11 @@ public class Round3 {
         int[][] d = new int[m][n];
         for (int i = 0; i < m; i++) {
             for (int j = 0; j < n; j++) {
-                d[i][j] = obstacleGrid[i][j] == 1 ? 0 : (i == 0 ? 0 : d[i - 1][j]) + (j == 0 ? 0 : d[i][j - 1]);
+                if (i == 0 && j == 0) {
+                    d[i][j] = obstacleGrid[i][j] == 1 ? 0 : 1;
+                } else {
+                    d[i][j] = obstacleGrid[i][j] == 1 ? 0 : (i == 0 ? 0 : d[i - 1][j]) + (j == 0 ? 0 : d[i][j - 1]);
+                }
             }
         }
         return d[m - 1][n - 1];
@@ -2794,13 +2802,13 @@ public class Round3 {
                 hasStarted = true;
                 hasSymbol = true;
             } else if (c == '.') {
-                if (hasDot) {
+                if (hasDot || hasExp) {
                     return false;
                 }
                 hasStarted = true;
                 hasDot = true;
             } else if (c == 'E' || c == 'e') {
-                if (!hasStarted || hasExp || !hasDigit || prev < '0' || prev > '9') {
+                if (!hasStarted || hasExp || !hasDigit) {
                     return false;
                 }
                 hasStarted = true;
@@ -2916,8 +2924,8 @@ public class Round3 {
             if (lenAfterAddWord > L) {
                 // do not add word
                 // finish this line
-                lines.add(line);
                 lineLengths.add(currentLineLen - line.size() + 1);
+                lines.add(line);
                 line = new ArrayList<String>();
                 line.add(word);
                 currentLineLen = word.length();
@@ -2928,7 +2936,7 @@ public class Round3 {
             }
             if (i == words.length - 1) {
                 lines.add(line);
-                lineLengths.add(currentLineLen);
+                lineLengths.add(currentLineLen - line.size() + 1);
             }
         }
         List<String> result = new ArrayList<String>();
@@ -2944,7 +2952,7 @@ public class Round3 {
                 for (int j = 0; j < numSpaces; j++) {
                     builder.append(" ");
                 }
-            } else {
+            } else if (i != lines.size() - 1) {
                 int baseNumSpacePerGap = numSpaces / (numWords - 1);
                 int spaceLeft = numSpaces % (numWords - 1);
                 for (int j = 0; j < numWords; j++) {
@@ -2953,6 +2961,17 @@ public class Round3 {
                     for (int k = 0; k < spaces; k++) {
                         builder.append(" ");
                     }
+                }
+            } else {
+                for (int j = 0; j < numWords; j++) {
+                    builder.append(line.get(j));
+                    if (j < numWords - 1) {
+                        builder.append(" ");
+                        numSpaces--;
+                    }
+                }
+                for (int k = 0; k < numSpaces; k++) {
+                    builder.append(" ");
                 }
             }
             result.add(builder.toString());
@@ -2971,8 +2990,8 @@ public class Round3 {
             return 0;
         }
         long start = 0;
-        long end = x / 2;
-        while (start < end) {
+        long end = x / 2 + 1;
+        while (start <= end) {
             long mid = (start + end) / 2;
             long product = mid * mid;
             if (product == x) {
@@ -3198,7 +3217,7 @@ public class Round3 {
         }
         int index1 = 0;
         int index2 = A.length - 1;
-        for (int i = 0; i < index2 && index1 < index2; ) {
+        for (int i = 0; i <= index2 && index1 < index2; ) {
             if (A[i] == 0) {
                 int temp = A[index1];
                 A[index1] = A[i];
@@ -3709,6 +3728,7 @@ public class Round3 {
                     int preIndex = stack.pop();
                     int area = heights[i][preIndex] * (stack.isEmpty() ? j : j - stack.peek() - 1);
                     rowMax = Math.max(rowMax, area);
+                    j--;
                 }
             }
             max = Math.max(max, rowMax);
@@ -5151,11 +5171,12 @@ public class Round3 {
     }
 
 
-
     public static void main(String[] args) {
 
-        PRINT(largestRectangleArea(new int[]{2,1,5,6,2,3}));
-
+        List<String> list = fullJustify(new String[]{"What", "must", "be", "shall", "be."}, 12);
+        for (String row : list) {
+            PRINT("#" + row + "#");
+        }
     }
 
     public static ListNode createListNode(int[] num) {
