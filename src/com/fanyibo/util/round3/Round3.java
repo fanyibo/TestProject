@@ -8,6 +8,7 @@ package com.fanyibo.util.round3;
 
 import com.fanyibo.tree.TreeNode;
 import com.fanyibo.util.ListNode;
+import com.fanyibo.util.round2.Round2;
 import javafx.beans.binding.When;
 
 import java.util.*;
@@ -3748,7 +3749,41 @@ public class Round3 {
      */
     public static ListNode partition(ListNode head, int x) {
 
-        return null;
+        if (head == null) {
+            return null;
+        }
+        ListNode leftHead = null;
+        ListNode rightHead = null;
+        ListNode leftTemp = null;
+        ListNode rightTemp = null;
+
+        ListNode temp = head;
+        while (temp != null) {
+            ListNode next = temp.next;
+            temp.next = null;
+            if (temp.val < x) {
+                if (leftHead == null) {
+                    leftHead = temp;
+                    leftTemp = temp;
+                } else {
+                    leftTemp.next = temp;
+                    leftTemp = leftTemp.next;
+                }
+            } else {
+                if (rightHead == null) {
+                    rightHead = temp;
+                    rightTemp = temp;
+                } else {
+                    rightTemp.next = temp;
+                    rightTemp = rightTemp.next;
+                }
+            }
+            temp = next;
+        }
+        if (leftTemp != null) {
+            leftTemp.next = rightHead;
+        }
+        return leftHead == null ? rightHead : leftHead;
     }
 
     /**
@@ -3796,17 +3831,23 @@ public class Round3 {
         } else if (size1 == 1) {
             return s1.charAt(0) == s2.charAt(0);
         }
+        int[] chars = new int[256];
         for (int i = 0; i < size1; i++) {
-            if (isScramble(s1.substring(0, i + 1), s2.substring(0, i + 1)) && isScramble(s1.substring(i + 1),
-                                                                                         s2.substring(i + 1))) {
+            chars[s1.charAt(i)]++;
+            chars[s2.charAt(i)]--;
+        }
+        for (int i = 0; i < 256; i++) {
+            if (chars[i] != 0) {
+                return false;
+            }
+        }
+        for (int i = 1; i < size1; i++) {
+            if (isScramble(s1.substring(0, i), s2.substring(0, i))
+                    && isScramble(s1.substring(i), s2.substring(i))) {
                 return true;
             }
-            if (isScramble(s1.substring(0, i + 1), s2.substring(size2 - i - 1)) && isScramble(s1.substring(i + 1),
-                                                                                              s2.substring(0,
-                                                                                                           size2 - i
-                                                                                                                   -
-                                                                                                                   1)
-            )) {
+            if (isScramble(s1.substring(0, i), s2.substring(size2 - i))
+                    && isScramble(s1.substring(i), s2.substring(0, size2 - i))) {
                 return true;
             }
         }
@@ -3867,15 +3908,14 @@ public class Round3 {
      */
     public static List<Integer> grayCode(int n) {
 
-        if (n <= 0) {
-            return new ArrayList<Integer>();
-        }
-        int elem = 2;
         List<Integer> result = new ArrayList<Integer>();
-        for (int i = 1; i <= n; i++) {
-            if (i == 1) {
+        if (n < 0) {
+            return result;
+        }
+        int elem = 1;
+        for (int i = 0; i <= n; i++) {
+            if (i == 0) {
                 result.add(0);
-                result.add(1);
             } else {
                 int size = result.size();
                 for (int j = size - 1; j >= 0; j--) {
@@ -3906,6 +3946,7 @@ public class Round3 {
      */
     public static List<List<Integer>> subsetsWithDup(int[] num) {
 
+        Arrays.sort(num);
         Set<List<Integer>> set = new HashSet<List<Integer>>();
         if (num.length > 0) {
             for (int i = 0; i < num.length; i++) {
@@ -3947,25 +3988,37 @@ public class Round3 {
             return 0;
         }
         int[] d = new int[size];
-        for (int i = 0; i < size - 1; i++) {
-            char c = s.charAt(i);
-            if (c == '0') {
-                if (i == 0 || (s.charAt(i - 1) != '1' && s.charAt(i - 1) != '2')) {
-                    return 0;
-                }
-                d[i] = i < 2 ? 1 : d[i - 2];
-            } else if (s.charAt(i - 1) == '1') {
-                if (i == 0) {
-                    d[i] = 1;
-                } else {
-                    d[i] = d[i - 1] + (i < 2 ? 1 : d[i - 2] + 1);
-                }
-            } else if (s.charAt(i - 1) == '2') {
-                if (c >= '7') {
+        for (int i = 0; i < size; i++) {
+            char curr = s.charAt(i);
+            if (curr < '0' || curr > '9') {
+                return 0;
+            }
+            if (i == 0) {
+                d[i] = curr == '0' ? 0 : 1;
+            } else {
+                char prev = s.charAt(i - 1);
+                if (curr == '0') {
+                    if (prev > '2' || prev == '0') {
+                        d[i] = 0;
+                    } else {
+                        d[i] = i >= 2 ? d[i - 2] : 1;
+                    }
+                } else if (prev == '0') {
                     d[i] = d[i - 1];
+                } else if (prev == '1') {
+                    d[i] = d[i - 1] + (i >= 2 ? d[i - 2] : 1);
+                } else if (prev == '2') {
+                    if (curr >= '1' && curr <= '6') {
+                        d[i] = d[i - 1] + (i >= 2 ? d[i - 2] : 1);
+                    } else {
+                        d[i] = d[i - 1];
+                    }
                 } else {
-                    d[i] = d[i - 1] + (i < 2 ? 1 : d[i - 2] + 1);
+                    d[i] = d[i - 1];
                 }
+            }
+            if (d[i] == 0) {
+                return 0;
             }
         }
         return d[size - 1];
@@ -4059,7 +4112,7 @@ public class Round3 {
             return result;
         } else if (level == 1) {
             int num = Integer.parseInt(s);
-            if (num > 255 || (s.charAt(0) == '0' && num != 0)) {
+            if (num > 255 || (s.charAt(0) == '0' && (num != 0 || (s.length() > 1)))) {
                 return result;
             } else {
                 List<String> list = new ArrayList<String>();
@@ -4173,6 +4226,7 @@ public class Round3 {
 
         List<TreeNode> roots = new ArrayList<TreeNode>();
         if (start > end) {
+            roots.add(null);
             return roots;
         } else if (start == end) {
             roots.add(new TreeNode(start));
@@ -4281,18 +4335,20 @@ public class Round3 {
      */
     public static boolean isValidBST(TreeNode root) {
 
-        int lastVal = Integer.MIN_VALUE;
+        int lastVal = 0;
+        boolean first = true;
         TreeNode pre = null;
         TreeNode node = root;
         while (node != null) {
             if (node.left == null) {
-                if (lastVal >= node.val) {
+                if (lastVal >= node.val && !first) {
                     return false;
                 }
+                first = false;
                 lastVal = node.val;
                 node = node.right;
             } else {
-                pre = node.right;
+                pre = node.left;
                 while (pre.right != null && pre.right != node) {
                     pre = pre.right;
                 }
@@ -4301,9 +4357,10 @@ public class Round3 {
                     node = node.left;
                 } else {
                     pre.right = null;
-                    if (lastVal >= node.val) {
+                    if (lastVal >= node.val && !first) {
                         return false;
                     }
+                    first = false;
                     lastVal = node.val;
                     node = node.right;
                 }
@@ -4338,7 +4395,7 @@ public class Round3 {
                 parent = node;
                 node = node.right;
             } else {
-                pre = node.right;
+                pre = node.left;
                 while (pre.right != null && pre.right != node) {
                     pre = pre.right;
                 }
@@ -4404,6 +4461,7 @@ public class Round3 {
 
         return root == null || isSymmetric(root.left, root.right);
     }
+
     public static boolean isSymmetric(TreeNode p, TreeNode q) {
 
         if (p == null) {
@@ -4411,7 +4469,7 @@ public class Round3 {
         } else if (q == null) {
             return false;
         }
-        return p.val == q.val && isSymmetric(p.left, q.right) && isSameTree(p.right, q.left);
+        return p.val == q.val && isSymmetric(p.left, q.right) && isSymmetric(p.right, q.left);
     }
 
 
@@ -4585,7 +4643,27 @@ public class Round3 {
      */
     public static TreeNode buildTree1(int[] preorder, int[] inorder) {
 
-        return null;
+        if (preorder.length != inorder.length) {
+            return null;
+        }
+        return _buildTree1(preorder, 0, preorder.length - 1, inorder, 0, inorder.length - 1);
+    }
+
+    public static TreeNode _buildTree1(int[] preorder, int pStart, int pEnd, int[] inorder, int iStart, int iEnd) {
+
+        if (pStart > pEnd || iStart > iEnd || pEnd - pStart != iEnd - iStart) {
+            return null;
+        }
+        TreeNode root = new TreeNode(preorder[pStart]);
+        int rootIndex = iStart;
+        for (; rootIndex <= iEnd; rootIndex++) {
+            if (inorder[rootIndex] == preorder[pStart]) {
+                break;
+            }
+        }
+        root.left = _buildTree1(preorder, pStart + 1, pStart + rootIndex - iStart, inorder, iStart, rootIndex - 1);
+        root.right = _buildTree1(preorder, pStart + rootIndex - iStart + 1, pEnd, inorder, rootIndex + 1, iEnd);
+        return root;
     }
 
     /**
@@ -4596,7 +4674,28 @@ public class Round3 {
      */
     public static TreeNode buildTree2(int[] inorder, int[] postorder) {
 
-        return null;
+        if (inorder.length != postorder.length) {
+            return null;
+        }
+        return _buildTree2(inorder, 0, inorder.length - 1, postorder, 0, postorder.length - 1);
+    }
+
+    public static TreeNode _buildTree2(int[] inorder, int iStart, int iEnd, int[] postorder, int pStart, int pEnd) {
+
+        if (pStart > pEnd || iStart > iEnd || pEnd - pStart != iEnd - iStart) {
+            return null;
+        }
+        TreeNode root = new TreeNode(postorder[pEnd]);
+        int rootIndex = iStart;
+        for (; rootIndex <= iEnd; rootIndex++) {
+            if (inorder[rootIndex] == postorder[pEnd]) {
+                break;
+            }
+        }
+        root.left = _buildTree2(inorder, iStart, rootIndex - 1, postorder, pStart, rootIndex - iStart - 1 + pStart);
+        root.right = _buildTree2(inorder, rootIndex + 1, iEnd, postorder, rootIndex - iStart + pStart,
+                                 pStart - iStart + iEnd - 1);
+        return root;
     }
 
     /**
@@ -4619,7 +4718,51 @@ public class Round3 {
      */
     public static List<List<Integer>> levelOrderBottom(TreeNode root) {
 
-        return null;
+        List<List<Integer>> result = new ArrayList<List<Integer>>();
+        if (root == null) {
+            return result;
+        }
+        boolean markNew = true;
+        TreeNode mark = root;
+        Deque<TreeNode> dequeue = new ArrayDeque<TreeNode>();
+        dequeue.addLast(root);
+        List<Integer> row = new ArrayList<Integer>();
+        while (!dequeue.isEmpty()) {
+            TreeNode node = dequeue.removeFirst();
+            TreeNode left = node.left;
+            TreeNode right = node.right;
+            if (left != null) {
+                dequeue.addLast(left);
+            }
+            if (right != null) {
+                dequeue.addLast(right);
+            }
+            if (node == mark) {
+                markNew = true;
+                if (node == root) {
+                    row.add(node.val);
+                } else {
+                    result.add(0, row);
+                    row = new ArrayList<Integer>();
+                    row.add(node.val);
+                }
+            } else {
+                row.add(node.val);
+            }
+            if (markNew) {
+                if (left != null) {
+                    mark = left;
+                    markNew = false;
+                } else if (right != null) {
+                    mark = right;
+                    markNew = false;
+                }
+            }
+        }
+        if (!row.isEmpty()) {
+            result.add(0, row);
+        }
+        return result;
     }
 
     /**
@@ -4628,7 +4771,19 @@ public class Round3 {
      */
     public static TreeNode sortedArrayToBST(int[] num) {
 
-        return null;
+        return _sortedArrayToBST(num, 0, num.length - 1);
+    }
+
+    public static TreeNode _sortedArrayToBST(int[] num, int start, int end) {
+
+        if (start > end) {
+            return null;
+        }
+        int mid = (start + end) / 2;
+        TreeNode root = new TreeNode(num[mid]);
+        root.left = _sortedArrayToBST(num, start, mid - 1);
+        root.right = _sortedArrayToBST(num, mid + 1, end);
+        return root;
     }
 
     /**
@@ -4637,7 +4792,25 @@ public class Round3 {
      */
     public static TreeNode sortedListToBST(ListNode head) {
 
-        return null;
+        if (head == null) {
+            return null;
+        } else if (head.next == null) {
+            return new TreeNode(head.val);
+        }
+        ListNode temp1 = head;
+        ListNode temp2 = head;
+        ListNode parent = null;
+        while (temp2 != null && temp2.next != null) {
+            parent = temp1;
+            temp1 = temp1.next;
+            temp2 = temp2.next.next;
+        }
+        ListNode rootNode = parent.next;
+        parent.next = null;
+        TreeNode root = new TreeNode(rootNode.val);
+        root.left = sortedListToBST(head);
+        root.right = sortedListToBST(rootNode.next);
+        return root;
     }
 
     /**
@@ -4648,7 +4821,15 @@ public class Round3 {
      */
     public static boolean isBalanced(TreeNode root) {
 
-        return false;
+        if (root == null || (root.left == null && root.right == null)) {
+            return true;
+        }
+        int leftH = maxDepth(root.left);
+        int rightH = maxDepth(root.right);
+        if (Math.abs(rightH - leftH) > 1) {
+            return false;
+        }
+        return isBalanced(root.left) && isBalanced(root.right);
     }
 
     /**
@@ -4663,8 +4844,12 @@ public class Round3 {
             return 0;
         } else if (root.left == null && root.right == null) {
             return 1;
+        } else if (root.left == null) {
+            return minDepth(root.right) + 1;
+        } else if (root.right == null) {
+            return minDepth(root.left) + 1;
         } else {
-            return Math.min(maxDepth(root.left), maxDepth(root.right)) + 1;
+            return Math.min(minDepth(root.left), minDepth(root.right)) + 1;
         }
     }
 
@@ -4686,8 +4871,16 @@ public class Round3 {
      */
     public static boolean hasPathSum(TreeNode root, int sum) {
 
-        return false;
+        if (root == null) {
+            return false;
+        }
+        int newSum = sum - root.val;
+        if (root.left == null && root.right == null) {
+            return newSum == 0;
+        }
+        return hasPathSum(root.left, newSum) || hasPathSum(root.right, newSum);
     }
+
 
     /**
      * 113. Path Sum II
@@ -4709,7 +4902,37 @@ public class Round3 {
      */
     public static List<List<Integer>> pathSum(TreeNode root, int sum) {
 
-        return null;
+        return _pathSum(root, sum);
+    }
+
+    public static List<List<Integer>> _pathSum(TreeNode root, int sum) {
+
+        List<List<Integer>> result = new ArrayList<List<Integer>>();
+        if (root == null) {
+            return result;
+        } else if (root.left == null && root.right == null) {
+            if (sum == root.val) {
+                List<Integer> list = new ArrayList<Integer>();
+                list.add(root.val);
+                result.add(list);
+            }
+            return result;
+        }
+        List<List<Integer>> left = _pathSum(root.left, sum - root.val);
+        List<List<Integer>> right = _pathSum(root.right, sum - root.val);
+        for (List<Integer> list : left) {
+            List<Integer> temp = new ArrayList<Integer>();
+            temp.add(root.val);
+            temp.addAll(list);
+            result.add(temp);
+        }
+        for (List<Integer> list : right) {
+            List<Integer> temp = new ArrayList<Integer>();
+            temp.add(root.val);
+            temp.addAll(list);
+            result.add(temp);
+        }
+        return result;
     }
 
     /**
@@ -4737,6 +4960,32 @@ public class Round3 {
      */
     public static void flatten(TreeNode root) {
 
+        _flatten(root);
+    }
+
+    public static TreeNode _flatten(TreeNode root) {
+
+        if (root == null) {
+            return null;
+        } else if (root.left == null && root.right == null) {
+            return root;
+        }
+        TreeNode left = root.left;
+        TreeNode right = root.right;
+        root.left = null;
+        root.right = null;
+
+        TreeNode leftTail = _flatten(left);
+        TreeNode rightTail = _flatten(right);
+
+        if (leftTail == null) {
+            root.right = right;
+            return rightTail;
+        } else {
+            root.right = left;
+            leftTail.right = right;
+            return rightTail == null ? leftTail : rightTail;
+        }
     }
 
 
@@ -4753,7 +5002,24 @@ public class Round3 {
      */
     public static int numDistinct(String S, String T) {
 
-        return 0;
+        int sizeS = S.length();
+        int sizeT = T.length();
+        if (sizeS < sizeT || sizeS == 0) {
+            return 0;
+        }
+        int[][] d = new int[sizeT + 1][sizeS + 1];
+        for (int i = 0; i <= sizeT; i++) {
+            for (int j = i; j <= sizeS; j++) {
+                if (i == 0) {
+                    d[i][j] = 1;
+                } else if (i == j) {
+                    d[i][j] = T.charAt(i - 1) == S.charAt(j - 1) ? d[i - 1][j - 1] : 0;
+                } else {
+                    d[i][j] = (T.charAt(i - 1) == S.charAt(j - 1) ? d[i - 1][j - 1] : 0) + d[i][j - 1];
+                }
+            }
+        }
+        return d[sizeT][sizeS];
     }
 
     /**
@@ -4791,6 +5057,66 @@ public class Round3 {
 
     public static void connect(TreeLinkNode root) {
 
+        if (root == null || (root.left == null && root.right == null)) {
+            return;
+        }
+        TreeLinkNode next = root.next;
+        TreeLinkNode levelNext = null;
+        while (next != null && next.left == null && next.right == null) {
+            next = next.next;
+        }
+        if (next != null) {
+            levelNext = next.left == null ? next.right : next.left;
+        }
+        if (root.left == null) {
+            root.right.next = levelNext;
+        } else if (root.right == null) {
+            root.left.next = levelNext;
+        } else {
+            root.left.next = root.right;
+            root.right.next = levelNext;
+        }
+        connect(root.right);
+        connect(root.left);
+
+
+        //        if (root == null) {
+        //            return;
+        //        }
+        //        boolean markNew = true;
+        //        TreeLinkNode mark = root;
+        //        TreeLinkNode lastOne = null;
+        //        Deque<TreeLinkNode> dequeue = new ArrayDeque<TreeLinkNode>();
+        //        dequeue.addLast(root);
+        //        while (!dequeue.isEmpty()) {
+        //            TreeLinkNode node = dequeue.removeFirst();
+        //            TreeLinkNode left = node.left;
+        //            TreeLinkNode right = node.right;
+        //            if (left != null) {
+        //                dequeue.addLast(left);
+        //            }
+        //            if (right != null) {
+        //                dequeue.addLast(right);
+        //            }
+        //            if (node == mark) {
+        //                markNew = true;
+        //                if (node != root) {
+        //                    lastOne = node;
+        //                }
+        //            } else if (lastOne != null) {
+        //                lastOne.next = node;
+        //                lastOne = node;
+        //            }
+        //            if (markNew) {
+        //                if (left != null) {
+        //                    mark = left;
+        //                    markNew = false;
+        //                } else if (right != null) {
+        //                    mark = right;
+        //                    markNew = false;
+        //                }
+        //            }
+        //        }
     }
 
 
@@ -4816,6 +5142,65 @@ public class Round3 {
      */
     public void connect2(TreeLinkNode root) {
 
+        if (root == null || (root.left == null && root.right == null)) {
+            return;
+        }
+        TreeLinkNode next = root.next;
+        TreeLinkNode levelNext = null;
+        while (next != null && next.left == null && next.right == null) {
+            next = next.next;
+        }
+        if (next != null) {
+            levelNext = next.left == null ? next.right : next.left;
+        }
+        if (root.left == null) {
+            root.right.next = levelNext;
+        } else if (root.right == null) {
+            root.left.next = levelNext;
+        } else {
+            root.left.next = root.right;
+            root.right.next = levelNext;
+        }
+        connect(root.right);
+        connect(root.left);
+
+        //        if (root == null) {
+        //            return;
+        //        }
+        //        boolean markNew = true;
+        //        TreeLinkNode mark = root;
+        //        TreeLinkNode lastOne = null;
+        //        Deque<TreeLinkNode> dequeue = new ArrayDeque<TreeLinkNode>();
+        //        dequeue.addLast(root);
+        //        while (!dequeue.isEmpty()) {
+        //            TreeLinkNode node = dequeue.removeFirst();
+        //            TreeLinkNode left = node.left;
+        //            TreeLinkNode right = node.right;
+        //            if (left != null) {
+        //                dequeue.addLast(left);
+        //            }
+        //            if (right != null) {
+        //                dequeue.addLast(right);
+        //            }
+        //            if (node == mark) {
+        //                markNew = true;
+        //                if (node != root) {
+        //                    lastOne = node;
+        //                }
+        //            } else if (lastOne != null) {
+        //                lastOne.next = node;
+        //                lastOne = node;
+        //            }
+        //            if (markNew) {
+        //                if (left != null) {
+        //                    mark = left;
+        //                    markNew = false;
+        //                } else if (right != null) {
+        //                    mark = right;
+        //                    markNew = false;
+        //                }
+        //            }
+        //        }
     }
 
 
@@ -4834,7 +5219,22 @@ public class Round3 {
      */
     public static List<List<Integer>> generate(int numRows) {
 
-        return null;
+        List<List<Integer>> result = new ArrayList<List<Integer>>();
+        for (int i = 1; i <= numRows; i++) {
+            if (i == 1) {
+                List<Integer> list = new ArrayList<Integer>();
+                list.add(i);
+                result.add(list);
+            } else {
+                List<Integer> last = result.get(result.size() - 1);
+                List<Integer> list = new ArrayList<Integer>();
+                for (int j = 0; j <= last.size(); j++) {
+                    list.add((j == last.size() ? 0 : last.get(j)) + (j == 0 ? 0 : last.get(j - 1)));
+                }
+                result.add(list);
+            }
+        }
+        return result;
     }
 
     /**
@@ -4847,7 +5247,19 @@ public class Round3 {
      */
     public static List<Integer> getRow(int rowIndex) {
 
-        return null;
+        List<Integer> last = new ArrayList<Integer>();
+        for (int i = 0; i <= rowIndex; i++) {
+            if (i == 0) {
+                last.add(1);
+            } else {
+                List<Integer> list = new ArrayList<Integer>();
+                for (int j = 0; j <= last.size(); j++) {
+                    list.add((j == last.size() ? 0 : last.get(j)) + (j == 0 ? 0 : last.get(j - 1)));
+                }
+                last = list;
+            }
+        }
+        return last;
     }
 
     /**
@@ -4869,7 +5281,28 @@ public class Round3 {
      */
     public static int minimumTotal(List<List<Integer>> triangle) {
 
-        return 0;
+        List<Integer> rowPath = new ArrayList<Integer>();
+        for (List<Integer> row : triangle) {
+            List<Integer> temp = new ArrayList<Integer>();
+            for (int i = 0; i <= rowPath.size(); i++) {
+                if (i == 0) {
+                    temp.add((rowPath.isEmpty() ? 0 : rowPath.get(0)) + row.get(0));
+                } else if (i == rowPath.size()) {
+                    temp.add(rowPath.get(i - 1) + row.get(i));
+                } else {
+                    temp.add(Math.min(rowPath.get(i - 1), rowPath.get(i)) + row.get(i));
+                }
+            }
+            rowPath = temp;
+        }
+        if (rowPath.isEmpty()) {
+            return 0;
+        }
+        int min = rowPath.get(0);
+        for (int i = 1; i < rowPath.size(); i++) {
+            min = Math.min(min, rowPath.get(i));
+        }
+        return min;
     }
 
     /**
@@ -4880,7 +5313,16 @@ public class Round3 {
      */
     public static int maxProfit1(int[] prices) {
 
-        return 0;
+        if (prices.length < 2) {
+            return 0;
+        }
+        int maxProfit = 0;
+        int minLeft = prices[0];
+        for (int i = 0; i < prices.length; i++) {
+            maxProfit = Math.max(maxProfit, prices[i] - minLeft);
+            minLeft = Math.min(minLeft, prices[i]);
+        }
+        return maxProfit;
     }
 
     /**
@@ -4894,7 +5336,22 @@ public class Round3 {
      */
     public static int maxProfit2(int[] prices) {
 
-        return 0;
+        if (prices.length < 2) {
+            return 0;
+        }
+        int maxProfit = 0;
+        Deque<Integer> queue = new ArrayDeque<Integer>();
+        for (int i = 0; i < prices.length; i++) {
+            if (queue.isEmpty()) {
+                queue.addLast(prices[i]);
+            } else if (prices[i] >= queue.getLast()) {
+                maxProfit += (prices[i] - queue.getLast());
+                queue.addLast(prices[i]);
+            } else {
+                queue.addLast(prices[i]);
+            }
+        }
+        return maxProfit;
     }
 
     /**
@@ -4907,7 +5364,49 @@ public class Round3 {
      */
     public static int maxProfit3(int[] prices) {
 
-        return 0;
+        if (prices.length < 2) {
+            return 0;
+        }
+        int minLeft = prices[0];
+        int maxProfitOne = 0;
+        int maxProfitTwo = 0;
+        List<Integer> queue = new ArrayList<Integer>();
+        for (int i = 0; i < prices.length; i++) {
+            int currentPrice = prices[i];
+            maxProfitOne = Math.max(maxProfitOne, currentPrice - minLeft);
+            minLeft = Math.min(minLeft, currentPrice);
+            if (queue.isEmpty()) {
+                queue.add(currentPrice);
+            } else {
+                int size = queue.size();
+                if (currentPrice > queue.get(queue.size() - 1)) {
+                    if (size % 2 == 0) {
+                        queue.remove(queue.size() - 1);
+                    }
+                    queue.add(currentPrice);
+                } else if (currentPrice < queue.get(queue.size() - 1)) {
+                    if (size % 2 != 0) {
+                        queue.remove(queue.size() - 1);
+                    }
+                    queue.add(currentPrice);
+                }
+            }
+        }
+        minLeft = queue.get(0);
+        int profitMaxL = 0;
+        for (int i = 0; i < queue.size(); i++) {
+            profitMaxL = Math.max(profitMaxL, queue.get(i) - minLeft);
+            minLeft = Math.min(minLeft, queue.get(i));
+
+            int profitMaxR = 0;
+            int minRight = queue.get(i);
+            for (int j = i; j < queue.size(); j++) {
+                profitMaxR = Math.max(profitMaxR, queue.get(j) - minRight);
+                minRight = Math.min(minRight, queue.get(j));
+            }
+            maxProfitTwo = Math.max(maxProfitTwo, profitMaxL + profitMaxR);
+        }
+        return Math.max(maxProfitOne, maxProfitTwo);
     }
 
     /**
@@ -4924,7 +5423,25 @@ public class Round3 {
 
     public static int maxPathSum(TreeNode root) {
 
-        return 0;
+        if (root == null) {
+            return 0;
+        }
+        int[] max = new int[1];
+        max[0] = root.val;
+        _maxPathSum(root, max);
+        return max[0];
+    }
+
+    public static int _maxPathSum(TreeNode root, int[] max) {
+
+        if (root == null) {
+            return 0;
+        } else {
+            int left = Math.max(0, _maxPathSum(root.left, max));
+            int right = Math.max(0, _maxPathSum(root.right, max));
+            max[0] = Math.max(max[0], left + right + root.val);
+            return root.val + Math.max(left, right);
+        }
     }
 
     /**
@@ -4939,7 +5456,45 @@ public class Round3 {
      */
     public static boolean isPalindrome(String s) {
 
-        return false;
+        if (s.length() == 0) {
+            return true;
+        }
+        int index1 = 0;
+        int index2 = s.length() - 1;
+        while (index1 < index2) {
+            char c1 = s.charAt(index1);
+            char c2 = s.charAt(index2);
+
+            if (!((c1 >= 'A' && c1 <= 'Z') || (c1 >= 'a' && c1 <= 'z') || (c1 >= '0' && c1 <= '9'))) {
+                index1++;
+            } else if (!((c2 >= 'A' && c2 <= 'Z') || (c2 >= 'a' && c2 <= 'z') || (c2 >= '0' && c2 <= '9'))) {
+                index2--;
+            } else {
+                if (!isSameChar(c1, c2)) {
+                    return false;
+                } else {
+                    index1++;
+                    index2--;
+                }
+            }
+        }
+        return true;
+    }
+
+    public static boolean isSameChar(char a, char b) {
+
+        if (a == b) {
+            return true;
+        }
+        int iA = (int) a;
+        int iB = (int) b;
+        if (iA >= 65 && iA <= 90) {
+            iA += 32;
+        }
+        if (iB >= 65 && iB <= 90) {
+            iB += 32;
+        }
+        return iA == iB;
     }
 
 
@@ -5002,8 +5557,50 @@ public class Round3 {
      * The longest consecutive elements sequence is [1, 2, 3, 4]. Return its length: 4.
      * Your algorithm should run in O(n) complexity.
      */
+    public static class INTBOOL {
+        int value;
+        boolean bool = false;
+
+        public INTBOOL(int v, boolean b) {
+            value = v;
+            bool = b;
+        }
+    }
+
     public static int longestConsecutive(int[] num) {
 
+        if (num.length <= 1) {
+            return num.length;
+        }
+        Map<Integer, INTBOOL> values = new HashMap<Integer, INTBOOL>();
+        for (int n : num) {
+            values.put(n, new INTBOOL(1, false));
+        }
+        for (int n : values.keySet()) {
+            if (!values.get(n).bool) {
+                _longestConsecutive(n, values);
+            }
+        }
+        int max = 0;
+        for (int n : num) {
+            max = Math.max(max, values.get(n).value);
+        }
+        return max;
+    }
+
+    public static int _longestConsecutive(int num, Map<Integer, INTBOOL> values) {
+
+        if (values.containsKey(num)) {
+            INTBOOL attrib = values.get(num);
+            if (!attrib.bool) {
+                attrib.bool = true;
+                if (values.containsKey(num - 1)) {
+                    int len = _longestConsecutive(num - 1, values);
+                    attrib.value = len + 1;
+                }
+            }
+            return attrib.value;
+        }
         return 0;
     }
 
@@ -5023,7 +5620,26 @@ public class Round3 {
      */
     public static int sumNumbers(TreeNode root) {
 
-        return 0;
+        if (root == null) {
+            return 0;
+        }
+        int[] sum = new int[1];
+        _sumNumbers(root, 0, sum);
+        return sum[0];
+    }
+
+    public static void _sumNumbers(TreeNode root, int value, int[] sum) {
+
+        if (root == null) {
+            return;
+        }
+        value = 10 * value + root.val;
+        if (root.left == null && root.right == null) {
+            sum[0] += value;
+        } else {
+            _sumNumbers(root.left, value, sum);
+            _sumNumbers(root.right, value, sum);
+        }
     }
 
 
@@ -5303,7 +5919,28 @@ public class Round3 {
      */
     public static List<Integer> postorderTraversal(TreeNode root) {
 
-        return null;
+        List<Integer> result = new ArrayList<Integer>();
+        if (root == null) {
+            return result;
+        }
+        TreeNode node = root;
+        TreeNode lastVisited = null;
+        Stack<TreeNode> stack = new Stack<TreeNode>();
+        while (!stack.isEmpty() || node != null) {
+            if (node.left != null) {
+                stack.push(node);
+                node = node.left;
+            } else {
+                TreeNode peekNode = stack.peek();
+                if (peekNode.right != null && peekNode.right != lastVisited) {
+                    node = peekNode.right;
+                } else {
+                    result.add(peekNode.val);
+                    lastVisited = stack.pop();
+                }
+            }
+        }
+        return result;
     }
 
     /**
@@ -5695,8 +6332,10 @@ public class Round3 {
 
     public static void main(String[] args) {
 
-        PRINT(isInterleave("aabcc","dbbca","aadbbcbcac"));
-        PRINT(isInterleave("aabcc","dbbca","aadbbbaccc"));
+        PRINT(maxProfit3(new int[]{3, 2, 6, 5, 0, 3}));
+
+        PRINT(isInterleave("aabcc", "dbbca", "aadbbcbcac"));
+        PRINT(isInterleave("aabcc", "dbbca", "aadbbbaccc"));
         PRINT(generateTrees(3).size());
         PRINT(numTrees(3));
 

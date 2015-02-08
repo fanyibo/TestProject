@@ -5674,7 +5674,7 @@ public class Round2 {
         int left = Math.max(0, _maxPathSum(node.left));
         int right = Math.max(0, _maxPathSum(node.right));
         iMaxPathSum = Math.max(iMaxPathSum, left + right + node.val);
-        return left + right + node.val;
+        return Math.max(left, right) + node.val;
     }
 
     /**
