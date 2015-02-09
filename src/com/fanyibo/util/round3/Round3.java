@@ -11,6 +11,7 @@ import com.fanyibo.util.ListNode;
 import com.fanyibo.util.round2.Round2;
 import javafx.beans.binding.When;
 
+import java.rmi.server.UnicastRemoteObject;
 import java.util.*;
 
 public class Round3 {
@@ -5520,7 +5521,44 @@ public class Round3 {
      */
     public static List<List<String>> findLadders(String start, String end, Set<String> dict) {
 
-        return null;
+        if (dict.contains(start)) {
+            dict.remove(start);
+        }
+        if (!dict.contains(end)) {
+            dict.add(end);
+        }
+        List<List<String>> result = new ArrayList<List<String>>();
+        Map<String, Set<String>> map = new HashMap<String, Set<String>>();
+        Set<String> lastRow = new HashSet<String>();
+        lastRow.add(start);
+        result.add(new ArrayList<String>(lastRow));
+        while (!lastRow.contains(end)) {
+            if (lastRow.isEmpty() || dict.isEmpty()) {
+                return new ArrayList<List<String>>();
+            }
+            Set<String> toBeRemoved = new HashSet<String>();
+            List<List<String>> temp = new ArrayList<List<String>>();
+            int size = result.size();
+            for (String wordLastRow : lastRow) {
+                for (String word : dict) {
+                    if (oneChange(wordLastRow, word)) {
+                        toBeRemoved.add(word);
+                        for (int i = 0; i < size; i++) {
+                            List<String> path = result.get(i);
+                            if (path.get(path.size() - 1).equals(wordLastRow)) {
+                                List<String> list = new ArrayList<String>(path);
+                                list.add(word);
+                                temp.add(list);
+                            }
+                        }
+                    }
+                }
+            }
+            result = temp;
+            dict.removeAll(toBeRemoved);
+            lastRow = toBeRemoved;
+        }
+        return result;
     }
 
 
@@ -5545,7 +5583,46 @@ public class Round3 {
      */
     public static int ladderLength(String start, String end, Set<String> dict) {
 
-        return 0;
+        if (dict.contains(start)) {
+            dict.remove(start);
+        }
+        if (!dict.contains(end)) {
+            dict.add(end);
+        }
+        int level = 1;
+        Set<String> lastRow = new HashSet<String>();
+        lastRow.add(start);
+        while (!lastRow.contains(end)) {
+            if (lastRow.isEmpty() || dict.isEmpty()) {
+                return 0;
+            }
+            Set<String> toBeRemoved = new HashSet<String>();
+            for (String wordLastRow : lastRow) {
+                for (String word : dict) {
+                    if (oneChange(wordLastRow, word)) {
+                        toBeRemoved.add(word);
+                    }
+                }
+            }
+            dict.removeAll(toBeRemoved);
+            lastRow = toBeRemoved;
+            level++;
+        }
+        return level;
+    }
+
+    public static boolean oneChange(String str1, String str2) {
+
+        if (str1.length() != str2.length()) {
+            return false;
+        }
+        int count = 0;
+        for (int i = 0; i < str1.length(); i++) {
+            if (str1.charAt(i) != str2.charAt(i)) {
+                count++;
+            }
+        }
+        return count == 1;
     }
 
 
@@ -5660,6 +5737,82 @@ public class Round3 {
      */
     public static void solve(char[][] board) {
 
+        if (board == null || board.length == 0) {
+            return;
+        }
+        int rows = board.length;
+        int cols = board[0].length;
+        if (rows < 3 || cols < 3) {
+            return;
+        }
+
+        List<Integer> indexX = new ArrayList<Integer>();
+        List<Integer> indexY = new ArrayList<Integer>();
+
+        int[][] marks = new int[rows][cols];
+        for (int i = 0; i < rows; i++) {
+            if (board[i][0] != 'X' && marks[i][0] != 1) {
+                indexX.add(i);
+                indexY.add(0);
+            }
+            if (board[i][cols - 1] != 'X' && marks[i][cols - 1] != 1) {
+                indexX.add(i);
+                indexY.add(cols - 1);
+            }
+        }
+        for (int j = 1; j < cols - 1; j++) {
+            if (board[0][j] != 'X' && marks[0][j] != 1) {
+                indexX.add(0);
+                indexY.add(j);
+            }
+            if (board[rows - 1][j] != 'X' && marks[rows - 1][j] != 1) {
+                indexX.add(rows - 1);
+                indexY.add(j);
+            }
+        }
+
+
+        while (!indexX.isEmpty()) {
+
+            int x = indexX.remove(0);
+            int y = indexY.remove(0);
+
+            marks[x][y] = 1;
+
+            int leftX = x;
+            int leftY = y - 1;
+            int upX = x - 1;
+            int upY = y;
+            int rightX = x;
+            int rightY = y + 1;
+            int downX = x + 1;
+            int downY = y;
+
+            if (rightY < cols && marks[rightX][rightY] != 1 && board[rightX][rightY] != 'X') {
+                indexX.add(rightX);
+                indexY.add(rightY);
+            }
+            if (downX < rows && marks[downX][downY] != 1 && board[downX][downY] != 'X') {
+                indexX.add(downX);
+                indexY.add(downY);
+            }
+            if (upX >= 0 && marks[upX][upY] != 1 && board[upX][upY] != 'X') {
+                indexX.add(upX);
+                indexY.add(upY);
+            }
+            if (leftY >= 0 && marks[leftX][leftY] != 1 && board[leftX][leftY] != 'X') {
+                indexX.add(leftX);
+                indexY.add(leftY);
+            }
+        }
+
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                if (marks[i][j] != 1) {
+                    board[i][j] = 'X';
+                }
+            }
+        }
     }
 
 
@@ -5676,7 +5829,49 @@ public class Round3 {
      */
     public static List<List<String>> partition(String s) {
 
-        return null;
+        int size = s.length();
+        if (size == 0) {
+            return new ArrayList<List<String>>();
+        }
+        boolean[][] d = new boolean[size][size];
+        for (int i = size - 1; i >= 0; i--) {
+            for (int j = i; j < size; j++) {
+                if (i == j) {
+                    d[i][j] = true;
+                } else if (i + 1 == j) {
+                    d[i][j] = s.charAt(i) == s.charAt(j);
+                } else {
+                    d[i][j] = s.charAt(i) == s.charAt(j) && d[i + 1][j - 1];
+                }
+            }
+        }
+        return new ArrayList<List<String>>(_partition(s, 0, d));
+    }
+
+    public static Set<List<String>> _partition(String s, int start, boolean[][] d) {
+
+        Set<List<String>> result = new HashSet<List<String>>();
+        if (start >= s.length()) {
+            return result;
+        }
+        for (int i = start; i < s.length(); i++) {
+            if (d[start][i]) {
+                if (i < s.length() - 1) {
+                    Set<List<String>> rest = _partition(s, i + 1, d);
+                    for (List<String> _rest : rest) {
+                        List<String> list = new ArrayList<String>();
+                        list.add(s.substring(start, i + 1));
+                        list.addAll(_rest);
+                        result.add(list);
+                    }
+                } else {
+                    List<String> list = new ArrayList<String>();
+                    list.add(s.substring(start));
+                    result.add(list);
+                }
+            }
+        }
+        return result;
     }
 
 
@@ -5689,7 +5884,36 @@ public class Round3 {
      */
     public static int minCut(String s) {
 
-        return 0;
+        int size = s.length();
+        if (size == 0) {
+            return 0;
+        }
+        boolean[][] d = new boolean[size][size];
+        for (int i = size - 1; i >= 0; i--) {
+            for (int j = i; j < size; j++) {
+                if (i == j) {
+                    d[i][j] = true;
+                } else if (i + 1 == j) {
+                    d[i][j] = s.charAt(i) == s.charAt(j);
+                } else {
+                    d[i][j] = s.charAt(i) == s.charAt(j) && d[i + 1][j - 1];
+                }
+            }
+        }
+        int[] cut = new int[size];
+        for (int i = 0; i < size; i++) {
+            cut[i] = i;
+            if (d[0][i]) {
+                cut[i] = 0;
+            } else {
+                for (int j = 0; j < i; j++) {
+                    if (d[j + 1][i]) {
+                        cut[i] = Math.min(cut[i], cut[j] + 1);
+                    }
+                }
+            }
+        }
+        return cut[size - 1];
     }
 
     /**
@@ -5723,7 +5947,29 @@ public class Round3 {
 
     public static UndirectedGraphNode cloneGraph(UndirectedGraphNode node) {
 
-        return null;
+        if (node == null) {
+            return null;
+        }
+        Map<Integer, UndirectedGraphNode> map = new HashMap<Integer, UndirectedGraphNode>();
+        return _cloneGraph(node, map);
+    }
+
+    public static UndirectedGraphNode _cloneGraph(UndirectedGraphNode node, Map<Integer, UndirectedGraphNode> map) {
+
+        if (node == null) {
+            return null;
+        }
+        int hash = node.hashCode();
+        if (map.containsKey(hash)) {
+            return map.get(hash);
+        } else {
+            UndirectedGraphNode newNode = new UndirectedGraphNode(node.label);
+            map.put(hash, newNode);
+            for (UndirectedGraphNode neighbor : node.neighbors) {
+                newNode.neighbors.add(_cloneGraph(neighbor, map));
+            }
+            return newNode;
+        }
     }
 
 
@@ -5738,7 +5984,38 @@ public class Round3 {
      */
     public static int canCompleteCircuit(int[] gas, int[] cost) {
 
-        return 0;
+        if (gas.length == 0 || cost.length == 0 || gas.length != cost.length) {
+            return -1;
+        }
+        int size = gas.length;
+        int max = gas[0];
+        int maxIndex = 0;
+        for (int i = 0; i < size; i++) {
+            if (max < gas[i]) {
+                max = gas[i];
+                maxIndex = i;
+            }
+        }
+        int startIndex = maxIndex;
+        for (int i = 0; i < size; i++) {
+            int tank = 0;
+            int count = 0;
+            int current = startIndex;
+            while (count < size) {
+                tank += gas[current];
+                if (tank < cost[current]) {
+                    break;
+                }
+                tank -= cost[current];
+                current = current == size - 1 ? 0 : current + 1;
+                count++;
+            }
+            if (count >= size) {
+                return startIndex;
+            }
+            startIndex = startIndex == size - 1 ? 0 : startIndex + 1;
+        }
+        return -1;
     }
 
 
@@ -5752,7 +6029,44 @@ public class Round3 {
      */
     public static int candy(int[] ratings) {
 
-        return 0;
+        int size = ratings.length;
+        if (size < 2) {
+            return size;
+        }
+        int[] candies = new int[size];
+        for (int i = 0; i < size; i++) {
+            if (i == 0) {
+                candies[i] = 1;
+            } else if (ratings[i] > ratings[i - 1]) {
+                candies[i] = candies[i - 1] + 1;
+            } else if (ratings[i] < ratings[i - 1]) {
+                candies[i] = candies[i - 1] - 1;
+            } else {
+                candies[i] = candies[i - 1];
+            }
+            if ((i > 0 && i < size - 1 && ratings[i - 1] > ratings[i] && ratings[i] <= ratings[i + 1])
+                    || (i > 0 && i == size - 1 && ratings[i - 1] > ratings[i])) {
+                reAdjustCandy(ratings, candies, i);
+            }
+        }
+        int total = 0;
+        for (int candy : candies) {
+            total += candy;
+        }
+        return total;
+    }
+
+    public static void reAdjustCandy(int[] ratings, int[] candies, int startIndex) {
+
+        int k = startIndex;
+        int diff = 1 - candies[k];
+        while (k > 0 && ratings[k - 1] > ratings[k]) {
+            candies[k] = candies[k] + diff;
+            k--;
+        }
+        if (diff > 0) {
+            candies[k] += diff;
+        }
     }
 
 
@@ -5764,7 +6078,11 @@ public class Round3 {
      */
     public static int singleNumber1(int[] A) {
 
-        return 0;
+        int result = 0;
+        for (int a : A) {
+            result = (~a & result) | (a & ~result);
+        }
+        return result;
     }
 
 
@@ -5776,7 +6094,17 @@ public class Round3 {
      */
     public static int singleNumber2(int[] A) {
 
-        return 0;
+        int result = 0;
+        for (int i = 0; i < 32; i++) {
+            int count = 0;
+            for (int a : A) {
+                if (((a >> i) & 1) != 0) {
+                    count++;
+                }
+            }
+            result |= ((count % 3) << i);
+        }
+        return result;
     }
 
 
@@ -5798,7 +6126,24 @@ public class Round3 {
 
     public static RandomListNode copyRandomList(RandomListNode head) {
 
-        return null;
+        return _copyRandomList(head, new HashMap<Integer, RandomListNode>());
+    }
+
+    public static RandomListNode _copyRandomList(RandomListNode head, Map<Integer, RandomListNode> map) {
+
+        if (head == null) {
+            return null;
+        }
+        int hash = head.hashCode();
+        if (map.containsKey(hash)) {
+            return map.get(hash);
+        } else {
+            RandomListNode newNode = new RandomListNode(head.label);
+            map.put(hash, newNode);
+            newNode.random = _copyRandomList(head.random, map);
+            newNode.next = _copyRandomList(head.next, map);
+            return newNode;
+        }
     }
 
 
@@ -5813,7 +6158,24 @@ public class Round3 {
      */
     public static boolean wordBreak1(String s, Set<String> dict) {
 
-        return false;
+        if (dict.size() == 0 || s.length() == 0) {
+            return false;
+        }
+        boolean[] d = new boolean[s.length()];
+        for (int i = 0; i < s.length(); i++) {
+            String head = s.substring(0, i + 1);
+            if (dict.contains(head)) {
+                d[i] = true;
+            } else {
+                for (int j = 0; j <= i; j++) {
+                    if (d[j] && dict.contains(s.substring(j + 1, i + 1))) {
+                        d[i] = true;
+                        break;
+                    }
+                }
+            }
+        }
+        return d[s.length() - 1];
     }
 
 
@@ -5829,7 +6191,64 @@ public class Round3 {
      */
     public static List<String> wordBreak2(String s, Set<String> dict) {
 
-        return null;
+        if (dict.size() == 0 || s.length() == 0) {
+            return new ArrayList<String>();
+        }
+        boolean[][] d = new boolean[s.length()][s.length()];
+        for (int i = 0; i < s.length(); i++) {
+            for (int j = i; j < s.length(); j++) {
+                if (dict.contains(s.substring(i, j + 1))) {
+                    d[i][j] = true;
+                    continue;
+                }
+                for (int k = i; k <= j; k++) {
+                    if (d[i][k] && dict.contains(s.substring(k + 1, j + 1))) {
+                        d[i][j] = true;
+                        break;
+                    }
+                }
+            }
+        }
+        if (!d[0][s.length() - 1]) {
+            return new ArrayList<String>();
+        }
+        List<List<String>> lists = _wordBreak2(s, 0, dict, d);
+        List<String> result = new ArrayList<String>();
+        for (List<String> list : lists) {
+            StringBuilder builder = new StringBuilder();
+            for (int i = 0; i < list.size(); i++) {
+                builder.append(list.get(i));
+                if (i != list.size() - 1) {
+                    builder.append(" ");
+                }
+            }
+            result.add(builder.toString());
+        }
+        return result;
+    }
+
+    public static List<List<String>> _wordBreak2(String s, int startIndex, Set<String> dict, boolean[][] d) {
+
+        List<List<String>> result = new ArrayList<List<String>>();
+        for (int i = startIndex; i < s.length(); i++) {
+            String head = s.substring(startIndex, i + 1);
+            if (dict.contains(head)) {
+                if (i == s.length() - 1) {
+                    List<String> list = new ArrayList<String>();
+                    list.add(head);
+                    result.add(list);
+                } else if (d[i + 1][s.length() - 1]) {
+                    List<List<String>> rest = _wordBreak2(s, i + 1, dict, d);
+                    for (List<String> _rest : rest) {
+                        List<String> list = new ArrayList<String>();
+                        list.add(head);
+                        list.addAll(_rest);
+                        result.add(list);
+                    }
+                }
+            }
+        }
+        return result;
     }
 
     /**
@@ -5840,7 +6259,26 @@ public class Round3 {
      */
     public static boolean hasCycle(ListNode head) {
 
-        return false;
+        if (head == null) {
+            return false;
+        }
+        boolean first = true;
+        ListNode temp1 = head;
+        ListNode temp2 = head;
+        while ((first || temp1 != temp2) && temp1 != null && temp2 != null) {
+            temp1 = temp1.next;
+            temp2 = temp2.next;
+            if (temp2 == null) {
+                return false;
+            } else {
+                temp2 = temp2.next;
+            }
+            first = false;
+        }
+        if (temp1 == null || temp2 == null) {
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -5851,7 +6289,31 @@ public class Round3 {
      */
     public static ListNode detectCycle(ListNode head) {
 
-        return null;
+        if (head == null) {
+            return null;
+        }
+        boolean first = true;
+        ListNode temp1 = head;
+        ListNode temp2 = head;
+        while ((first || temp1 != temp2) && temp1 != null && temp2 != null) {
+            temp1 = temp1.next;
+            temp2 = temp2.next;
+            if (temp2 == null) {
+                return null;
+            } else {
+                temp2 = temp2.next;
+            }
+            first = false;
+        }
+        if (temp1 == null || temp2 == null) {
+            return null;
+        }
+        temp1 = head;
+        while (temp1 != temp2) {
+            temp1 = temp1.next;
+            temp2 = temp2.next;
+        }
+        return temp1;
     }
 
     /**
@@ -5955,17 +6417,92 @@ public class Round3 {
      */
     public static class LRUCache {
 
+        public static class DoubleLinkedListNode {
+            int key;
+            int val;
+            DoubleLinkedListNode prev = null;
+            DoubleLinkedListNode next = null;
+
+            public DoubleLinkedListNode(int key, int val) {
+                this.key = key;
+                this.val = val;
+            }
+        }
+
+        int cap;
+        DoubleLinkedListNode               head = null;
+        DoubleLinkedListNode               tail = null;
+        Map<Integer, DoubleLinkedListNode> map  = new HashMap<Integer, DoubleLinkedListNode>();
 
         public LRUCache(int capacity) {
+            this.cap = capacity;
         }
 
         public int get(int key) {
 
-            return 0;
+            if (!map.containsKey(key) || cap == 0) {
+                return -1;
+            }
+            DoubleLinkedListNode node = map.get(key);
+            if (head != node) {
+                node.prev.next = node.next;
+                if (node.next != null) {
+                    node.next.prev = node.prev;
+                } else {
+                    tail = node.prev;
+                }
+                node.prev = null;
+                node.next = head;
+                head.prev = node;
+                head = node;
+            }
+            return node.val;
         }
 
         public void set(int key, int value) {
 
+            if (cap == 0) {
+                return;
+            }
+            if (map.containsKey(key)) {
+                DoubleLinkedListNode node = map.get(key);
+                node.val = value;
+                if (head != node) {
+                    node.prev.next = node.next;
+                    if (node.next != null) {
+                        node.next.prev = node.prev;
+                    } else {
+                        tail = node.prev;
+                    }
+                    node.prev = null;
+                    node.next = head;
+                    head.prev = node;
+                    head = node;
+                }
+            } else {
+                if (map.size() == cap) {
+                    map.remove(tail.key);
+                    if (tail.prev == null) {
+                        head = null;
+                        tail = null;
+                    } else {
+                        DoubleLinkedListNode newTail = tail.prev;
+                        newTail.next = null;
+                        tail.prev = null;
+                        tail = newTail;
+                    }
+                }
+                DoubleLinkedListNode newNode = new DoubleLinkedListNode(key, value);
+                map.put(key, newNode);
+                if (head == null) {
+                    head = newNode;
+                    tail = newNode;
+                } else {
+                    newNode.next = head;
+                    head.prev = newNode;
+                    head = newNode;
+                }
+            }
         }
     }
 
@@ -5975,7 +6512,49 @@ public class Round3 {
      */
     public static ListNode insertionSortList(ListNode head) {
 
+        if (head == null) {
+            return null;
+        }
+        ListNode newHead = head;
+        ListNode temp = head;
+        ListNode parent = null;
+        while (temp != null) {
+            ListNode next = temp.next;
+            temp.next = null;
+            if (parent != null) {
+                parent.next = null;
+                newHead = _insertionSortList(newHead, temp);
+            }
+            ListNode temp1 = newHead;
+            while (temp1 != null) {
+                parent = temp1;
+                temp1 = temp1.next;
+            }
+            if (parent != null) {
+                parent.next = next;
+            }
+            temp = next;
+        }
         return null;
+    }
+
+    public static ListNode _insertionSortList(ListNode head, ListNode target) {
+
+        ListNode newHead = head;
+        ListNode temp = head;
+        ListNode parent = null;
+        while (temp != null && temp.val <= target.val) {
+            parent = temp;
+            temp = temp.next;
+        }
+        if (parent == null) {
+            newHead = target;
+            newHead.next = head;
+        } else {
+            parent.next = target;
+            target.next = temp;
+        }
+        return newHead;
     }
 
     /**
@@ -5984,7 +6563,63 @@ public class Round3 {
      */
     public static ListNode sortList(ListNode head) {
 
-        return null;
+        if (head == null || head.next == null) {
+            return head;
+        }
+        ListNode temp = head.next.next;
+        ListNode parent = head;
+        while (temp != null) {
+            parent = parent.next;
+            temp = temp.next;
+            if (temp != null) {
+                temp = temp.next;
+            }
+        }
+        ListNode head2 = parent.next;
+        parent.next = null;
+        return _mergeSortedList(sortList(head), sortList(head2));
+    }
+
+    public static ListNode _mergeSortedList(ListNode head1, ListNode head2) {
+
+        if (head1 == null) {
+            return head2;
+        } else if (head2 == null) {
+            return head1;
+        }
+        ListNode temp1 = head1;
+        ListNode temp2 = head2;
+        ListNode newHead = null;
+        ListNode temp = null;
+        while (temp1 != null && temp2 != null) {
+            if (newHead == null) {
+                if (temp1.val <= temp2.val) {
+                    newHead = temp1;
+                    temp1 = temp1.next;
+                } else {
+                    newHead = temp2;
+                    temp2 = temp2.next;
+                }
+                temp = newHead;
+                temp.next = null;
+            } else {
+                if (temp1.val <= temp2.val) {
+                    temp.next = temp1;
+                    temp1 = temp1.next;
+                } else {
+                    temp.next = temp2;
+                    temp2 = temp2.next;
+                }
+                temp = temp.next;
+                temp.next = null;
+            }
+        }
+        if (temp1 != null) {
+            temp.next = temp1;
+        } else if (temp2 != null) {
+            temp.next = temp2;
+        }
+        return newHead;
     }
 
     /**
@@ -6008,7 +6643,35 @@ public class Round3 {
 
     public static int maxPoints(Point[] points) {
 
-        return 0;
+        if (points.length <= 2) {
+            return points.length;
+        }
+        int max = 0;
+        for (int i = 0; i < points.length; i++) {
+            int aX = points[i].x;
+            int aY = points[i].y;
+            int dup = 1;
+            Map<Float, Integer> map = new HashMap<Float, Integer>();
+            for (int j = i + 1; j < points.length; j++) {
+                int bX = points[j].x;
+                int bY = points[j].y;
+                if (aX == bX && aY == bY) {
+                    dup++;
+                } else {
+                    float key = (aX == bX) ? Float.MAX_VALUE : (aY == bY ? 0 : (float) (bY - aY) / (float) (bX - aX));
+                    if (map.containsKey(key)) {
+                        map.put(key, map.get(key) + 1);
+                    } else {
+                        map.put(key, 1);
+                    }
+                }
+            }
+            for (Float key : map.keySet()) {
+                max = Math.max(max, map.get(key) + dup);
+            }
+            max = Math.max(max, dup);
+        }
+        return max;
     }
 
     /**
@@ -6329,47 +6992,95 @@ public class Round3 {
         return null;
     }
 
+    /**
+     * 187. Repeated DNA Sequences
+     * All DNA is composed of a series of nucleotides abbreviated as A, C, G, and T, for example: "ACGAATTCCG". When
+     * studying DNA, it is sometimes useful to identify repeated sequences within the DNA.
+     * Write a function to find all the 10-letter-long sequences (substrings) that occur more than once in a DNA
+     * molecule.
+     * For example,
+     * Given s = "AAAAACCCCCAAAAACCCCCCAAAAAGGGTTT",
+     * Return:
+     * ["AAAAACCCCC", "CCCCCAAAAA"].
+     */
+    public static List<String> findRepeatedDnaSequences(String s) {
+
+        Map<Character, Integer> map = new HashMap<Character, Integer>();
+        map.put('A', 0);
+        map.put('C', 1);
+        map.put('G', 2);
+        map.put('T', 3);
+
+        int hash = 0;
+        Set<String> result = new HashSet<String>();
+        Set<Integer> visited = new HashSet<Integer>();
+        for (int i = 0; i < s.length(); i++) {
+            if (i < 9) {
+                hash = (hash << 2) + map.get(s.charAt(i));
+            } else {
+                hash = (hash << 2) + map.get(s.charAt(i));
+                hash &= ((1 << 20) - 1);
+                if (visited.contains(hash)) {
+                    result.add(s.substring(i - 9, i + 1));
+                } else {
+                    visited.add(hash);
+                }
+            }
+        }
+        return new ArrayList<String>(result);
+    }
 
     public static void main(String[] args) {
 
-        PRINT(maxProfit3(new int[]{3, 2, 6, 5, 0, 3}));
+        //PRINT(findRepeatedDnaSequences("AAAAACCCCCAAAAACCCCCCAAAAAGGGTTT"));
 
-        PRINT(isInterleave("aabcc", "dbbca", "aadbbcbcac"));
-        PRINT(isInterleave("aabcc", "dbbca", "aadbbbaccc"));
-        PRINT(generateTrees(3).size());
-        PRINT(numTrees(3));
+        //PRINT(partition("ab"));
+        Set<String> dict = new HashSet<String>();
+        dict.add("cat");
+        dict.add("cats");
+        dict.add("and");
+        dict.add("sand");
+        dict.add("dog");
+        PRINT(wordBreak2("catsanddog", dict));
 
-        TreeNode n1 = new TreeNode(1);
-        TreeNode n2 = new TreeNode(2);
-        TreeNode n3 = new TreeNode(3);
-        TreeNode n4 = new TreeNode(4);
-        TreeNode n5 = new TreeNode(5);
-        TreeNode n6 = new TreeNode(6);
-        TreeNode n7 = new TreeNode(7);
-        n1.left = n2;
-        n1.right = n3;
-        n2.left = n4;
-        n2.right = n5;
-        n3.right = n6;
-        n5.left = n7;
-
-        /*
-
-             1
-           2   3
-         4   5   6
-            7
-
-            4,2,7,5,1,3,6
-
-         */
-        PRINT(preorderTraversal(n1));
-        PRINT(inorderTraversal(n1));
-        PRINT(constSpaceInorderTraversal(n1));
-        PRINT(levelOrder(n1));
-        PRINT(zigzagLevelOrder(n1));
-        PRINT(maxDepth(n1));
-        PRINT(minDepth(n1));
+        //        PRINT(maxProfit3(new int[]{3, 2, 6, 5, 0, 3}));
+        //
+        //        PRINT(isInterleave("aabcc", "dbbca", "aadbbcbcac"));
+        //        PRINT(isInterleave("aabcc", "dbbca", "aadbbbaccc"));
+        //        PRINT(generateTrees(3).size());
+        //        PRINT(numTrees(3));
+        //
+        //        TreeNode n1 = new TreeNode(1);
+        //        TreeNode n2 = new TreeNode(2);
+        //        TreeNode n3 = new TreeNode(3);
+        //        TreeNode n4 = new TreeNode(4);
+        //        TreeNode n5 = new TreeNode(5);
+        //        TreeNode n6 = new TreeNode(6);
+        //        TreeNode n7 = new TreeNode(7);
+        //        n1.left = n2;
+        //        n1.right = n3;
+        //        n2.left = n4;
+        //        n2.right = n5;
+        //        n3.right = n6;
+        //        n5.left = n7;
+        //
+        //        /*
+        //
+        //             1
+        //           2   3
+        //         4   5   6
+        //            7
+        //
+        //            4,2,7,5,1,3,6
+        //
+        //         */
+        //        PRINT(preorderTraversal(n1));
+        //        PRINT(inorderTraversal(n1));
+        //        PRINT(constSpaceInorderTraversal(n1));
+        //        PRINT(levelOrder(n1));
+        //        PRINT(zigzagLevelOrder(n1));
+        //        PRINT(maxDepth(n1));
+        //        PRINT(minDepth(n1));
     }
 
     public static ListNode createListNode(int[] num) {
