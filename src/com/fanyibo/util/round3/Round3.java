@@ -7996,6 +7996,36 @@ public class Round3 {
         }
     }
 
+    /**
+     * Binary tree vertical order print
+     * Lowest ancester of two tree nodes
+     * Move zero to end of array
+     * FInd intersection of two sorted array
+     * Binary tree serialization and de-serialization
+     * Implement concurrent read/write buffer
+     * Print all paths in a binary tree
+     * Function to find the square root of a number
+     * Pretty print JSON object
+     * Square root
+     * Simple regex matcher
+     * Jump II
+     * Partition
+     * MapReduce
+     * Decode ways
+     * Find minimum in rotated sorted array
+     * Reverse list
+     * Print level order tree
+     * Print out all char combinations of phone number
+     * Have multiple points, find the k-th closest point to (0,0)
+     * Trie
+     * Sort colors
+     * How would you design home feed?
+     * Syste,, design, disjoint set problem
+     * conflict resolution (confict with colleagues)
+     * a project on resume
+     * How will you design the social graph with class, interfaces, etc
+     */
+
     public static void main(String[] args) {
 
 
