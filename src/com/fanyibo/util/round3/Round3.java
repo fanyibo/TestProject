@@ -7604,8 +7604,8 @@ public class Round3 {
      * 4
      * / \
      * 5   2
-     *    / \
-     *   3   1
+     * / \
+     * 3   1
      */
     public static TreeNode upsideDownBinaryTree(TreeNode root) {
 
@@ -7622,32 +7622,32 @@ public class Round3 {
         }
         return parent;
 
-//        if (root == null || root.left == null) {
-//            return root;
-//        }
-//        Stack<TreeNode> stack = new Stack<TreeNode>();
-//        TreeNode temp = root;
-//        while (temp != null) {
-//            stack.push(temp);
-//            temp = temp.left;
-//        }
-//        TreeNode newRoot = null;
-//        while (!stack.isEmpty()) {
-//            temp = stack.pop();
-//            if (newRoot == null) {
-//                newRoot = temp;
-//            }
-//            TreeNode oriLeft = temp.left;
-//            TreeNode oriRight = temp.right;
-//            if (oriLeft == null) {
-//                continue;
-//            }
-//            temp.left = null;
-//            temp.right = null;
-//            oriLeft.left = oriRight;
-//            oriLeft.right = temp;
-//        }
-//        return newRoot;
+        //        if (root == null || root.left == null) {
+        //            return root;
+        //        }
+        //        Stack<TreeNode> stack = new Stack<TreeNode>();
+        //        TreeNode temp = root;
+        //        while (temp != null) {
+        //            stack.push(temp);
+        //            temp = temp.left;
+        //        }
+        //        TreeNode newRoot = null;
+        //        while (!stack.isEmpty()) {
+        //            temp = stack.pop();
+        //            if (newRoot == null) {
+        //                newRoot = temp;
+        //            }
+        //            TreeNode oriLeft = temp.left;
+        //            TreeNode oriRight = temp.right;
+        //            if (oriLeft == null) {
+        //                continue;
+        //            }
+        //            temp.left = null;
+        //            temp.right = null;
+        //            oriLeft.left = oriRight;
+        //            oriLeft.right = temp;
+        //        }
+        //        return newRoot;
     }
 
     /**
@@ -7751,9 +7751,9 @@ public class Round3 {
                 index2++;
             } else {
                 if (map.size() == 2) {
-                    if (maxJ - maxI < index2-index1-1) {
+                    if (maxJ - maxI < index2 - index1 - 1) {
                         maxI = index1;
-                        maxJ = index2-1;
+                        maxJ = index2 - 1;
                     }
                     while (index1 < index2) {
                         char a = s.charAt(index1);
@@ -7845,33 +7845,159 @@ public class Round3 {
 
         List<String> result = new ArrayList<String>();
         if (vals.length == 0) {
-            result.add(start + "->" + end);
+            result.add(gerRangeString(start, end));
             return result;
         }
-        int iStart = -1;
-        int iEnd = -1;
-        for (int i=0; i < vals.length; i++) {
+        boolean started = false;
+        int prev = -1;
+        for (int i = 0; i < vals.length; i++) {
+            int current = vals[i];
+            if (current >= start && current <= end) {
+                if (!started) {
+                    started = true;
+                    if (current != start) {
+                        result.add(gerRangeString(start, current - 1));
+                    }
+                } else if (current != prev + 1) {
+                    result.add(gerRangeString(prev + 1, current - 1));
+                }
+            }
+            prev = current;
+        }
+        if (prev < end) {
+            result.add(gerRangeString(prev + 1, end));
+        }
+        return result;
+    }
 
+    public static String gerRangeString(int start, int end) {
+        if (start == end) {
+            return Integer.toString(start);
+        }
+        return Integer.toString(start) + "->" + Integer.toString(end);
+    }
+
+    /**
+     * 167. Two Sum II - Input array is sorted
+     * Given an array of integers that is already sorted in ascending order, find two numbers such that they add up to
+     * a specific target number.
+     * The function twoSum should return indices of the two numbers such that they add up to the target, where index1
+     * must be less than index2. Please note that your returned answers (both index1 and index2) are not zero-based.
+     * You may assume that each input would have exactly one solution.
+     * Input: numbers={2, 7, 11, 15}, target=9
+     * Output: index1=1, index2=2
+     */
+    public static int[] twoSum2(int[] numbers, int target) {
+
+        int[] result = {-1, -1};
+        if (numbers.length == 0) {
+            return result;
+        }
+        int index1 = 0;
+        int index2 = numbers.length - 1;
+        while (index1 < index2) {
+            int sum = numbers[index1] + numbers[index2];
+            if (sum > target) {
+                index2--;
+            } else if (sum < target) {
+                index1++;
+            } else {
+                result[0] = index1 + 1;
+                result[1] = index2 + 1;
+                break;
+            }
         }
         return result;
     }
 
     /**
-     * 167. Two Sum II - Input array is sorted
-     */
-
-    /**
      * 170. Two Sum III - Data structure design
+     * Design and implement a TwoSum class. It should support the following operations: add and find.
+     * add - Add the number to an internal data structure.
+     * find - Find if there exists any pair of numbers which sum is equal to the value.
+     * For example,
+     * add(1); add(3); add(5);
+     * find(4) -> true
+     * find(7) -> false
      */
+    public static class TwoSum {
+
+        HashMap<Integer, Integer> map = new HashMap<Integer, Integer>();
+
+        public void add(int number) {
+
+            if (map.containsKey(number)) {
+                map.put(number, map.get(number) + 1);
+            } else {
+                map.put(number, 1);
+            }
+        }
+
+        public boolean find(int value) {
+
+            for (Integer key : map.keySet()) {
+                int target = value - key;
+                if (map.containsKey(target)) {
+                    if (key == target && map.get(key) > 1) {
+                        return true;
+                    } else if (key != target) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+    }
 
     /**
      * 186. Reverse Words in a String II
+     * Given an input string, reverse the string word by word. A word is defined as a sequence of non-space characters.
+     * The input string does not contain leading or trailing spaces and the words are always separated by a single
+     * space.
+     * For example,
+     * Given s = "the sky is blue",
+     * return "blue is sky the".
+     * Could you do it in-place without allocating extra space?
      */
+    public static void reverseWords(char[] s) {
 
+        int index1 = 0;
+        int index2 = s.length - 1;
+        while (index1 < index2) {
+            char c = s[index1];
+            s[index1] = s[index2];
+            s[index2] = c;
+            index1++;
+            index2--;
+        }
+        int prevSpace = -1;
+        for (int i = 0; i <= s.length; i++) {
+            int start = -1;
+            int end = -1;
+            if (i == s.length) {
+                start = prevSpace + 1;
+                end = i - 1;
+            } else if (s[i] == ' ') {
+                start = prevSpace + 1;
+                end = i - 1;
+                prevSpace = i;
+            }
+            if (start != -1 && end != -1) {
+                index1 = start;
+                index2 = end;
+                while (index1 < index2) {
+                    char c = s[index1];
+                    s[index1] = s[index2];
+                    s[index2] = c;
+                    index1++;
+                    index2--;
+                }
+            }
+        }
+    }
 
     public static void main(String[] args) {
 
-        PRINT(isOneEditDistance("abcdefg", "abcddefg"));
 
         /**
          * * 1
@@ -7887,18 +8013,18 @@ public class Round3 {
          *   3   1
          */
 
-//        TreeNode n1 = new TreeNode(1);
-//        TreeNode n2 = new TreeNode(2);
-//        TreeNode n3 = new TreeNode(3);
-//        TreeNode n4 = new TreeNode(4);
-//        TreeNode n5 = new TreeNode(5);
-//        n1.left = n2;
-//        n1.right = n3;
-//        n2.left = n4;
-//        n2.right = n5;
-//
-//        TreeNode newRoot = upsideDownBinaryTree(n1);
-//        PRINT(constSpaceInorderTraversal(newRoot));
+        //        TreeNode n1 = new TreeNode(1);
+        //        TreeNode n2 = new TreeNode(2);
+        //        TreeNode n3 = new TreeNode(3);
+        //        TreeNode n4 = new TreeNode(4);
+        //        TreeNode n5 = new TreeNode(5);
+        //        n1.left = n2;
+        //        n1.right = n3;
+        //        n2.left = n4;
+        //        n2.right = n5;
+        //
+        //        TreeNode newRoot = upsideDownBinaryTree(n1);
+        //        PRINT(constSpaceInorderTraversal(newRoot));
 
         //        Set<String> dict = new HashSet<String>();
         //        dict.add("hot");
@@ -7974,5 +8100,14 @@ public class Round3 {
             }
             System.out.print("NULL\n");
         }
+    }
+
+    public static String arrayToString(char[] array) {
+
+        StringBuilder builder = new StringBuilder();
+        for (char c : array) {
+            builder.append(c);
+        }
+        return builder.toString();
     }
 }
