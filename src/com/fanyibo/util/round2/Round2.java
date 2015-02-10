@@ -4190,8 +4190,7 @@ public class Round2 {
 
         if (s.length() == 0) {
             return 0;
-        }
-        if (s.charAt(0) == '0') {
+        } else if (s.charAt(0) == '0') {
             return 0;
         }
         int[] d = new int[s.length()];
@@ -4204,12 +4203,12 @@ public class Round2 {
                     return 0;
                 }
                 d[i] = i < 2 ? 1 : d[i - 2];
-            } else if (c > '6') {
+            } else if (c >= '7' && c <= '9') {
                 d[i] = d[i - 1] + ((s.charAt(i - 1) == '1') ? (i < 2 ? 1 : d[i - 2]) : 0);
             } else if (c > '0' && c <= '6') {
                 d[i] = d[i - 1] + ((s.charAt(i - 1) == '1' || s.charAt(i - 1) == '2') ? (i < 2 ? 1 : d[i - 2]) : 0);
             } else {
-                d[i] = 0;
+                return 0;
             }
         }
         return d[s.length() - 1];

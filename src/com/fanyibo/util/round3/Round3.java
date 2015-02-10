@@ -8,8 +8,6 @@ package com.fanyibo.util.round3;
 
 import com.fanyibo.tree.TreeNode;
 import com.fanyibo.util.ListNode;
-import com.sun.corba.se.spi.orbutil.fsm.Input;
-import javafx.scene.chart.Chart;
 
 import java.util.*;
 
@@ -876,19 +874,9 @@ public class Round3 {
             }
         }
         if (temp2 != null) {
-            while (temp2 != null) {
-                temp.next = temp2;
-                temp2 = temp2.next;
-                temp = temp.next;
-                temp.next = null;
-            }
+            temp.next = temp2;
         } else if (temp1 != null) {
-            while (temp1 != null) {
-                temp.next = temp1;
-                temp1 = temp1.next;
-                temp = temp.next;
-                temp.next = null;
-            }
+            temp.next = temp1;
         }
         return head;
     }
@@ -1034,41 +1022,43 @@ public class Round3 {
      * You may not alter the values in the nodes, only nodes itself may be changed.
      * Only constant memory is allowed.
      * For example,
-     * Given this linked list: 1->2->3->4->5->6
+     * Given this linked list: 1->2->3->4->5
      * For k = 2, you should return: 2->1->4->3->5
      * For k = 3, you should return: 3->2->1->4->5
      */
     public static ListNode reverseKGroup(ListNode head, int k) {
 
-        ListNode newHead = null;
-        ListNode lastTail = null;
-        ListNode endNode = head;
-        int count = 0;
-        while (endNode != null) {
-            count++;
-            if (count == k) {
-                ListNode nextHead = endNode.next;
-                ListNode subOriHead = (lastTail == null) ? head : lastTail.next;
-                ListNode subHead = _reverseKGroup(subOriHead, k);
-                if (newHead == null) {
-                    newHead = subHead;
-                } else {
-                    lastTail.next = subHead;
-                }
-                subOriHead.next = nextHead;
-                lastTail = subOriHead;
-                endNode = nextHead;
-                count = 0;
-            } else {
-                endNode = endNode.next;
-            }
+        if (head == null || k <= 1) {
+            return head;
         }
-        return newHead == null ? head : newHead;
+        ListNode newHead = null;
+        ListNode parent = null;
+        ListNode temp = head;
+        while (temp != null) {
+            ListNode subHead = _reverseKGroup(temp,k);
+            if (parent == null) {
+                newHead = subHead;
+            } else {
+                parent.next = subHead;
+            }
+            parent = temp;
+            temp = temp.next;
+        }
+        return newHead;
     }
 
     public static ListNode _reverseKGroup(ListNode head, int k) {
 
         if (head == null || head.next == null || k <= 1) {
+            return head;
+        }
+        int size = 0;
+        ListNode tempCount = head;
+        while (tempCount != null) {
+            size++;
+            tempCount = tempCount.next;
+        }
+        if (size < k) {
             return head;
         }
         ListNode temp1 = head;
@@ -1081,6 +1071,7 @@ public class Round3 {
             temp1 = temp2;
             temp2 = temp;
         }
+        head.next = temp2;
         return temp1;
     }
 
@@ -1129,19 +1120,13 @@ public class Round3 {
         int index1 = 0;
         int index2 = A.length - 1;
         while (index1 < size) {
-            while (index1 < size && A[index1] != elem) {
+            if (A[index1] == elem) {
+                swap(A, index1, index2);
+                size--;
+                index2--;
+            } else {
                 index1++;
             }
-            while (index2 >= index1 && A[index2] == elem) {
-                index2--;
-                size--;
-            }
-            if (index1 < index2 && index1 < size) {
-                A[index1] = A[index2];
-                size--;
-            }
-            index1++;
-            index2--;
         }
         return size;
     }
@@ -1306,7 +1291,7 @@ public class Round3 {
      * 1,2,3 → 1,3,2
      * 3,2,1 → 1,2,3
      * 1,1,5 → 1,5,1
-     * 1,2,3,4 -> 1,2,4,3
+     * 1,2,3,8,6 -> 1,2,6,3,8
      * 1,2,1,2,4
      * 4,2,2,1,1
      * 123213421
@@ -1359,24 +1344,6 @@ public class Round3 {
                 max = Math.max(max, stack.isEmpty() ? (i + 1) : (i - stack.peek()));
             }
         }
-
-
-        //        int[] d = new int[size];
-        //        d[0] = 0;
-        //        int max = 0;
-        //        for (int i = 1; i < size; i++) {
-        //            if (s.charAt(i) == '(') {
-        //                d[i] = 0;
-        //            } else {
-        //                if (s.charAt(i - 1) == '(') {
-        //                    d[i] = (i >= 2 ? d[i - 2] : 0) + 2;
-        //                } else {
-        //                    d[i] = (i - d[i - 1] - 1 >= 0 && s.charAt(i - d[i - 1] - 1) == '(')
-        //                            ? (d[i - 1] + 2 + (i - d[i - 1] - 2 >=0 ? d[i - d[i - 1] - 2] : 0)) : 0;
-        //                }
-        //            }
-        //            max = Math.max(max, d[i]);
-        //        }
         return max;
     }
 
@@ -2006,6 +1973,53 @@ public class Round3 {
         return step;
     }
 
+    public static List<List<Integer>> getJumpPath(int[] A) {
+
+        if (A.length < 2) {
+            return new ArrayList<List<Integer>>();
+        }
+        int start = 0;
+        int end = 0;
+
+        List<Set<Integer>> prevs = new ArrayList<Set<Integer>>();
+        for (int i = 0; i < A.length; i++) {
+            prevs.add(new HashSet<Integer>());
+        }
+        while (end < A.length - 1) {
+            int furthest = 0;
+            for (int i = start; i <= end; ++i) {
+                for (int j = i+1; j <= Math.min(i + A[i], A.length - 1); j++) {
+                    prevs.get(j).add(i);
+                }
+                furthest = Math.max(furthest, i + A[i]);
+            }
+            if (furthest <= end && furthest < A.length - 1) {
+                return new ArrayList<List<Integer>>();
+            }
+            start = end + 1;
+            end = furthest;
+        }
+        List<List<Integer>> result = new ArrayList<List<Integer>>();
+        _DFS(prevs, A.length - 1, new ArrayList<Integer>(), result);
+        return result;
+    }
+    public static void _DFS(List<Set<Integer>> map, int node, List<Integer> path, List<List<Integer>> result) {
+
+        if (node < 0 || node >= map.size()) {
+            return;
+        }
+        path.add(0, node);
+        if (map.get(node).isEmpty()) {
+            result.add(new ArrayList<Integer>(path));
+        } else {
+            Set<Integer> children = map.get(node);
+            for (Integer child : children) {
+                _DFS(map, child, path, result);
+            }
+        }
+        path.remove(0);
+    }
+
     /**
      * 46. Permutations
      * Given a collection of numbers, return all possible permutations.
@@ -2329,17 +2343,13 @@ public class Round3 {
         if (A.length == 0) {
             return 0;
         }
-        //        int max = A[0];
-        //        int[] d = new int[A.length];
-        //        for (int i = 0; i < A.length; i++) {
-        //            if (i == 0) {
-        //                d[0] = A[0];
-        //            } else {
-        //                d[i] = Math.max(A[i], A[i] + d[i - 1]);
-        //            }
-        //            max = Math.max(max, d[i]);
-        //        }
-        //        return max;
+        //                int max = A[0];
+        //                int tempMax = A[0];
+        //                for (int i = 1; i < A.length; i++) {
+        //                    tempMax = Math.max(A[i], A[i] + tempMax);
+        //                    max = Math.max(max, tempMax);
+        //                }
+        //                return max;
         return _maxSubArray(A, 0, A.length - 1);
     }
 
@@ -2990,6 +3000,8 @@ public class Round3 {
 
         if (x <= 0) {
             return 0;
+        } else if (x == 1) {
+            return 1;
         }
         long start = 0;
         long end = x / 2 + 1;
@@ -3982,45 +3994,30 @@ public class Round3 {
      */
     public static int numDecodings(String s) {
 
-        int size = s.length();
-        if (size == 0) {
+        if (s.length() == 0) {
+            return 0;
+        } else if (s.charAt(0) == '0') {
             return 0;
         }
-        int[] d = new int[size];
-        for (int i = 0; i < size; i++) {
-            char curr = s.charAt(i);
-            if (curr < '0' || curr > '9') {
-                return 0;
-            }
+        int[] d = new int[s.length()];
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
             if (i == 0) {
-                d[i] = curr == '0' ? 0 : 1;
-            } else {
-                char prev = s.charAt(i - 1);
-                if (curr == '0') {
-                    if (prev > '2' || prev == '0') {
-                        d[i] = 0;
-                    } else {
-                        d[i] = i >= 2 ? d[i - 2] : 1;
-                    }
-                } else if (prev == '0') {
-                    d[i] = d[i - 1];
-                } else if (prev == '1') {
-                    d[i] = d[i - 1] + (i >= 2 ? d[i - 2] : 1);
-                } else if (prev == '2') {
-                    if (curr >= '1' && curr <= '6') {
-                        d[i] = d[i - 1] + (i >= 2 ? d[i - 2] : 1);
-                    } else {
-                        d[i] = d[i - 1];
-                    }
-                } else {
-                    d[i] = d[i - 1];
+                d[i] = 1;
+            } else if (c == '0') {
+                if (s.charAt(i - 1) == '0' || s.charAt(i - 1) > '2') {
+                    return 0;
                 }
-            }
-            if (d[i] == 0) {
+                d[i] = i < 2 ? 1 : d[i - 2];
+            } else if (c >= '7' && c <= '9') {
+                d[i] = d[i - 1] + ((s.charAt(i - 1) == '1') ? (i < 2 ? 1 : d[i - 2]) : 0);
+            } else if (c > '0' && c <= '6') {
+                d[i] = d[i - 1] + ((s.charAt(i - 1) == '1' || s.charAt(i - 1) == '2') ? (i < 2 ? 1 : d[i - 2]) : 0);
+            } else {
                 return 0;
             }
         }
-        return d[size - 1];
+        return d[s.length() - 1];
     }
 
     /**
@@ -7996,16 +7993,218 @@ public class Round3 {
         }
     }
 
+
     /**
-     * Binary tree vertical order print
-     * Lowest ancester of two tree nodes
-     * Move zero to end of array
-     * FInd intersection of two sorted array
-     * Binary tree serialization and de-serialization
+     * Binary Tree Vertical Order
+     */
+    public static List<List<Integer>> binaryTreeVerticalOrder(TreeNode root) {
+
+        if (root == null) {
+            return new ArrayList<List<Integer>>();
+        }
+        int[] min = new int[1];
+        int[] max = new int[1];
+        findMinMaxVerticalLevel(root, 0, min, max);
+
+        List<List<Integer>> result = new ArrayList<List<Integer>>();
+        for (int i = min[0]; i <= max[0]; i++) {
+            result.add(binaryTreeVerticalOrder(root, 0, i));
+        }
+        return result;
+    }
+
+    public static void findMinMaxVerticalLevel(TreeNode node, int currentLevel, int[] min, int[] max) {
+
+        if (node == null) {
+            return;
+        }
+        min[0] = Math.min(min[0], currentLevel);
+        max[0] = Math.max(max[0], currentLevel);
+        findMinMaxVerticalLevel(node.left, currentLevel - 1, min, max);
+        findMinMaxVerticalLevel(node.right, currentLevel + 1, min, max);
+    }
+
+    public static List<Integer> binaryTreeVerticalOrder(TreeNode node, int currentLevel, int level) {
+
+        if (node == null) {
+            return new ArrayList<Integer>();
+        }
+        List<Integer> result = new ArrayList<Integer>();
+        if (currentLevel == level) {
+            result.add(node.val);
+        }
+        result.addAll(binaryTreeVerticalOrder(node.left, currentLevel - 1, level));
+        result.addAll(binaryTreeVerticalOrder(node.right, currentLevel + 1, level));
+        return result;
+    }
+
+    /**
+     * Lowest Common Ancestor of two tree nodes
+     */
+    public static TreeNode LCATreeNode(TreeNode root, int node1, int node2) {
+
+        if (root == null) {
+            return null;
+        }
+        if (root.val == node1 || root.val == node2) {
+            return root;
+        }
+        TreeNode left = LCATreeNode(root.left, node1, node2);
+        TreeNode right = LCATreeNode(root.right, node1, node2);
+        if (left!= null && right != null) {
+            return root;
+        }
+        return left == null ? right : left;
+    }
+
+    /**
+     * Move zero to end of the array
+     */
+    public static void MoveZeroToEnd(int[] num) {
+
+        if (num.length <= 1) {
+            return;
+        }
+        int j = num.length - 1;
+        for (int i = 0; i < j; i++) {
+            if (num[i] == 0) {
+                int temp = num[i];
+                num[i] = num[j];
+                num[j] = temp;
+                j--;
+                i--;
+            }
+        }
+    }
+
+    /**
+     * Find intersection of two sorted array
+     */
+    public static int IntersectionSortedArray(int[] A, int[] B) {
+
+        if (A.length == 0 || B.length == 0) {
+            return 0;
+        }
+        return _IntersectionSortedArray(A, 0, A.length - 1, B, 0, B.length - 1);
+    }
+
+    public static int _IntersectionSortedArray(int[] A, int startA, int endA, int[] B, int startB, int endB) {
+
+        if (startA > endA || startB > endB) {
+            return 0;
+        } else if (startA == endA) {
+            return A[startA];
+        } else if (startB == endB) {
+            return B[startB];
+        }
+        int midA = (startA + endA) / 2;
+        int midB = (startB + endB) / 2;
+        if (A[midA] == B[startB]) {
+            return A[midA];
+        } else if (A[midA] < B[startB]) {
+            return _IntersectionSortedArray(A, midA + 1, endA, B, startB, endB);
+        } else if (A[midA] >= B[endB]) {
+            return _IntersectionSortedArray(A, startA, midA, B, startB, endB);
+        } else if (B[midB] == A[startA]) {
+            return B[midB];
+        } else if (B[midB] < A[startA]) {
+            return _IntersectionSortedArray(A, startA, endA, B, midB + 1, endB);
+        } else if (B[midB] >= A[endA]) {
+            return _IntersectionSortedArray(A, startA, endA, B, startB, midB);
+        } else {
+            Set<Integer> setA = new HashSet<Integer>();
+            for (int i = startA; i <= endA; i++) {
+                setA.add(A[i]);
+            }
+            for (int i = startB; i <= endB; i++) {
+                if (setA.contains(B[i])) {
+                    return B[i];
+                }
+            }
+            return 0;
+        }
+    }
+
+    public static List<List<Integer>> PrintAllPath(TreeNode root) {
+
+        List<List<Integer>> paths = new ArrayList<List<Integer>>();
+        _PrintAllPath(root, new ArrayList<Integer>(), paths);
+        return paths;
+    }
+
+    public static void _PrintAllPath(TreeNode root, List<Integer> path, List<List<Integer>> paths) {
+
+        if (root == null) {
+            return;
+        }
+        path.add(root.val);
+        if (root.left == null && root.right == null) {
+            paths.add(new ArrayList<Integer>(path));
+        }
+        if (root.left != null) {
+            _PrintAllPath(root.left, path, paths);
+        }
+        if (root.right != null) {
+            _PrintAllPath(root.right, path, paths);
+        }
+        path.remove(path.size() - 1);
+    }
+
+    public static int findKthSmallestElement(int[] A, int k) {
+
+        if (k <= 0 || k > A.length) {
+            return -1;
+        }
+        return _findKthSmallestElement(A, 0, A.length - 1, k);
+    }
+
+    public static int _findKthSmallestElement(int[] A, int start, int end, int k) {
+
+        if (start > end) {
+            return -1;
+        } else if (start == end) {
+            return A[start];
+        }
+        int mid = (start + end) / 2;
+        int pivot = A[mid];
+        swap(A, mid, end);
+        int i = start;
+        for (int j = start; j < end; j++) {
+            if (A[j] <= pivot) {
+                swap(A, i, j);
+                i++;
+            }
+        }
+        swap(A, i, end);
+        int frontSize = i - start + 1;
+        if (frontSize == k) {
+            return pivot;
+        } else if (frontSize > k) {
+            return _findKthSmallestElement(A, start, i - 1, k);
+        } else {
+            return _findKthSmallestElement(A, i + 1, end, k - frontSize);
+        }
+    }
+
+    public static void swap(int[] A, int i, int j) {
+        int temp = A[i];
+        A[i] = A[j];
+        A[j] = temp;
+    }
+
+    /**
+     * get permutation, 61
+     * pow
+     * sqrt
+     * sortColor
+     * largestRectangleArea
+     */
+
+
+    /**
      * Implement concurrent read/write buffer
-     * Print all paths in a binary tree
      * Function to find the square root of a number
-     * Pretty print JSON object
+     * Pretty print JSON object: JSON.stringify(obj, undefined, 2); // indentation level = 2
      * Square root
      * Simple regex matcher
      * Jump II
@@ -8020,20 +8219,28 @@ public class Round3 {
      * Trie
      * Sort colors
      * How would you design home feed?
-     * Syste,, design, disjoint set problem
-     * conflict resolution (confict with colleagues)
+     * System, design, disjoint set problem
+     * conflict resolution (conflict with colleagues)
      * a project on resume
      * How will you design the social graph with class, interfaces, etc
      */
 
     public static void main(String[] args) {
 
+        PRINT(getJumpPath(new int[]{5, 3, 2, 1, 4}));
+
+
+
+
+
+
+
 
         /**
-         * * 1
-         * / \
-         * 2   3
-         * / \
+         *     1
+         *    / \
+         *   2   3
+         *  / \
          * 4   5
          * return the root of the binary tree [4,5,2,#,#,3,1].
          * 4
@@ -8043,15 +8250,16 @@ public class Round3 {
          *   3   1
          */
 
-        //        TreeNode n1 = new TreeNode(1);
-        //        TreeNode n2 = new TreeNode(2);
-        //        TreeNode n3 = new TreeNode(3);
-        //        TreeNode n4 = new TreeNode(4);
-        //        TreeNode n5 = new TreeNode(5);
-        //        n1.left = n2;
-        //        n1.right = n3;
-        //        n2.left = n4;
-        //        n2.right = n5;
+//        TreeNode n1 = new TreeNode(1);
+//        TreeNode n2 = new TreeNode(2);
+//        TreeNode n3 = new TreeNode(3);
+//        TreeNode n4 = new TreeNode(4);
+//        TreeNode n5 = new TreeNode(5);
+//        n1.left = n2;
+//        n1.right = n3;
+//        n2.left = n4;
+//        n2.right = n5;
+//        PRINT(PrintAllPath(n1));
         //
         //        TreeNode newRoot = upsideDownBinaryTree(n1);
         //        PRINT(constSpaceInorderTraversal(newRoot));
