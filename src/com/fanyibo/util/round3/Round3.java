@@ -5379,16 +5379,12 @@ public class Round3 {
             return 0;
         }
         int maxProfit = 0;
-        Deque<Integer> queue = new ArrayDeque<Integer>();
-        for (int i = 0; i < prices.length; i++) {
-            if (queue.isEmpty()) {
-                queue.addLast(prices[i]);
-            } else if (prices[i] >= queue.getLast()) {
-                maxProfit += (prices[i] - queue.getLast());
-                queue.addLast(prices[i]);
-            } else {
-                queue.addLast(prices[i]);
+        int prev = prices[0];
+        for (int i = 1; i < prices.length; i++) {
+            if (prices[i] >= prev) {
+                maxProfit += (prices[i] - prev);
             }
+            prev = prices[i];
         }
         return maxProfit;
     }
@@ -8242,6 +8238,8 @@ public class Round3 {
      * sortColor
      * largestRectangleArea
      * Populate next right node in each node 116.
+     * Word Break
+     * HashTable
      */
 
 
