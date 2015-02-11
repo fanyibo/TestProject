@@ -1035,7 +1035,7 @@ public class Round3 {
         ListNode parent = null;
         ListNode temp = head;
         while (temp != null) {
-            ListNode subHead = _reverseKGroup(temp,k);
+            ListNode subHead = _reverseKGroup(temp, k);
             if (parent == null) {
                 newHead = subHead;
             } else {
@@ -1988,7 +1988,7 @@ public class Round3 {
         while (end < A.length - 1) {
             int furthest = 0;
             for (int i = start; i <= end; ++i) {
-                for (int j = i+1; j <= Math.min(i + A[i], A.length - 1); j++) {
+                for (int j = i + 1; j <= Math.min(i + A[i], A.length - 1); j++) {
                     prevs.get(j).add(i);
                 }
                 furthest = Math.max(furthest, i + A[i]);
@@ -2003,6 +2003,7 @@ public class Round3 {
         _DFS(prevs, A.length - 1, new ArrayList<Integer>(), result);
         return result;
     }
+
     public static void _DFS(List<Set<Integer>> map, int node, List<Integer> path, List<List<Integer>> result) {
 
         if (node < 0 || node >= map.size()) {
@@ -4308,13 +4309,15 @@ public class Round3 {
         boolean[][] d = new boolean[size1 + 1][size2 + 1];
         for (int i = 0; i <= size1; i++) {
             for (int j = 0; j <= size2; j++) {
-                if (i == 0) {
-                    d[i][j] = s2.substring(0, j).equals(s3.substring(0, i + j));
+                if (i == 0 && j == 0) {
+                    d[i][j] = true;
+                } else if (i == 0) {
+                    d[i][j] = s2.charAt(j - 1) == s3.charAt(j - 1) && d[i][j - 1];
                 } else if (j == 0) {
-                    d[i][j] = s1.substring(0, i).equals(s3.substring(0, i + j));
+                    d[i][j] = s1.charAt(i - 1) == s3.charAt(i - 1) && d[i - 1][j];
                 } else {
-                    d[i][j] = (s1.charAt(i - 1) == s3.charAt(i + j - 1) && d[i - 1][j]) || (s2.charAt(j - 1) == s3
-                            .charAt(i + j - 1) && d[i][j - 1]);
+                    d[i][j] = (s1.charAt(i - 1) == s3.charAt(i + j - 1) && d[i - 1][j])
+                            || (s2.charAt(j - 1) == s3.charAt(i + j - 1) && d[i][j - 1]);
                 }
             }
         }
@@ -4806,6 +4809,7 @@ public class Round3 {
         TreeNode root = new TreeNode(rootNode.val);
         root.left = sortedListToBST(head);
         root.right = sortedListToBST(rootNode.next);
+        parent.next = rootNode;
         return root;
     }
 
@@ -5300,6 +5304,45 @@ public class Round3 {
         }
         return min;
     }
+
+
+    /**
+     * Not very efficient
+     */
+    public static int minimumTotal2(List<List<Integer>> triangle) {
+
+        if (triangle.size() == 0 || triangle.get(0).size() == 0) {
+            return 0;
+        }
+        int[] min = new int[1];
+        min[0] = Integer.MAX_VALUE;
+        _minimumTotal2(triangle, 0, 0, new int[1], min);
+        return min[0];
+    }
+
+    public static void _minimumTotal2(List<List<Integer>> triangle, int i, int j, int[] current, int[] min) {
+
+        if (i < 0 || i >= triangle.size() || j < 0 || j >= triangle.get(i).size()) {
+            return;
+        }
+        current[0] += triangle.get(i).get(j);
+        if (!_minimumTotal2HasChild(triangle, i, j)) {
+            min[0] = Math.min(min[0], current[0]);
+        } else {
+            _minimumTotal2(triangle, i + 1, j, current, min);
+            _minimumTotal2(triangle, i + 1, j + 1, current, min);
+        }
+        current[0] -= triangle.get(i).get(j);
+    }
+
+    public static boolean _minimumTotal2HasChild(List<List<Integer>> triangle, int i, int j) {
+
+        if (i < 0 || i >= triangle.size() - 1 || j < 0 || j >= triangle.get(i).size()) {
+            return false;
+        }
+        return true;
+    }
+
 
     /**
      * 121. Best Time to Buy and Sell Stock
@@ -8051,7 +8094,7 @@ public class Round3 {
         }
         TreeNode left = LCATreeNode(root.left, node1, node2);
         TreeNode right = LCATreeNode(root.right, node1, node2);
-        if (left!= null && right != null) {
+        if (left != null && right != null) {
             return root;
         }
         return left == null ? right : left;
@@ -8198,6 +8241,7 @@ public class Round3 {
      * sqrt
      * sortColor
      * largestRectangleArea
+     * Populate next right node in each node 116.
      */
 
 
@@ -8227,13 +8271,33 @@ public class Round3 {
 
     public static void main(String[] args) {
 
-        PRINT(getJumpPath(new int[]{5, 3, 2, 1, 4}));
+        List<List<Integer>> lists = new ArrayList<List<Integer>>();
+        List<Integer> list1 = new ArrayList<Integer>();
+        list1.add(2);
+
+        List<Integer> list2 = new ArrayList<Integer>();
+        list2.add(3);
+        list2.add(4);
+
+        List<Integer> list3 = new ArrayList<Integer>();
+        list3.add(6);
+        list3.add(5);
+        list3.add(7);
+
+        List<Integer> list4 = new ArrayList<Integer>();
+        list4.add(4);
+        list4.add(1);
+        list4.add(8);
+        list4.add(3);
+
+        lists.add(list1);
+        lists.add(list2);
+        lists.add(list3);
+        lists.add(list4);
 
 
-
-
-
-
+        PRINT(minimumTotal(lists) + " == " + minimumTotal2(lists));
+        //PRINT(getJumpPath(new int[]{5, 3, 2, 1, 4}));
 
 
         /**
@@ -8250,16 +8314,16 @@ public class Round3 {
          *   3   1
          */
 
-//        TreeNode n1 = new TreeNode(1);
-//        TreeNode n2 = new TreeNode(2);
-//        TreeNode n3 = new TreeNode(3);
-//        TreeNode n4 = new TreeNode(4);
-//        TreeNode n5 = new TreeNode(5);
-//        n1.left = n2;
-//        n1.right = n3;
-//        n2.left = n4;
-//        n2.right = n5;
-//        PRINT(PrintAllPath(n1));
+        //        TreeNode n1 = new TreeNode(1);
+        //        TreeNode n2 = new TreeNode(2);
+        //        TreeNode n3 = new TreeNode(3);
+        //        TreeNode n4 = new TreeNode(4);
+        //        TreeNode n5 = new TreeNode(5);
+        //        n1.left = n2;
+        //        n1.right = n3;
+        //        n2.left = n4;
+        //        n2.right = n5;
+        //        PRINT(PrintAllPath(n1));
         //
         //        TreeNode newRoot = upsideDownBinaryTree(n1);
         //        PRINT(constSpaceInorderTraversal(newRoot));
