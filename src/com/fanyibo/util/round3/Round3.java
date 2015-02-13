@@ -8267,34 +8267,114 @@ public class Round3 {
      * How will you design the social graph with class, interfaces, etc
      */
 
+
+    public static int conscutiveInt(int[][] board, int row, int col) {
+
+        int m = board.length;
+        if (m == 0) {
+            return 0;
+        }
+        int n = board[0].length;
+        if (n == 0 || row < 0 || row >= m || col < 0 || col >= n) {
+            return 0;
+        }
+        return _conscutiveInt(board, m, n, new boolean[m][n], new int[m][n], row, col);
+    }
+
+    public static int _conscutiveInt(int[][] board, int m, int n, boolean[][] visited, int[][] d, int row, int col) {
+
+        if (row < 0 || row >= m || col < 0 || col >= n) {
+            return 0;
+        }
+        if (visited[row][col]) {
+            return d[row][col];
+        }
+        d[row][col] = 1;
+        int current = board[row][col];
+        boolean up = row > 0 && current == board[row - 1][col] - 1;
+        boolean down = row < m - 1 && current == board[row + 1][col] - 1;
+        boolean left = col > 0 && current == board[row][col - 1] - 1;
+        boolean right = col < n - 1 && current == board[row][col + 1] - 1;
+        if (up && !visited[row - 1][col]) {
+            d[row - 1][col] = _conscutiveInt(board, m, n, visited, d, row - 1, col);
+            d[row][col] = Math.max(d[row][col], d[row - 1][col] + 1);
+        }
+        if (down && !visited[row + 1][col]) {
+            d[row + 1][col] = _conscutiveInt(board, m, n, visited, d, row + 1, col);
+            d[row][col] = Math.max(d[row][col], d[row + 1][col] + 1);
+        }
+        if (left && !visited[row][col - 1]) {
+            d[row][col - 1] = _conscutiveInt(board, m, n, visited, d, row, col - 1);
+            d[row][col] = Math.max(d[row][col], d[row][col - 1] + 1);
+        }
+        if (right && !visited[row][col + 1]) {
+            d[row][col + 1] = _conscutiveInt(board, m, n, visited, d, row, col + 1);
+            d[row][col] = Math.max(d[row][col], d[row][col + 1] + 1);
+        }
+        visited[row][col] = true;
+        return d[row][col];
+    }
+
+
+    public static class InOrderTreeNode {
+
+        int val;
+        InOrderTreeNode left;
+        InOrderTreeNode right;
+        InOrderTreeNode prev;
+        InOrderTreeNode next;
+        public InOrderTreeNode(int v) {
+            this.val = v;
+        }
+    }
+
+    public static class InOrderTreeNodeStruct {
+
+        InOrderTreeNode self;
+        InOrderTreeNode first;
+        InOrderTreeNode last;
+
+        public InOrderTreeNodeStruct(InOrderTreeNode self, InOrderTreeNode first, InOrderTreeNode last) {
+            this.self = self;
+            this.first = first;
+            this.last = last;
+        }
+    }
+
+    public static InOrderTreeNode cloneTreeInOrder(TreeNode root) {
+
+        if (root == null) {
+            return null;
+        }
+        return _cloneTreeInOrder(root).self;
+    }
+
+    public static InOrderTreeNodeStruct _cloneTreeInOrder(TreeNode node) {
+
+        if (node == null) {
+            return new InOrderTreeNodeStruct(null, null, null);
+        }
+        InOrderTreeNode newNode = new InOrderTreeNode(node.val);
+        if (node.left == null && node.right == null) {
+            return new InOrderTreeNodeStruct(newNode, newNode, newNode);
+        }
+        InOrderTreeNodeStruct left = _cloneTreeInOrder(node.left);
+        InOrderTreeNodeStruct right = _cloneTreeInOrder(node.right);
+        newNode.left = left.self;
+        newNode.right = right.self;
+        newNode.prev = left.last;
+        newNode.next = right.first;
+        if (left.last != null) {
+            left.last.next = newNode;
+        }
+        if (right.first != null) {
+            right.first.prev = newNode;
+        }
+        return new InOrderTreeNodeStruct(newNode, left.first, right.last);
+    }
+
     public static void main(String[] args) {
 
-        List<List<Integer>> lists = new ArrayList<List<Integer>>();
-        List<Integer> list1 = new ArrayList<Integer>();
-        list1.add(2);
-
-        List<Integer> list2 = new ArrayList<Integer>();
-        list2.add(3);
-        list2.add(4);
-
-        List<Integer> list3 = new ArrayList<Integer>();
-        list3.add(6);
-        list3.add(5);
-        list3.add(7);
-
-        List<Integer> list4 = new ArrayList<Integer>();
-        list4.add(4);
-        list4.add(1);
-        list4.add(8);
-        list4.add(3);
-
-        lists.add(list1);
-        lists.add(list2);
-        lists.add(list3);
-        lists.add(list4);
-
-
-        PRINT(minimumTotal(lists) + " == " + minimumTotal2(lists));
         //PRINT(getJumpPath(new int[]{5, 3, 2, 1, 4}));
 
 
@@ -8312,15 +8392,18 @@ public class Round3 {
          *   3   1
          */
 
-        //        TreeNode n1 = new TreeNode(1);
-        //        TreeNode n2 = new TreeNode(2);
-        //        TreeNode n3 = new TreeNode(3);
-        //        TreeNode n4 = new TreeNode(4);
-        //        TreeNode n5 = new TreeNode(5);
-        //        n1.left = n2;
-        //        n1.right = n3;
-        //        n2.left = n4;
-        //        n2.right = n5;
+        TreeNode n1 = new TreeNode(1);
+        TreeNode n2 = new TreeNode(2);
+        TreeNode n3 = new TreeNode(3);
+        TreeNode n4 = new TreeNode(4);
+        TreeNode n5 = new TreeNode(5);
+        n1.left = n2;
+        n1.right = n3;
+        n2.left = n4;
+        n2.right = n5;
+        InOrderTreeNode node = cloneTreeInOrder(n1);
+        PRINT(node.val);
+
         //        PRINT(PrintAllPath(n1));
         //
         //        TreeNode newRoot = upsideDownBinaryTree(n1);
