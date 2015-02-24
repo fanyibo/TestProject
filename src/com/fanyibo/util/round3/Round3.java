@@ -8032,6 +8032,50 @@ public class Round3 {
         }
     }
 
+    /**
+     * 188. Best Time to Buy and Sell Stock IV
+     * Say you have an array for which the ith element is the price of a given stock on day i.
+     * Design an algorithm to find the maximum profit. You may complete at most k transactions.
+     * Note:
+     * You may not engage in multiple transactions at the same time (ie, you must sell the stock before you buy again).
+     */
+    public static int maxProfit(int k, int[] prices) {
+        return 0;
+    }
+
+    /**
+     * 189. Rotate Array
+     * Rotate an array of n elements to the right by k steps.
+     * For example, with n = 7 and k = 3, the array [1,2,3,4,5,6,7] is rotated to [5,6,7,1,2,3,4].
+     * Note:
+     * Try to come up as many solutions as you can, there are at least 3 different ways to solve this problem.
+     */
+    public static void rotate(int[] nums, int k) {
+
+        int size = nums.length;
+        if (k % size == 0 || size < 2 || k <= 0) {
+            return;
+        }
+        k = k % size;
+        int t = 0;
+        for (int i = size - k; i < size; i++, t++) {
+            int temp = nums[i];
+            nums[i] = nums[t];
+            nums[t] = temp;
+        }
+        int start = size - k - 1 < t ? size - 1 : size - k - 1;
+        for (int i = start; i >= t; i--) {
+            int m = i;
+            for (int j = 0; j < k; j++) {
+                if (m + 1 < size) {
+                    int temp = nums[m + 1];
+                    nums[m + 1] = nums[m];
+                    nums[m] = temp;
+                    m++;
+                }
+            }
+        }
+    }
 
     /**
      * Binary Tree Vertical Order
@@ -8375,6 +8419,19 @@ public class Round3 {
 
     public static void main(String[] args) {
 
+        {
+            int[] A = {1,2,3,4,5,6,7,8,9,10};
+            rotate(A, 6);
+            PRINT(Arrays.toString(A));
+        }
+        {
+            int[] A = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27,
+                       28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51,
+                       52, 53};
+            rotate(A, 82);
+            PRINT(Arrays.toString(A));
+        }
+
         //PRINT(getJumpPath(new int[]{5, 3, 2, 1, 4}));
 
 
@@ -8392,17 +8449,17 @@ public class Round3 {
          *   3   1
          */
 
-        TreeNode n1 = new TreeNode(1);
-        TreeNode n2 = new TreeNode(2);
-        TreeNode n3 = new TreeNode(3);
-        TreeNode n4 = new TreeNode(4);
-        TreeNode n5 = new TreeNode(5);
-        n1.left = n2;
-        n1.right = n3;
-        n2.left = n4;
-        n2.right = n5;
-        InOrderTreeNode node = cloneTreeInOrder(n1);
-        PRINT(node.val);
+//        TreeNode n1 = new TreeNode(1);
+//        TreeNode n2 = new TreeNode(2);
+//        TreeNode n3 = new TreeNode(3);
+//        TreeNode n4 = new TreeNode(4);
+//        TreeNode n5 = new TreeNode(5);
+//        n1.left = n2;
+//        n1.right = n3;
+//        n2.left = n4;
+//        n2.right = n5;
+//        InOrderTreeNode node = cloneTreeInOrder(n1);
+//        PRINT(node.val);
 
         //        PRINT(PrintAllPath(n1));
         //
