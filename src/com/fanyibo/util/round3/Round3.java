@@ -8,9 +8,14 @@ package com.fanyibo.util.round3;
 
 import com.fanyibo.tree.TreeNode;
 import com.fanyibo.util.ListNode;
+import com.sun.deploy.util.StringUtils;
 import sun.net.www.content.text.plain;
 
 import javax.xml.stream.events.Characters;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.*;
 
 public class Round3 {
@@ -2691,18 +2696,18 @@ public class Round3 {
      * corner of the grid (marked 'Finish' in the diagram below).
      * How many possible unique paths are there?
      */
-    public static int uniquePaths(int m, int n) {
+    public static long uniquePaths(int m, int n) {
 
         if (m <= 0 || n <= 0) {
             return 0;
         }
-        int[][] d = new int[m][n];
+        long[][] d = new long[m][n];
         for (int i = 0; i < m; i++) {
             for (int j = 0; j < n; j++) {
-                if (i == 0 && j == 0) {
+                if (i == 0 || j == 0) {
                     d[i][j] = 1;
                 } else {
-                    d[i][j] = (i == 0 ? 0 : d[i - 1][j]) + (j == 0 ? 0 : d[i][j - 1]);
+                    d[i][j] = d[i - 1][j] + d[i][j - 1];
                 }
             }
         }
@@ -8584,11 +8589,26 @@ public class Round3 {
         return max;
     }
 
+    public static boolean isAbundant(int num) {
 
-    public static void main(String[] args) {
+        int sum = 0;
+        for (int i = 1; i < num; i++) {
+            if (num % i == 0) {
+                sum += i;
+            }
+        }
+        return sum > num;
+    }
 
-        PRINT(getNum(10));
-        PRINT(getNum(2000000));
+    public static long getNum3() {
+
+        return 0;
+    }
+
+    public static void main(String[] args) throws IOException {
+
+        PRINT(getNum3());
+
         /*
         //PRINT(maxProfit3(new int[]{3, 1, 5, 6, 2, 8, 1, 10, 6, 2}));
         //PRINT(maxProfit4(6, new int[]{3, 1, 5, 6, 2, 8, 1, 10, 6, 2}));
@@ -8988,22 +9008,23 @@ public class Round3 {
         }
         PRINT("##############################################################");
 */
-//        * ["hit","hot","dot","dog","cog"],
-//        * ["hit","hot","lot","log","cog"]
-//        * ]
+        //        * ["hit","hot","dot","dog","cog"],
+        //        * ["hit","hot","lot","log","cog"]
+        //        * ]
 
-//        {
-//            int[] A = {1,2,3,4,5,6,7,8,9,10};
-//            rotate(A, 6);
-//            PRINT(Arrays.toString(A));
-//        }
-//        {
-//            int[] A = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27,
-//                       28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51,
-//                       52, 53};
-//            rotate(A, 82);
-//            PRINT(Arrays.toString(A));
-//        }
+        //        {
+        //            int[] A = {1,2,3,4,5,6,7,8,9,10};
+        //            rotate(A, 6);
+        //            PRINT(Arrays.toString(A));
+        //        }
+        //        {
+        //            int[] A = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27,
+
+        //                       28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51,
+        //                       52, 53};
+        //            rotate(A, 82);
+        //            PRINT(Arrays.toString(A));
+        //        }
 
         //PRINT(getJumpPath(new int[]{5, 3, 2, 1, 4}));
 
@@ -9022,17 +9043,17 @@ public class Round3 {
          *   3   1
          */
 
-//        TreeNode n1 = new TreeNode(1);
-//        TreeNode n2 = new TreeNode(2);
-//        TreeNode n3 = new TreeNode(3);
-//        TreeNode n4 = new TreeNode(4);
-//        TreeNode n5 = new TreeNode(5);
-//        n1.left = n2;
-//        n1.right = n3;
-//        n2.left = n4;
-//        n2.right = n5;
-//        InOrderTreeNode node = cloneTreeInOrder(n1);
-//        PRINT(node.val);
+        //        TreeNode n1 = new TreeNode(1);
+        //        TreeNode n2 = new TreeNode(2);
+        //        TreeNode n3 = new TreeNode(3);
+        //        TreeNode n4 = new TreeNode(4);
+        //        TreeNode n5 = new TreeNode(5);
+        //        n1.left = n2;
+        //        n1.right = n3;
+        //        n2.left = n4;
+        //        n2.right = n5;
+        //        InOrderTreeNode node = cloneTreeInOrder(n1);
+        //        PRINT(node.val);
 
         //        PRINT(PrintAllPath(n1));
         //
@@ -9130,6 +9151,6 @@ public class Round3 {
 
     public static void printTimeDiff(long time1, long time2) {
         long diff = time2 - time1;
-        PRINT("Time Elapased [" + (double)diff/1000000 + " ms]");
+        PRINT("Time Elapased [" + (double) diff / 1000000 + " ms]");
     }
 }
